@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0b1d26;
+  font-family: 'Inter', sans-serif;
+  color: #d1d1d1;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Playfair Display', serif;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 25px;
+  transition: all 0.3s;
+  background-color: rgba(106, 115, 125, 0.2);
+
+  &:hover {
+    background-color: rgba(106, 115, 125, 0.27);
+  }
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+/* Button Styles */
+.explore-btn {
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.explore-btn:hover {
+  background-color: #1a2c35;
+  color: #e0f0e9;
+}
+
+/* Animation Classes */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 32px;
+  }
+}

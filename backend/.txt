@@ -1,0 +1,70 @@
+MONGO_URI=mongodb://btejanshu_db_user:tcRsZY02ejhiodRj@ac-jrlbwuh-shard-00-00.zmeuv6m.mongodb.net:27017,ac-jrlbwuh-shard-00-01.zmeuv6m.mongodb.net:27017,ac-jrlbwuh-shard-00-02.zmeuv6m.mongodb.net:27017/?ssl=true&replicaSet=atlas-j13rb2-shard-0&authSource=admin&appName=Uk-Hiker2
+# MOngoPAss=tcRsZY02ejhiodRj
+# MOngoUSer=btejanshu_db_user
+JWT_SECRET=Deepanshu123
+
+
+//seedAdmin.js
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+
+import connectDB from "./config/db.js";
+import Admin from "./models/Admin.js";
+
+dotenv.config();
+
+const seedAdmin = async () => {
+  try {
+    await connectDB();
+
+    const hashedPassword = await bcrypt.hash("admin123", 10);
+
+    const admin = {
+      username: "admin",
+      password: hashedPassword
+    };
+
+    await Admin.deleteMany();
+    await Admin.create(admin);
+
+    console.log("Admin created successfully with hashed password");
+    process.exit();
+
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+seedAdmin();
+
+// seedBlogs.js
+import dotenv from "dotenv";
+import Blog from "./models/Blog.js";
+import connectDB from "./config/db.js";
+
+import { blogList } from "../frontend/src/data/blogs/blogs.js";
+
+dotenv.config();
+
+const seedBlogs = async () => {
+  try {
+    await connectDB();
+
+    await Blog.deleteMany();
+
+    console.log("Inserting blogs:", blogList.length);
+
+    await Blog.insertMany(blogList);
+
+    console.log("Blogs inserted successfully");
+
+    process.exit();
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+seedBlogs();
