@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import BlogCard from "../components/blog/BlogCard";
 
-const API = "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
