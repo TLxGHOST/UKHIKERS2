@@ -5,7 +5,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import slotRoutes from "./routes/slotRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import adminBookingRoutes from "./routes/adminBookingRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
+//import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 
@@ -26,7 +26,7 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/slots",slotRoutes);
 app.use("/api/admin/bookings",adminBookingRoutes);
 app.use("/api/bookings",bookingRoutes);
-app.use("/api/payment",paymentRoutes);
+//app.use("/api/payment",paymentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
