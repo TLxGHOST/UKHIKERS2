@@ -40,7 +40,7 @@ const Footer = () => {
             {["The Team"].map((item) => (
               <li key={item}>
                 <a
-                  href="https://tejanshu.me/Systumm"
+                  href="https://tejanshu.me"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#8f9ca3] hover:text-white transition-colors"
@@ -75,9 +75,9 @@ const Footer = () => {
 
           <div className="mt-10 text-[#8f9ca3]">
             <p>
-              Re-Designed with ♥ by{" "}
+              Developed with ♥ by{" "}
               <a
-                href="https://www.tejanshu.me"
+                href="https://www.tejanshu.me/"
                 className="text-[#fbd784]"
                 target="_blank"
                 rel="noopener noreferrer"
