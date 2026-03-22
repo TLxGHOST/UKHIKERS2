@@ -5,7 +5,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import slotRoutes from "./routes/slotRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import adminBookingRoutes from "./routes/adminBookingRoutes.js";
-import createOrder from "./routes/paymentRoutes.js";
+//import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 
@@ -20,13 +20,23 @@ connectDB();
 const app = express();
 
 app.use(cors());
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://ukhikers-2.vercel.app"
+    ],
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use("/api/admin", adminRoutes);
 app.use("/api/blogs", blogRoutes);
-app.use("/api/slots",slotRoutes);
-app.use("/api/admin/bookings",adminBookingRoutes);
-app.use("/api/bookings",bookingRoutes);
-app.use("/api/payment",createOrder);
+app.use("/api/slots", slotRoutes);
+app.use("/api/admin/bookings", adminBookingRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
