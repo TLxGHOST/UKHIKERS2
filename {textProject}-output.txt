@@ -5,8 +5,8 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-05-05 15:16:02 (Asia/Calcutta / GMT+06:30)
-Total Files Processed: 105
+Generated On: 2026-05-05 15:54:19 (Asia/Calcutta / GMT+06:30)
+Total Files Processed: 87
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
 
@@ -29,7 +29,7 @@ PROJECT STRUCTURE
 │   │   └── 📄 razorpay.js (226 B)
 │   ├── 📁 controllers/
 │   │   ├── 📄 adminBookingController.js (1.58 KB)
-│   │   ├── 📄 adminController.js (1.58 KB)
+│   │   ├── 📄 adminController.js (1.47 KB)
 │   │   ├── 📄 adminStatsController.js (853 B)
 │   │   ├── 📄 blogController.js (1.01 KB)
 │   │   ├── 📄 bookingController.js (1.64 KB)
@@ -68,25 +68,6 @@ PROJECT STRUCTURE
 │   │   │       │   ├── 📄 hiking3.jpg (2.98 MB)
 │   │   │       │   ├── 📄 valley-of-flowers.jpg (2.07 MB)
 │   │   │       │   └── 📄 winter.jpg (2.47 MB)
-│   │   │       ├── 📁 equipment/
-│   │   │       │   ├── 📄 backpack.jpg (3.03 MB)
-│   │   │       │   ├── 📄 base-layer.jpg
-│   │   │       │   ├── 📄 boots.jpg (9.04 MB)
-│   │   │       │   ├── 📄 carabiner.jpg (2.47 MB)
-│   │   │       │   ├── 📄 crampons.jpg (29 B)
-│   │   │       │   ├── 📄 headlamp.jpg (1.62 MB)
-│   │   │       │   ├── 📄 helmet.jpg (2.7 MB)
-│   │   │       │   ├── 📄 hiking-backpack.jpg
-│   │   │       │   ├── 📄 hiking-boots.jpg (1.55 MB)
-│   │   │       │   ├── 📄 hiking-gps.jpg
-│   │   │       │   ├── 📄 hiking-jacket.jpg
-│   │   │       │   ├── 📄 hiking-tent.jpg
-│   │   │       │   ├── 📄 jacket.jpg (5.91 MB)
-│   │   │       │   ├── 📄 poles.jpg (4.75 MB)
-│   │   │       │   ├── 📄 sleepingbag.jpg (1.61 MB)
-│   │   │       │   ├── 📄 tent.jpg (1.56 MB)
-│   │   │       │   ├── 📄 trail-shoes.jpg
-│   │   │       │   └── 📄 trekking-poles.jpg
 │   │   │       ├── 📄 5.jpg (4.59 MB)
 │   │   │       ├── 📄 6.jpg (958.69 KB)
 │   │   │       ├── 📄 8.jpg (3.88 MB)
@@ -123,16 +104,16 @@ PROJECT STRUCTURE
 │   │   │       └── 📄 blogs.js (4.71 KB)
 │   │   ├── 📁 hooks/
 │   │   │   ├── 📄 useAdminStats.js (693 B)
-│   │   │   ├── 📄 useBookings.js (820 B)
+│   │   │   ├── 📄 useBookings.js (1005 B)
 │   │   │   └── 📄 usePayments.js (590 B)
 │   │   ├── 📁 pages/
 │   │   │   ├── 📄 AboutPage.jsx (11.32 KB)
 │   │   │   ├── 📄 AdminBookings.jsx (1.65 KB)
 │   │   │   ├── 📄 AdminDashboard.jsx (1.46 KB)
-│   │   │   ├── 📄 AdminLogin.jsx (1.61 KB)
+│   │   │   ├── 📄 AdminLogin.jsx (1.65 KB)
 │   │   │   ├── 📄 AdminPage.jsx (1.14 KB)
 │   │   │   ├── 📄 AdminPayments.jsx (1.98 KB)
-│   │   │   ├── 📄 AdminSlots.jsx (3.59 KB)
+│   │   │   ├── 📄 AdminSlots.jsx (4.95 KB)
 │   │   │   ├── 📄 BlogDetailPage.jsx (9.95 KB)
 │   │   │   ├── 📄 BlogPage.jsx (1.72 KB)
 │   │   │   ├── 📄 EquipmentPage.jsx (5.49 KB)
@@ -157,17 +138,17 @@ PROJECT STRUCTURE
 ================================================================================
 PROJECT STATISTICS
 ================================================================================
-Total Files: 105
-Total Directories: 26
+Total Files: 87
+Total Directories: 25
 Text Files: 74
-Binary Files: 31
-Total Size: 62.29 MB
+Binary Files: 13
+Total Size: 28.06 MB
 
 FILE TYPES DISTRIBUTION:
 ------------------------------
 .js             : 33
-.jpg            : 29
 .jsx            : 28
+.jpg            : 11
 .json           : 6
 .svg            : 2
 .css            : 2
@@ -391,88 +372,58 @@ FILE: backend/controllers/adminController.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 1.58 KB
+Size: 1.47 KB
 Extension: .js
 Language: javascript
 Location: backend/controllers/adminController.js
 Relative Path: backend/controllers
 Created: 2026-03-07 18:13:27 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-05 15:13:46 (Asia/Calcutta / GMT+06:30)
-MD5: b32f39691eb23b2a168ce96393c2fc56
-SHA256: 573a7a304419e499ebd56e7f604c9f6e8d9fec59d2bf566d4eb44ee4658b3492
+Modified: 2026-05-05 15:49:38 (Asia/Calcutta / GMT+06:30)
+MD5: 64323a82636362034c3d2c455b540f76
+SHA256: fefe325bce981ea8d7167c2065d6d9b1757fbb57347311031693965c0b777c54
 Encoding: UTF-8
 
 FILE CONTENT:
 ----------------------------------------
+import jwt from "jsonwebtoken";
+import { config } from "../config/config.js";
 import Booking from "../models/Booking.js";
 import TrekSlot from "../models/TrekSlot.js";
-import { config } from "../config/config.js";
 
-// 📊 DASHBOARD
 export const getDashboardStats = async (req, res) => {
   try {
     const totalBookings = await Booking.countDocuments();
-
-    const activeSlots = await TrekSlot.countDocuments({
-      date: { $gte: new Date() }
-    });
-
+    const activeSlots = await TrekSlot.countDocuments({ date: { $gte: new Date() } });
     const revenueData = await Booking.aggregate([
       { $match: { paymentStatus: "paid" } },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: "$amountPaid" }
-        }
-      }
+      { $group: { _id: null, total: { $sum: "$amountPaid" } } }
     ]);
-
     const revenue = revenueData[0]?.total || 0;
-
-    res.json({
-      success: true,
-      data: {
-        totalBookings,
-        activeSlots,
-        revenue
-      }
-    });
-
+    res.json({ success: true, data: { totalBookings, activeSlots, revenue } });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch stats"
-    });
+    res.status(500).json({ success: false, message: "Failed to fetch stats" });
   }
 };
 
-// 🔐 LOGIN (env-based)
+// 🔐 FIX: Sign a real JWT instead of returning a dummy string
 export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
-  if (
-    email === config.ADMIN_EMAIL &&
-    password === config.ADMIN_PASSWORD
-  ) {
-    return res.json({ token: "dummyToken123" });
+  if (email === config.ADMIN_EMAIL && password === config.ADMIN_PASSWORD) {
+    const token = jwt.sign(
+      { email },
+      config.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+    return res.json({ token });
   }
 
   res.status(401).json({ message: "Invalid credentials" });
 };
 
-// 📝 BLOG APIs (placeholders for now)
-export const createBlog = async (req, res) => {
-  res.json({ message: "Blog created" });
-};
-
-export const updateBlog = async (req, res) => {
-  res.json({ message: "Blog updated" });
-};
-
-export const deleteBlog = async (req, res) => {
-  res.json({ message: "Blog deleted" });
-};
+export const createBlog = async (req, res) => res.json({ message: "Blog created" });
+export const updateBlog = async (req, res) => res.json({ message: "Blog updated" });
+export const deleteBlog = async (req, res) => res.json({ message: "Blog deleted" });
 ================================================================================
 
 
@@ -622,7 +573,7 @@ Language: javascript
 Location: backend/controllers/bookingController.js
 Relative Path: backend/controllers
 Created: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-05 13:41:35 (Asia/Calcutta / GMT+06:30)
+Modified: 2026-05-05 15:44:05 (Asia/Calcutta / GMT+06:30)
 MD5: e824e60b7b8b5f70c17ef39f770c500f
 SHA256: 5b7449b7717eb098037fef2bda232f53597730d8c5eee3a84823fb089e1e2df7
 Encoding: ASCII
@@ -3115,29 +3066,6 @@ BINARY/EXCLUDED FILES (not included in text content)
 ================================================================================
 BINARY/EXCLUDED FILES (not included in text content)
 ================================================================================
-- frontend/public/assets/images/equipment/backpack.jpg
-- frontend/public/assets/images/equipment/base-layer.jpg
-- frontend/public/assets/images/equipment/boots.jpg
-- frontend/public/assets/images/equipment/carabiner.jpg
-- frontend/public/assets/images/equipment/crampons.jpg
-- frontend/public/assets/images/equipment/headlamp.jpg
-- frontend/public/assets/images/equipment/helmet.jpg
-- frontend/public/assets/images/equipment/hiking-backpack.jpg
-- frontend/public/assets/images/equipment/hiking-boots.jpg
-- frontend/public/assets/images/equipment/hiking-gps.jpg
-- frontend/public/assets/images/equipment/hiking-jacket.jpg
-- frontend/public/assets/images/equipment/hiking-tent.jpg
-- frontend/public/assets/images/equipment/jacket.jpg
-- frontend/public/assets/images/equipment/poles.jpg
-- frontend/public/assets/images/equipment/sleepingbag.jpg
-- frontend/public/assets/images/equipment/tent.jpg
-- frontend/public/assets/images/equipment/trail-shoes.jpg
-- frontend/public/assets/images/equipment/trekking-poles.jpg
-
-
-================================================================================
-BINARY/EXCLUDED FILES (not included in text content)
-================================================================================
 - frontend/public/assets/images/5.jpg
 - frontend/public/assets/images/6.jpg
 - frontend/public/assets/images/8.jpg
@@ -4694,16 +4622,16 @@ FILE: frontend/src/hooks/useBookings.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 820 B
+Size: 1005 B
 Extension: .js
 Language: javascript
 Location: frontend/src/hooks/useBookings.js
 Relative Path: frontend/src/hooks
 Created: 2026-05-05 14:51:25 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-05 14:51:36 (Asia/Calcutta / GMT+06:30)
-MD5: b0f97fa942072d8b034a553a14e65e1f
-SHA256: bace476572b0f6985bb52c9a38de0733a6882a073ca8c384cf6b9e79af224cee
-Encoding: ASCII
+Modified: 2026-05-05 15:51:24 (Asia/Calcutta / GMT+06:30)
+MD5: 129d1c376b4ee2e9c2d784a44fd43921
+SHA256: 1875e3fa73d9ae101003e6745184b6cd304c8730332ede5a8f7332571f54e3d8
+Encoding: UTF-8
 
 FILE CONTENT:
 ----------------------------------------
@@ -4717,7 +4645,7 @@ const useBookings = () => {
   const fetchBookings = async () => {
     try {
       const res = await api.get("/admin/bookings");
-      setBookings(res.data);
+      setBookings(res.data.data || []); // ← was res.data (wrong shape)
     } catch (err) {
       console.error(err);
     } finally {
@@ -4725,23 +4653,22 @@ const useBookings = () => {
     }
   };
 
+  // ← FIX: was missing entirely
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
   const approveBooking = async (id) => {
-    await api.put(`/admin/approve/${id}`);
+    await api.put(`/admin/bookings/approve/${id}`); // ← was /admin/approve/:id
     fetchBookings();
   };
 
   const rejectBooking = async (id) => {
-    await api.put(`/admin/reject/${id}`);
+    await api.put(`/admin/bookings/reject/${id}`); // ← was /admin/reject/:id
     fetchBookings();
   };
 
-  return {
-    bookings,
-    loading,
-    fetchBookings,
-    approveBooking,
-    rejectBooking,
-  };
+  return { bookings, loading, fetchBookings, approveBooking, rejectBooking };
 };
 
 export default useBookings;
@@ -5264,15 +5191,15 @@ FILE: frontend/src/pages/AdminLogin.jsx
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 1.61 KB
+Size: 1.65 KB
 Extension: .jsx
 Language: jsx
 Location: frontend/src/pages/AdminLogin.jsx
 Relative Path: frontend/src/pages
 Created: 2026-03-07 18:29:34 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-05 14:01:26 (Asia/Calcutta / GMT+06:30)
-MD5: ea3ef68a69f7855eadc69ab3329a0507
-SHA256: 6a0fbc4f00a430f7880e9ae4d81ce277f3c35eb82c6ed2e3b18c86667d75869e
+Modified: 2026-05-05 15:50:50 (Asia/Calcutta / GMT+06:30)
+MD5: 686f9bd4a33982de207a8343ede29b36
+SHA256: 2ce4fd3c58e45ddeff9e3974e3bd0cd5290bd90659f2999efafc4b2271f6f4c1
 Encoding: UTF-8
 
 FILE CONTENT:
@@ -5291,10 +5218,8 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/login", {
-        email,
-        password,
-      });
+      const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const res = await axios.post(`${BASE}/admin/login`, { email, password });
 
       // 🔐 SAVE TOKEN HERE
       localStorage.setItem("adminToken", res.data.token);
@@ -5525,16 +5450,16 @@ FILE: frontend/src/pages/AdminSlots.jsx
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 3.59 KB
+Size: 4.95 KB
 Extension: .jsx
 Language: jsx
 Location: frontend/src/pages/AdminSlots.jsx
 Relative Path: frontend/src/pages
 Created: 2026-03-07 20:05:16 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-03-07 23:47:57 (Asia/Calcutta / GMT+06:30)
-MD5: 6c9c6f81244d665a90c8589346daad1b
-SHA256: 08755103140154b5c3c3a77dec5173ff81fe625736bbe084a64e45c7a9b943e5
-Encoding: ASCII
+Modified: 2026-05-05 15:52:36 (Asia/Calcutta / GMT+06:30)
+MD5: 26d44519a1ec227be8a43b92e1476c0e
+SHA256: c0ffd98e3ee8f1ae1a5f971956de402db38d408244c3127fee0bb66a2ed10cb8
+Encoding: UTF-8
 
 FILE CONTENT:
 ----------------------------------------
@@ -5551,25 +5476,26 @@ export default function AdminSlots() {
   const [seats, setSeats] = useState("");
 
   /* FETCH TREKS */
-
   const fetchTreks = async () => {
-    const res = await fetch(`${API}/blogs`);
-
-    const data = await res.json();
-
-    setTreks(data);
+    try {
+      const res = await fetch(`${API}/blogs`);
+      const data = await res.json();
+      setTreks(data.data || []); // ✅ FIX: was setTreks(data)
+    } catch (err) {
+      console.error("Failed to fetch treks:", err);
+    }
   };
 
   /* FETCH SLOTS */
-
   const fetchSlots = async () => {
     if (!trekId) return;
-
-    const res = await fetch(`${API}/slots/${trekId}`);
-
-    const data = await res.json();
-
-    setSlots(data);
+    try {
+      const res = await fetch(`${API}/slots/trek/${trekId}`); // ✅ FIX: was /slots/${trekId}
+      const data = await res.json();
+      setSlots(data.data || []); // ✅ FIX: was setSlots(data)
+    } catch (err) {
+      console.error("Failed to fetch slots:", err);
+    }
   };
 
   useEffect(() => {
@@ -5581,58 +5507,52 @@ export default function AdminSlots() {
   }, [trekId]);
 
   /* CREATE SLOT */
-
   const createSlot = async () => {
     if (!trekId) {
       alert("Please select trek");
       return;
     }
-
     if (!date) {
       alert("Please select date");
       return;
     }
-
     if (!seats) {
       alert("Enter number of seats");
       return;
     }
 
-    const res = await fetch(`${API}/slots`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        trekId,
-        date,
-        totalSeats: Number(seats),
-      }),
-    });
+    try {
+      const res = await fetch(`${API}/slots`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trekId, date, totalSeats: Number(seats) }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!data.success) {
-      alert(data.message);
-      return;
+      if (!data.success) {
+        alert(data.message);
+        return;
+      }
+
+      alert("Slot created");
+      setDate("");
+      setSeats("");
+      fetchSlots();
+    } catch (err) {
+      console.error("Failed to create slot:", err);
+      alert("Something went wrong. Please try again.");
     }
-
-    alert("Slot created");
-
-    setDate("");
-    setSeats("");
-
-    fetchSlots();
   };
 
   /* DELETE SLOT */
-
   const deleteSlot = async (id) => {
-    await fetch(`${API}/slots/${id}`, {
-      method: "DELETE",
-    });
-
-    fetchSlots();
+    try {
+      await fetch(`${API}/slots/${id}`, { method: "DELETE" });
+      fetchSlots();
+    } catch (err) {
+      console.error("Failed to delete slot:", err);
+    }
   };
 
   return (
@@ -5640,13 +5560,12 @@ export default function AdminSlots() {
       <h1 className="text-3xl font-bold mb-8">Manage Trek Slots</h1>
 
       {/* SELECT TREK */}
-
       <select
         className="w-full max-w-md p-2 text-black rounded mb-6"
+        value={trekId}
         onChange={(e) => setTrekId(e.target.value)}
       >
-        <option>Select Trek</option>
-
+        <option value="">Select Trek</option>
         {treks.map((trek) => (
           <option key={trek._id} value={trek._id}>
             {trek.title}
@@ -5655,7 +5574,6 @@ export default function AdminSlots() {
       </select>
 
       {/* CREATE SLOT */}
-
       <div className="max-w-md space-y-4 mb-10">
         <input
           type="date"
@@ -5674,13 +5592,16 @@ export default function AdminSlots() {
 
         <button
           onClick={createSlot}
-          className="bg-yellow-600 px-6 py-2 rounded"
+          className="bg-yellow-600 px-6 py-2 rounded hover:bg-yellow-700 transition"
         >
           Add Slot
         </button>
       </div>
 
       {/* SLOT LIST */}
+      {trekId && slots.length === 0 && (
+        <p className="text-gray-400 mb-4">No slots found for this trek.</p>
+      )}
 
       <div className="grid md:grid-cols-3 gap-6">
         {slots.map((slot) => {
@@ -5688,13 +5609,31 @@ export default function AdminSlots() {
 
           return (
             <div key={slot._id} className="bg-[#1a2c35] p-4 rounded-lg">
-              <h3 className="font-bold">{slot.date}</h3>
+              <h3 className="font-bold mb-1">
+                {new Date(slot.date).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </h3>
 
-              <p>Seats Left: {seatsLeft}</p>
+              <p className="text-sm text-gray-300">
+                Total Seats: {slot.totalSeats}
+              </p>
+              <p className="text-sm text-gray-300">
+                Booked: {slot.bookedSeats}
+              </p>
+              <p
+                className={`text-sm font-semibold mt-1 ${
+                  seatsLeft === 0 ? "text-red-400" : "text-green-400"
+                }`}
+              >
+                {seatsLeft === 0 ? "Full" : `${seatsLeft} seats left`}
+              </p>
 
               <button
                 onClick={() => deleteSlot(slot._id)}
-                className="mt-3 bg-red-600 px-4 py-2 rounded"
+                className="mt-3 bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition text-sm"
               >
                 Delete
               </button>

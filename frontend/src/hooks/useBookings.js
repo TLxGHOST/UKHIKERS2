@@ -8,7 +8,7 @@ const useBookings = () => {
   const fetchBookings = async () => {
     try {
       const res = await api.get("/admin/bookings");
-      setBookings(res.data);
+      setBookings(res.data.data || []); // ← was res.data (wrong shape)
     } catch (err) {
       console.error(err);
     } finally {
@@ -16,23 +16,22 @@ const useBookings = () => {
     }
   };
 
+  // ← FIX: was missing entirely
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
   const approveBooking = async (id) => {
-    await api.put(`/admin/approve/${id}`);
+    await api.put(`/admin/bookings/approve/${id}`); // ← was /admin/approve/:id
     fetchBookings();
   };
 
   const rejectBooking = async (id) => {
-    await api.put(`/admin/reject/${id}`);
+    await api.put(`/admin/bookings/reject/${id}`); // ← was /admin/reject/:id
     fetchBookings();
   };
 
-  return {
-    bookings,
-    loading,
-    fetchBookings,
-    approveBooking,
-    rejectBooking,
-  };
+  return { bookings, loading, fetchBookings, approveBooking, rejectBooking };
 };
 
 export default useBookings;

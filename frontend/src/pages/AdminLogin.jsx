@@ -12,10 +12,8 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/login", {
-        email,
-        password,
-      });
+      const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const res = await axios.post(`${BASE}/admin/login`, { email, password });
 
       // 🔐 SAVE TOKEN HERE
       localStorage.setItem("adminToken", res.data.token);
