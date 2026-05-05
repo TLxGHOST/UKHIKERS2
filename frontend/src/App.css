@@ -5,6 +5,8 @@
   text-align: center;
 }
 
+transition-all duration-200
+hover:bg-gray-700 transition
 .logo {
   height: 6em;
   padding: 1.5em;

@@ -16,28 +16,6 @@ const AboutPage = () => {
       role: "Founder & CEO",
       bio: "With over 5 years of trekking experience across the state , Deepanshu founded UKHIKER with a vision to create dreams that meets the demands of serious mountaineers.",
       imageUrl: "/assets/images/about/team1.jpg",
-      // },
-      // {
-      //   id: 2,
-      //   name: "David Ridge",
-      //   role: "Head of Product Design",
-      //   bio: "David combines his passion for mountains with engineering expertise to design gear that withstands extreme conditions while providing comfort and functionality.",
-      //   imageUrl: "/assets/images/about/team2.jpg"
-      // },
-      // {
-      //   id: 3,
-      //   name: "Michelle Trekker",
-      //   role: "Content Director",
-      //   bio: "Former outdoor magazine editor and experienced trail guide, Michelle leads our content strategy and educational initiatives for the mountain community.",
-      //   imageUrl: "/assets/images/about/team3.jpg"
-      // },
-      // {
-      //   id: 4,
-      //   name: "James Alpine",
-      //   role: "Environmental Officer",
-      //   bio: "An environmental scientist specializing in alpine ecosystems, James ensures our operations and products minimize impact on the fragile mountain environments we cherish.",
-      //   imageUrl: "/assets/images/about/team2.jpg"
-      // }
     },
   ];
 
@@ -261,13 +239,6 @@ const AboutPage = () => {
                   <i className="fas fa-envelope mr-2 text-yellow-500"></i>{" "}
                   ukhikers@gmail.com
                 </p>
-
-                {/* <div className="mt-6">
-                  <h4 className="font-medium text-white mb-2">Hours:</h4>
-                  <p className="mb-1">Monday - Friday: 9am - 7pm</p>
-                  <p className="mb-1">Saturday: 10am - 6pm</p>
-                  <p>Sunday: 11am - 5pm</p>
-                </div> */}
               </div>
 
               <div className="flex space-x-4">
