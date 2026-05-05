@@ -1,28 +1,9 @@
-import razorpay from "../config/razorpay.js";
+import express from "express";
+import { addPayment, getAllPayments } from "../controllers/paymentController.js";
 
-const createOrder = async(req,res)=>{
+const router = express.Router();
 
-try{
+router.post("/add", addPayment);
+router.get("/", getAllPayments);
 
-const { amount } = req.body;
-
-const order = await razorpay.orders.create({
-
-amount: amount * 100,
-currency:"INR"
-
-});
-
-res.json(order);
-
-}catch(err){
-
-console.error(err);
-
-res.status(500).json({
-message:"Order creation failed"
-});
-
-}
-
-};
+export default router;

@@ -1,104 +1,69 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import Admin from "../models/Admin.js";
-import Blog from "../models/Blog.js";
+import Booking from "../models/Booking.js";
+import TrekSlot from "../models/TrekSlot.js";
+import { config } from "../config/config.js";
 
-/* ADMIN LOGIN */
-export const loginAdmin = async (req, res) => {
-
+// 📊 DASHBOARD
+export const getDashboardStats = async (req, res) => {
   try {
+    const totalBookings = await Booking.countDocuments();
 
-    const { username, password } = req.body;
-
-    const admin = await Admin.findOne({ username });
-
-    if (!admin) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const match = await bcrypt.compare(password, admin.password);
-
-    if (!match) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const token = jwt.sign(
-      { id: admin._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    res.json({ token });
-
-  } catch (error) {
-
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-
-  }
-
-};
-
-
-/* CREATE BLOG (ADMIN ONLY) */
-export const createBlog = async (req, res) => {
-
-  try {
-
-    const blog = new Blog(req.body);
-
-    await blog.save();
-
-    res.json({
-      message: "Blog created successfully",
-      blog
+    const activeSlots = await TrekSlot.countDocuments({
+      date: { $gte: new Date() }
     });
 
-  } catch (error) {
+    const revenueData = await Booking.aggregate([
+      { $match: { paymentStatus: "paid" } },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amountPaid" }
+        }
+      }
+    ]);
 
-    console.error(error);
-    res.status(500).json({ message: "Error creating blog" });
+    const revenue = revenueData[0]?.total || 0;
 
-  }
-
-};
-export const deleteBlog = async (req,res) => {
-
-  try{
-
-    const { id } = req.params;
-
-    await Blog.findByIdAndDelete(id);
-
-    res.json({message:"Trek deleted successfully"});
-
-  }catch(err){
-
-    console.error(err);
-    res.status(500).json({message:"Error deleting trek"});
-
-  }
-
-};
-export const updateBlog = async (req, res) => {
-
-  try {
-
-    const { id } = req.params;
-
-    const updated = await Blog.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true }
-    );
-
-    res.json(updated);
+    res.json({
+      success: true,
+      data: {
+        totalBookings,
+        activeSlots,
+        revenue
+      }
+    });
 
   } catch (err) {
-
     console.error(err);
-    res.status(500).json({ message: "Update failed" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch stats"
+    });
+  }
+};
 
+// 🔐 LOGIN (env-based)
+export const loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (
+    email === config.ADMIN_EMAIL &&
+    password === config.ADMIN_PASSWORD
+  ) {
+    return res.json({ token: "dummyToken123" });
   }
 
+  res.status(401).json({ message: "Invalid credentials" });
+};
+
+// 📝 BLOG APIs (placeholders for now)
+export const createBlog = async (req, res) => {
+  res.json({ message: "Blog created" });
+};
+
+export const updateBlog = async (req, res) => {
+  res.json({ message: "Blog updated" });
+};
+
+export const deleteBlog = async (req, res) => {
+  res.json({ message: "Blog deleted" });
 };

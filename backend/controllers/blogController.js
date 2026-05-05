@@ -4,42 +4,49 @@ import Blog from "../models/Blog.js";
 /* GET ALL BLOGS */
 export const getBlogs = async (req, res) => {
   try {
-
     const blogs = await Blog.find();
 
-    res.json(blogs);
-
+    res.json({
+      success: true,
+      data: blogs
+    });
   } catch (error) {
-
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch blogs"
+    });
   }
 };
-
 
 /* GET SINGLE BLOG */
 export const getBlogById = async (req, res) => {
   try {
-
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid blog id" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid blog id"
+      });
     }
 
     const blog = await Blog.findById(id);
 
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found"
+      });
     }
 
-    res.json(blog);
-
+    res.json({
+      success: true,
+      data: blog
+    });
   } catch (error) {
-
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 };

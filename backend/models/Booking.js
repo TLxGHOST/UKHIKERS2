@@ -2,34 +2,44 @@ import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
 
-  name:String,
-  email:String,
-  phone:String,
+  name: String,
+  email: String,
+  phone: String,
 
-  persons:Number,
+  persons: Number,
 
-  trekId:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Blog"
+  trekId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Blog"
   },
 
-  slotId:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"TrekSlot"
+  slotId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "TrekSlot"
   },
 
-  amountPaid:Number,
+  // 💰 PAYMENT SYSTEM
+  totalAmount: Number,
 
-  paymentStatus:{
-    type:String,
-    default:"pending"
+  amountPaid: {
+    type: Number,
+    default: 0
   },
 
-  bookingStatus:{
-    type:String,
-    default:"pending"
+  amountRemaining: Number,
+
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "partial", "paid"],
+    default: "pending"
+  },
+
+  bookingStatus: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending"
   }
 
-},{timestamps:true});
+}, { timestamps: true });
 
-export default mongoose.model("Booking",bookingSchema);
+export default mongoose.model("Booking", bookingSchema);

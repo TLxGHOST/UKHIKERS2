@@ -7,14 +7,20 @@ import {
   markPaymentComplete
 } from "../controllers/adminBookingController.js";
 
+import { protect } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.get("/",getAllBookings);
+/* GET ALL BOOKINGS */
+router.get("/", protect, getAllBookings);
 
-router.put("/approve/:id",approveBooking);
+/* APPROVE */
+router.put("/approve/:id", protect, approveBooking);
 
-router.put("/reject/:id",rejectBooking);
+/* REJECT */
+router.put("/reject/:id", protect, rejectBooking);
 
-router.put("/payment/:id",markPaymentComplete);
+/* MARK PAYMENT COMPLETE */
+router.put("/payment/:id", protect, markPaymentComplete);
 
 export default router;

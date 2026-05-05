@@ -1,111 +1,79 @@
 import Booking from "../models/Booking.js";
 
-/* GET ALL BOOKINGS */
+/* GET ALL */
+export const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("trekId", "title")
+      .populate("slotId", "date")
+      .sort({ createdAt: -1 });
 
-export const getAllBookings = async (req,res)=>{
-
-  try{
-
-    const bookings = await Booking
-      .find()
-      .populate("trekId","title")
-      .populate("slotId","date")
-      .sort({createdAt:-1});
-
-    res.json(bookings);
-
-  }catch(err){
-
-    res.status(500).json({
-      message:"Failed to fetch bookings"
+    res.json({
+      success: true,
+      data: bookings
     });
-
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch bookings"
+    });
   }
-
 };
 
-/* APPROVE BOOKING */
-
-export const approveBooking = async (req,res)=>{
-
-  try{
-
-    const { id } = req.params;
-
+/* APPROVE */
+export const approveBooking = async (req, res) => {
+  try {
     const booking = await Booking.findByIdAndUpdate(
-      id,
-      { bookingStatus:"approved" },
-      { returnDocument:"after" }
+      req.params.id,
+      { bookingStatus: "approved" },
+      { new: true }
     );
 
     res.json({
-      success:true,
-      booking
+      success: true,
+      data: booking
     });
-
-  }catch(err){
-
+  } catch {
     res.status(500).json({
-      message:"Approval failed"
+      success: false,
+      message: "Approval failed"
     });
-
   }
-
 };
 
-/* REJECT BOOKING */
+/* REJECT */
+export const rejectBooking = async (req, res) => {
+  try {
+    await Booking.findByIdAndUpdate(req.params.id, {
+      bookingStatus: "rejected"
+    });
 
-export const rejectBooking = async (req,res)=>{
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({
+      success: false,
+      message: "Reject failed"
+    });
+  }
+};
 
-  try{
-
-    const { id } = req.params;
-
+/* MARK PAID */
+export const markPaymentComplete = async (req, res) => {
+  try {
     const booking = await Booking.findByIdAndUpdate(
-      id,
-      { bookingStatus:"rejected" },
-      { returnDocument:"after" }
+      req.params.id,
+      { paymentStatus: "paid" },
+      { new: true }
     );
 
     res.json({
-      success:true
+      success: true,
+      data: booking
     });
-
-  }catch(err){
-
+  } catch {
     res.status(500).json({
-      message:"Reject failed"
+      success: false,
+      message: "Payment update failed"
     });
-
   }
-
-};
-
-/* MARK PAYMENT COMPLETE */
-
-export const markPaymentComplete = async (req,res)=>{
-
-  try{
-
-    const { id } = req.params;
-
-    const booking = await Booking.findByIdAndUpdate(
-      id,
-      { paymentStatus:"paid" },
-      { returnDocument:"after" }
-    );
-
-    res.json({
-      success:true,
-      booking
-    });
-
-  }catch(err){
-
-    res.status(500).json({
-      message:"Payment update failed"
-    });
-
-  }
-
 };

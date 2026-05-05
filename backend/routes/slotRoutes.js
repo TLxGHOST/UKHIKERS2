@@ -1,19 +1,23 @@
 import express from "express";
 import {
-createSlot,
-getSlots,
-getSlotsByTrek,
-deleteSlot
+  createSlot,
+  getSlots,
+  getSlotsByTrek,
+  deleteSlot
 } from "../controllers/slotController.js";
 
 const router = express.Router();
 
-router.get("/",getSlots);
+/* GET ALL SLOTS */
+router.get("/", getSlots);
 
-router.get("/:trekId",getSlotsByTrek);
+/* GET SLOTS BY TREK */
+router.get("/trek/:trekId", getSlotsByTrek);
 
-router.post("/",createSlot);
+/* CREATE SLOT */
+router.post("/", createSlot);
 
-router.delete("/:id",deleteSlot);
+/* DELETE SLOT */
+router.delete("/:id", deleteSlot);
 
 export default router;

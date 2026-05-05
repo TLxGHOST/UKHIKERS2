@@ -1,28 +1,51 @@
-import razorpay from "../config/razorpay.js";
+import Booking from "../models/Booking.js";
+import Payment from "../models/Payment.js";
 
-export const createOrder = async(req,res)=>{
+export const addPayment = async (req, res) => {
+  try {
 
-try{
+    const { bookingId, amount, paymentMethod } = req.body;
 
-const { amount } = req.body;
+    const booking = await Booking.findById(bookingId);
 
-const order = await razorpay.orders.create({
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
 
-amount: amount * 100,
-currency:"INR"
+    booking.amountPaid += amount;
+    booking.amountRemaining -= amount;
 
-});
+    if (booking.amountRemaining <= 0) {
+      booking.paymentStatus = "paid";
+      booking.amountRemaining = 0;
+    } else {
+      booking.paymentStatus = "partial";
+    }
 
-res.json(order);
+    await booking.save();
 
-}catch(err){
+    await Payment.create({
+      bookingId,
+      amount,
+      paymentType: booking.paymentStatus === "paid" ? "remaining" : "advance",
+      paymentMethod
+    });
 
-console.error(err);
+    res.json({ success: true, booking });
 
-res.status(500).json({
-message:"Order creation failed"
-});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Payment failed" });
+  }
+};
+export const getAllPayments = async (req, res) => {
+  try {
+    const payments = await Payment.find()
+      .populate("bookingId")
+      .sort({ createdAt: -1 });
 
-}
-
+    res.json(payments);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch payments" });
+  }
 };
