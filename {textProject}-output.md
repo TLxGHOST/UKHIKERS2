@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `UKHIKERS_2`
-- **Generated On**: 2026-05-06 12:53:42 (Asia/Calcutta / GMT+06:30)
+- **Generated On**: 2026-05-06 12:54:56 (Asia/Calcutta / GMT+06:30)
 - **Total Files Processed**: 89
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -24,7 +24,7 @@
 │   ├── 📁 config/
 │   │   ├── 📄 config.js (334 B)
 │   │   ├── 📄 db.js (296 B)
-│   │   ├── 📄 email.js (378 B)
+│   │   ├── 📄 email.js (639 B)
 │   │   └── 📄 razorpay.js (233 B)
 │   ├── 📁 controllers/
 │   │   ├── 📄 adminBookingController.js (2.84 KB)
@@ -321,15 +321,15 @@ export default connectDB;
 ### <a id="📄-backend-config-email-js"></a>📄 `backend/config/email.js`
 
 **File Info:**
-- **Size**: 378 B
+- **Size**: 639 B
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `backend/config/email.js`
 - **Relative Path**: `backend/config`
 - **Created**: 2026-05-06 06:53:07 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-06 12:15:21 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `cdeeebe0bae00e541787f92c0377bf64`
-- **SHA256**: `b12c52a5b88cd451cbfbc0673a4ef381b4cbe828f6757de5678a1686b52da974`
+- **Modified**: 2026-05-06 12:54:55 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `d3b318e5888aeb571e17331184a9e327`
+- **SHA256**: `ce3024a4282f2cb8a024e25b906dbaa19b1a8e330b163219fcc96be8326f0a0a`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -338,18 +338,22 @@ export default connectDB;
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  family: 4,
+  port: 465,               // Use SSL port instead of 587
+  secure: true,            // true for 465
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  family: 4,               // Force IPv4 (critical for Render)
   tls: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false,  // optional for self-signed, but keep
   },
+  connectionTimeout: 10000,     // 10 seconds
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
 });
 
 export default transporter;
