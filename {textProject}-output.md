@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `UKHIKERS_2`
-- **Generated On**: 2026-05-06 11:49:53 (Asia/Calcutta / GMT+06:30)
+- **Generated On**: 2026-05-06 12:08:07 (Asia/Calcutta / GMT+06:30)
 - **Total Files Processed**: 88
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -25,7 +25,7 @@
 │   │   ├── 📄 config.js (334 B)
 │   │   ├── 📄 db.js (296 B)
 │   │   ├── 📄 email.js (364 B)
-│   │   └── 📄 razorpay.js (226 B)
+│   │   └── 📄 razorpay.js (233 B)
 │   ├── 📁 controllers/
 │   │   ├── 📄 adminBookingController.js (2.84 KB)
 │   │   ├── 📄 adminController.js (2.2 KB)
@@ -56,8 +56,8 @@
 │   ├── 📁 utils/
 │   │   └── 📄 emailTemplates.js (9.7 KB)
 │   ├── 📄 adminseed.js (836 B)
-│   ├── 📄 package-lock.json (50.15 KB)
-│   ├── 📄 package.json (629 B)
+│   ├── 📄 package-lock.json (50.53 KB)
+│   ├── 📄 package.json (664 B)
 │   ├── 📄 seeder.js (11.53 KB)
 │   └── 📄 server.js (1.15 KB)
 ├── 📁 frontend/
@@ -357,15 +357,15 @@ export default transporter;
 ### <a id="📄-backend-config-razorpay-js"></a>📄 `backend/config/razorpay.js`
 
 **File Info:**
-- **Size**: 226 B
+- **Size**: 233 B
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `backend/config/razorpay.js`
 - **Relative Path**: `backend/config`
-- **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 13:09:56 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `d7d054b080695c2a5a85e9d246db0bb6`
-- **SHA256**: `7678fdb4747b104ffcfb676d605488a51b12b38e70772348507f7d80d34d29eb`
+- **Created**: 2026-05-06 12:07:32 (Asia/Calcutta / GMT+06:30)
+- **Modified**: 2026-05-06 12:08:07 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `e50c57166f566670f92551d7f91e786d`
+- **SHA256**: `6a93f4d76a848c3e0ae38e6fa68832c398e15d0450767d7c7f65211d8b7ee2ac`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -375,8 +375,8 @@ import Razorpay from "razorpay";
 import dotenv from "dotenv";
 dotenv.config();
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY,
-  key_secret: process.env.RAZORPAY_SECRET
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
 export default razorpay;
@@ -2496,15 +2496,15 @@ seedAdmin();
 ### <a id="📄-backend-package-lock-json"></a>📄 `backend/package-lock.json`
 
 **File Info:**
-- **Size**: 50.15 KB
+- **Size**: 50.53 KB
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `backend/package-lock.json`
 - **Relative Path**: `backend`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `186d862c9764b610c64c9501e825d440`
-- **SHA256**: `19054c65953a3abc1f3bc4519c8bafed9236fc43c80c3a1abccd7c703986df95`
+- **Modified**: 2026-05-06 11:55:21 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `90a320d8cae5bdaac9c87403100594bc`
+- **SHA256**: `7c9907f9debc22770fbdc1dd1f8b69c5325b895886dbc58f4a170dc6dee6d204`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -2528,6 +2528,7 @@ seedAdmin();
         "express": "^5.2.1",
         "jsonwebtoken": "^9.0.3",
         "mongoose": "^9.2.4",
+        "nodemailer": "^8.0.7",
         "razorpay": "^2.9.6"
       }
     },
@@ -3478,6 +3479,15 @@ seedAdmin();
         "node-gyp-build-test": "build-test.js"
       }
     },
+    "node_modules/nodemailer": {
+      "version": "8.0.7",
+      "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-8.0.7.tgz",
+      "integrity": "sha512-pkjE4mkBzQjdJT4/UmlKl3pX0rC9fZmjh7c6C9o7lv66Ac6w9WCnzPzhbPNxwZAzlF4mdq4CSWB5+FbK6FWCow==",
+      "license": "MIT-0",
+      "engines": {
+        "node": ">=6.0.0"
+      }
+    },
     "node_modules/object-assign": {
       "version": "4.1.1",
       "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
@@ -3907,15 +3917,15 @@ seedAdmin();
 ### <a id="📄-backend-package-json"></a>📄 `backend/package.json`
 
 **File Info:**
-- **Size**: 629 B
+- **Size**: 664 B
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `backend/package.json`
 - **Relative Path**: `backend`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-06 05:14:40 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `58afcd8f6ede62637ba98878327c50d0`
-- **SHA256**: `b2b4c20407276c6338898ae1a1a37d2338249771e98993106b06cdae6367fc86`
+- **Modified**: 2026-05-06 11:55:21 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `f7b9675d50dcf049f433886265fd0766`
+- **SHA256**: `5dc1f3e122933421d63b8c7380e99739a934600fbb0e057fc94248276015668f`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -3931,9 +3941,9 @@ seedAdmin();
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-  "start": "node server.js",
-  "seed": "node seeder.js",
-  "seed-blogs": "node seedBlogs.js"
+    "start": "node server.js",
+    "seed": "node seeder.js",
+    "seed-blogs": "node seedBlogs.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -3943,6 +3953,7 @@ seedAdmin();
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.4",
+    "nodemailer": "^8.0.7",
     "razorpay": "^2.9.6"
   }
 }
