@@ -5,7 +5,7 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-05-06 12:57:46 (Asia/Calcutta / GMT+06:30)
+Generated On: 2026-05-06 13:00:37 (Asia/Calcutta / GMT+06:30)
 Total Files Processed: 89
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
@@ -61,7 +61,7 @@ PROJECT STRUCTURE
 │   ├── 📄 package-lock.json (50.53 KB)
 │   ├── 📄 package.json (664 B)
 │   ├── 📄 seeder.js (11.53 KB)
-│   └── 📄 server.js (1.51 KB)
+│   └── 📄 server.js (1.36 KB)
 ├── 📁 frontend/
 │   ├── 📁 public/
 │   │   ├── 📁 assets/
@@ -4276,15 +4276,15 @@ FILE: backend/server.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 1.51 KB
+Size: 1.36 KB
 Extension: .js
 Language: javascript
 Location: backend/server.js
 Relative Path: backend
 Created: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-06 12:57:45 (Asia/Calcutta / GMT+06:30)
-MD5: e79f7269916c07fef540f98cb4ab4500
-SHA256: 031f150657121a84cc3abc8c021dd1585ba9bab2dd7dad854ca8302670aff6ee
+Modified: 2026-05-06 13:00:37 (Asia/Calcutta / GMT+06:30)
+MD5: eee45146483f3b9801a13efea510e554
+SHA256: 6ccad70a09ab86db2946738fc3be405af541fb8da183bc9e7a96e1c4e1bff965
 Encoding: ASCII
 
 FILE CONTENT:
@@ -4310,18 +4310,12 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",          // dev
-  "https://ukhikers-2.vercel.app/" // your live Vercel URL
+  "https://ukhikers-2.vercel.app" // your live Vercel URL
 ];
 
 /* MIDDLEWARE */
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: true,  // This reflects the request origin
   credentials: true,
 }));
 app.use(express.json());
