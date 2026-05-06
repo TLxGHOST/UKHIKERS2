@@ -6,7 +6,7 @@ import {
   deleteBlog,
   getDashboardStats
 } from "../controllers/adminController.js";
-
+import { getAdminStats } from "../controllers/adminStatsController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const router = express.Router();
 router.post("/login", loginAdmin);
 
 /* DASHBOARD */
-router.get("/stats", protect, getDashboardStats);
+router.get("/stats", protect, getAdminStats);
 
 /* BLOG MANAGEMENT */
 router.post("/blogs", protect, createBlog);

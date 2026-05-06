@@ -29,7 +29,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/slots", slotRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/bookings", adminBookingRoutes);
-app.use("/api/payment", paymentRoutes);
+app.use("/api/payments", paymentRoutes);
 
 /* TEST ROUTE */
 app.get("/", (req, res) => {

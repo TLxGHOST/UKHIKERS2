@@ -3,8 +3,8 @@
 ## 📊 Project Information
 
 - **Project Name**: `UKHIKERS_2`
-- **Generated On**: 2026-05-05 15:54:19 (Asia/Calcutta / GMT+06:30)
-- **Total Files Processed**: 87
+- **Generated On**: 2026-05-06 04:49:47 (Asia/Calcutta / GMT+06:30)
+- **Total Files Processed**: 88
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
 
@@ -43,7 +43,7 @@
 │   │   └── 📄 TrekSlot.js (488 B)
 │   ├── 📁 routes/
 │   │   ├── 📄 adminBookingRoutes.js (595 B)
-│   │   ├── 📄 adminRoutes.js (580 B)
+│   │   ├── 📄 adminRoutes.js (647 B)
 │   │   ├── 📄 blogRoutes.js (284 B)
 │   │   ├── 📄 bookingRoutes.js (198 B)
 │   │   ├── 📄 paymentRoutes.js (245 B)
@@ -112,13 +112,14 @@
 │   │   │   ├── 📄 AdminPage.jsx (1.14 KB)
 │   │   │   ├── 📄 AdminPayments.jsx (1.98 KB)
 │   │   │   ├── 📄 AdminSlots.jsx (4.95 KB)
-│   │   │   ├── 📄 BlogDetailPage.jsx (9.95 KB)
-│   │   │   ├── 📄 BlogPage.jsx (1.72 KB)
-│   │   │   ├── 📄 EquipmentPage.jsx (5.49 KB)
+│   │   │   ├── 📄 AdminTreks.jsx (11.64 KB)
+│   │   │   ├── 📄 BlogDetailPage.jsx (9.97 KB)
+│   │   │   ├── 📄 BlogPage.jsx (1.73 KB)
+│   │   │   ├── 📄 EquipmentPage.jsx (5.5 KB)
 │   │   │   └── 📄 HomePage.jsx (2.96 KB)
 │   │   ├── 📄 App.css (663 B)
 │   │   ├── 📄 App.jsx (102 B)
-│   │   ├── 📄 AppRouter.jsx (2.14 KB)
+│   │   ├── 📄 AppRouter.jsx (2.24 KB)
 │   │   ├── 📄 index.css (1.24 KB)
 │   │   ├── 📄 main.jsx (247 B)
 │   │   └── 📄 vite-env.d.ts (38 B)
@@ -192,6 +193,7 @@
 - [📄 frontend/src/pages/AdminPage.jsx](#📄-frontend-src-pages-adminpage-jsx)
 - [📄 frontend/src/pages/AdminPayments.jsx](#📄-frontend-src-pages-adminpayments-jsx)
 - [📄 frontend/src/pages/AdminSlots.jsx](#📄-frontend-src-pages-adminslots-jsx)
+- [📄 frontend/src/pages/AdminTreks.jsx](#📄-frontend-src-pages-admintreks-jsx)
 - [📄 frontend/src/pages/BlogDetailPage.jsx](#📄-frontend-src-pages-blogdetailpage-jsx)
 - [📄 frontend/src/pages/BlogPage.jsx](#📄-frontend-src-pages-blogpage-jsx)
 - [📄 frontend/src/pages/EquipmentPage.jsx](#📄-frontend-src-pages-equipmentpage-jsx)
@@ -219,18 +221,18 @@
 
 | Metric | Count |
 |--------|-------|
-| Total Files | 87 |
+| Total Files | 88 |
 | Total Directories | 25 |
-| Text Files | 74 |
+| Text Files | 75 |
 | Binary Files | 13 |
-| Total Size | 28.06 MB |
+| Total Size | 28.07 MB |
 
 ### 📄 File Types Distribution
 
 | Extension | Count |
 |-----------|-------|
 | `.js` | 33 |
-| `.jsx` | 28 |
+| `.jsx` | 29 |
 | `.jpg` | 11 |
 | `.json` | 6 |
 | `.svg` | 2 |
@@ -1223,15 +1225,15 @@ export default router;
 ### <a id="📄-backend-routes-adminroutes-js"></a>📄 `backend/routes/adminRoutes.js`
 
 **File Info:**
-- **Size**: 580 B
+- **Size**: 647 B
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `backend/routes/adminRoutes.js`
 - **Relative Path**: `backend/routes`
 - **Created**: 2026-03-07 18:13:40 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 14:57:21 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `20859a91fc96bb0df0bf9069bd4e47ed`
-- **SHA256**: `fef0457df61e32506337276064c4980ead5da42d8d4d9f713b01bc72f1bb94a6`
+- **Modified**: 2026-05-06 04:14:48 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `94496cd40fed057fa05f5a3892273bfd`
+- **SHA256**: `c49982e20bad840d3a6bae3f46617f51653101d15e3b14f7ed422e277569313e`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -1245,7 +1247,7 @@ import {
   deleteBlog,
   getDashboardStats
 } from "../controllers/adminController.js";
-
+import { getAdminStats } from "../controllers/adminStatsController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -1254,7 +1256,7 @@ const router = express.Router();
 router.post("/login", loginAdmin);
 
 /* DASHBOARD */
-router.get("/stats", protect, getDashboardStats);
+router.get("/stats", protect, getAdminStats);
 
 /* BLOG MANAGEMENT */
 router.post("/blogs", protect, createBlog);
@@ -3043,9 +3045,9 @@ process.exit();
 - **Location**: `backend/server.js`
 - **Relative Path**: `backend`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 13:11:01 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `533ed49c17c5318b7af486eff73e476c`
-- **SHA256**: `581d99cd620c63e2a443d5eb11191e63740ba6d6ce7db5ccbf50b4c3e7116e84`
+- **Modified**: 2026-05-06 04:45:34 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `15cb70a47a86df0056787a90d9862b83`
+- **SHA256**: `f4aabfee6e1eab92952f3c89e825c27f6da6266b1d593a4179fbc6d8a1d5f8e8`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -3082,7 +3084,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/slots", slotRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/bookings", adminBookingRoutes);
-app.use("/api/payment", paymentRoutes);
+app.use("/api/payments", paymentRoutes);
 
 /* TEST ROUTE */
 app.get("/", (req, res) => {
@@ -5674,18 +5676,397 @@ export default function AdminSlots() {
 
 ---
 
+### <a id="📄-frontend-src-pages-admintreks-jsx"></a>📄 `frontend/src/pages/AdminTreks.jsx`
+
+**File Info:**
+- **Size**: 11.64 KB
+- **Extension**: `.jsx`
+- **Language**: `jsx`
+- **Location**: `frontend/src/pages/AdminTreks.jsx`
+- **Relative Path**: `frontend/src/pages`
+- **Created**: 2026-05-06 04:48:20 (Asia/Calcutta / GMT+06:30)
+- **Modified**: 2026-05-06 04:48:29 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `97a49c9c915712f8c7e4cc6f4dadc9e6`
+- **SHA256**: `d6d925b08f8c621cf8d5fa603b2e93124987db453525e5f073b7a3b432ca0a52`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```jsx
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const AdminTreks = () => {
+  const [treks, setTreks] = useState([]);
+  const [slots, setSlots] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  // Form states for new trek
+  const [showAddTrek, setShowAddTrek] = useState(false);
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [difficulty, setDifficulty] = useState("moderate");
+  const [duration, setDuration] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+
+  // Form states for new slot
+  const [showAddSlot, setShowAddSlot] = useState(false);
+  const [selectedTrek, setSelectedTrek] = useState("");
+  const [slotDate, setSlotDate] = useState("");
+  const [totalSeats, setTotalSeats] = useState("");
+
+  // Fetch all treks
+  const fetchTreks = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const res = await axios.get(`${API}/blogs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setTreks(res.data.data || []);
+    } catch (err) {
+      console.error("Failed to fetch treks:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch slots for a specific trek
+  const fetchSlots = async (trekId) => {
+    try {
+      const res = await axios.get(`${API}/slots/trek/${trekId}`);
+      setSlots((prev) => ({
+        ...prev,
+        [trekId]: res.data.data || [],
+      }));
+    } catch (err) {
+      console.error("Failed to fetch slots:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTreks();
+  }, []);
+
+  // Load slots for all treks when treks are loaded
+  useEffect(() => {
+    treks.forEach((trek) => {
+      fetchSlots(trek._id);
+    });
+  }, [treks]);
+
+  // Add new trek
+  const handleAddTrek = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("adminToken");
+      // Note: You might need to update your backend to support this
+      await axios.post(
+        `${API}/admin/blogs`,
+        {
+          title,
+          price: Number(price),
+          difficulty,
+          duration,
+          excerpt,
+          imageUrl,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      alert("Trek added successfully!");
+      setShowAddTrek(false);
+      setTitle("");
+      setPrice("");
+      setDifficulty("moderate");
+      setDuration("");
+      setExcerpt("");
+      setImageUrl("");
+      fetchTreks();
+    } catch (err) {
+      console.error("Failed to add trek:", err);
+      alert("Failed to add trek");
+    }
+  };
+
+  // Add new slot
+  const handleAddSlot = async (e) => {
+    e.preventDefault();
+    if (!selectedTrek || !slotDate || !totalSeats) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/slots`, {
+        trekId: selectedTrek,
+        date: slotDate,
+        totalSeats: Number(totalSeats),
+      });
+
+      alert("Slot added successfully!");
+      setShowAddSlot(false);
+      setSlotDate("");
+      setTotalSeats("");
+      setSelectedTrek("");
+      fetchSlots(selectedTrek);
+    } catch (err) {
+      console.error("Failed to add slot:", err);
+      alert("Failed to add slot");
+    }
+  };
+
+  // Delete slot
+  const handleDeleteSlot = async (slotId, trekId) => {
+    if (!confirm("Delete this slot?")) return;
+
+    try {
+      await axios.delete(`${API}/slots/${slotId}`);
+      fetchSlots(trekId);
+    } catch (err) {
+      console.error("Failed to delete slot:", err);
+    }
+  };
+
+  if (loading) {
+    return <div className="p-6">Loading treks...</div>;
+  }
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Treks & Slots Management</h1>
+
+        <div className="space-x-3">
+          <button
+            onClick={() => setShowAddTrek(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            + Add Trek
+          </button>
+          <button
+            onClick={() => setShowAddSlot(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            + Add Slot
+          </button>
+        </div>
+      </div>
+
+      {/* Add Trek Modal */}
+      {showAddTrek && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h2 className="text-xl font-bold mb-4 text-black">Add New Trek</h2>
+            <form onSubmit={handleAddTrek} className="space-y-3">
+              <input
+                type="text"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                required
+              />
+              <input
+                type="number"
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                required
+              />
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+              >
+                <option value="easy">Easy</option>
+                <option value="moderate">Moderate</option>
+                <option value="difficult">Difficult</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Duration (e.g., 3 days)"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                required
+              />
+              <textarea
+                placeholder="Excerpt"
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                rows="3"
+              />
+              <input
+                type="text"
+                placeholder="Image URL"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+              />
+
+              <div className="flex space-x-2">
+                <button
+                  type="submit"
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAddTrek(false)}
+                  className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Slot Modal */}
+      {showAddSlot && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h2 className="text-xl font-bold mb-4 text-black">Add New Slot</h2>
+            <form onSubmit={handleAddSlot} className="space-y-3">
+              <select
+                value={selectedTrek}
+                onChange={(e) => setSelectedTrek(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                required
+              >
+                <option value="">Select Trek</option>
+                {treks.map((trek) => (
+                  <option key={trek._id} value={trek._id}>
+                    {trek.title}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="date"
+                value={slotDate}
+                onChange={(e) => setSlotDate(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                required
+              />
+              <input
+                type="number"
+                placeholder="Total Seats"
+                value={totalSeats}
+                onChange={(e) => setTotalSeats(e.target.value)}
+                className="w-full border p-2 rounded text-black"
+                required
+              />
+
+              <div className="flex space-x-2">
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                  Add Slot
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAddSlot(false)}
+                  className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Treks List */}
+      <div className="space-y-6">
+        {treks.map((trek) => (
+          <div key={trek._id} className="bg-white rounded-lg shadow p-4">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-black">
+                  {trek.title}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  ₹{trek.price} | {trek.difficulty} | {trek.duration}
+                </p>
+              </div>
+            </div>
+
+            {/* Slots for this trek */}
+            <div>
+              <h4 className="font-medium text-black mb-2">Slots:</h4>
+              {slots[trek._id]?.length > 0 ? (
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-sm text-gray-600">
+                      <th>Date</th>
+                      <th>Total Seats</th>
+                      <th>Booked</th>
+                      <th>Available</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {slots[trek._id].map((slot) => (
+                      <tr key={slot._id} className="text-sm">
+                        <td className="text-black">
+                          {new Date(slot.date).toLocaleDateString("en-IN")}
+                        </td>
+                        <td className="text-black">{slot.totalSeats}</td>
+                        <td className="text-black">{slot.bookedSeats}</td>
+                        <td className="text-green-600 font-medium">
+                          {slot.totalSeats - slot.bookedSeats}
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => handleDeleteSlot(slot._id, trek._id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-sm text-gray-500">No slots added yet</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default AdminTreks;
+
+```
+
+---
+
 ### <a id="📄-frontend-src-pages-blogdetailpage-jsx"></a>📄 `frontend/src/pages/BlogDetailPage.jsx`
 
 **File Info:**
-- **Size**: 9.95 KB
+- **Size**: 9.97 KB
 - **Extension**: `.jsx`
 - **Language**: `jsx`
 - **Location**: `frontend/src/pages/BlogDetailPage.jsx`
 - **Relative Path**: `frontend/src/pages`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `04cc52992c653f5b2f273f7ef06aa92f`
-- **SHA256**: `020829ce3b6a42b3d4542ed7749816644115f4585a1c57c4ba6f11ce54dc3eea`
+- **Modified**: 2026-05-06 04:39:06 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `0812effebd8e69e35b6e4fd32b7d081d`
+- **SHA256**: `a1e29f9179d6d9136a9942d18d33395e064036d000678e5831bd0777bab13eae`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -5696,7 +6077,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/";
 
 const BlogDetailPage = () => {
   const { id } = useParams();
@@ -5739,7 +6120,7 @@ const BlogDetailPage = () => {
 
         const data = await res.json();
 
-        setBlogPost(data);
+        setBlogPost(data.data);
       } catch (err) {
         console.error(err);
         setBlogPost(null);
@@ -5756,10 +6137,9 @@ const BlogDetailPage = () => {
   useEffect(() => {
     const fetchSlots = async () => {
       try {
-        const res = await fetch(`${API}/slots/${id}`);
+        const res = await fetch(`${API}/slots/trek/${id}`); // ✅
         const data = await res.json();
-
-        setSlots(data);
+        setSlots(data.data || []);
       } catch (err) {
         console.error("Slot fetch failed", err);
       }
@@ -6066,15 +6446,15 @@ export default BlogDetailPage;
 ### <a id="📄-frontend-src-pages-blogpage-jsx"></a>📄 `frontend/src/pages/BlogPage.jsx`
 
 **File Info:**
-- **Size**: 1.72 KB
+- **Size**: 1.73 KB
 - **Extension**: `.jsx`
 - **Language**: `jsx`
 - **Location**: `frontend/src/pages/BlogPage.jsx`
 - **Relative Path**: `frontend/src/pages`
 - **Created**: 2025-06-01 05:09:19 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-03-07 23:48:01 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `8be5695d86000b82320a029f3c9b8be3`
-- **SHA256**: `f3e6e171aa99711cfc7bdd54137880318141b8d6660e78b11bca4ed2515f3b6b`
+- **Modified**: 2026-05-06 04:11:04 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `f21afc2a424fc9ab32c6d6b0db6b5ea3`
+- **SHA256**: `d78c3bde02c47b971643dae05d4621b616fd8c2f1d04772c198dc35e0aec115e`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -6108,7 +6488,7 @@ const BlogPage = () => {
         const res = await fetch(`${API}/blogs`);
         const data = await res.json();
 
-        setBlogs(data);
+        setBlogs(data.data || []);
       } catch (err) {
         console.error("Error fetching blogs:", err);
       } finally {
@@ -6157,15 +6537,15 @@ export default BlogPage;
 ### <a id="📄-frontend-src-pages-equipmentpage-jsx"></a>📄 `frontend/src/pages/EquipmentPage.jsx`
 
 **File Info:**
-- **Size**: 5.49 KB
+- **Size**: 5.5 KB
 - **Extension**: `.jsx`
 - **Language**: `jsx`
 - **Location**: `frontend/src/pages/EquipmentPage.jsx`
 - **Relative Path**: `frontend/src/pages`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `3629766b32ca2e2292dfb12671fe2781`
-- **SHA256**: `df31d2ce2c18d5996b769dd119042c2b5cc3909b85840941ad07a62268927004`
+- **Modified**: 2026-05-06 04:39:36 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `1e4355b2791c9d165b523cf0e9a5ff55`
+- **SHA256**: `1856bdb30a5978cd8c72bab2eb152e6d4b7cb6a5c373407db6e95a30fc716d01`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -6200,7 +6580,7 @@ const EquipmentPage = () => {
         const res = await fetch(`${API}/blogs`);
         const data = await res.json();
 
-        setTreks(data);
+        setTreks(data.data || []);
       } catch (error) {
         console.error("Error fetching treks:", error);
       } finally {
@@ -6549,15 +6929,15 @@ export default App;
 ### <a id="📄-frontend-src-approuter-jsx"></a>📄 `frontend/src/AppRouter.jsx`
 
 **File Info:**
-- **Size**: 2.14 KB
+- **Size**: 2.24 KB
 - **Extension**: `.jsx`
 - **Language**: `jsx`
 - **Location**: `frontend/src/AppRouter.jsx`
 - **Relative Path**: `frontend/src`
 - **Created**: 2025-06-01 05:04:46 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-05 14:13:10 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `3737dcd854eb3f5cd9ac2ba865b98267`
-- **SHA256**: `f11f787e8b3e3cd214db913a0634e807c95fe0a20a821fe01e4e3784b4a4f5aa`
+- **Modified**: 2026-05-06 04:49:47 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `3d590f4c3e3969e9e8ae968a1953cd75`
+- **SHA256**: `71153960f19817c5163689fdc3c9016cb00e1473ec92b8673adc353ddf463d58`
 - **Encoding**: UTF-8
 
 **File code content:**
@@ -6578,6 +6958,7 @@ import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
+import AdminTreks from "./pages/AdminTreks";
 // 🔐 Admin
 import AdminLogin from "./pages/AdminLogin";
 
@@ -6617,7 +6998,7 @@ const AppRouter = () => {
         >
           {/* default → redirect to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
-
+          <Route path="treks" element={<AdminTreks />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="slots" element={<AdminSlots />} />

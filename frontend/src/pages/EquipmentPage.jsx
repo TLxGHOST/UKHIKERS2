@@ -27,7 +27,7 @@ const EquipmentPage = () => {
         const res = await fetch(`${API}/blogs`);
         const data = await res.json();
 
-        setTreks(data);
+        setTreks(data.data || []);
       } catch (error) {
         console.error("Error fetching treks:", error);
       } finally {

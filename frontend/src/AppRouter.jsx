@@ -13,6 +13,7 @@ import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
+import AdminTreks from "./pages/AdminTreks";
 // 🔐 Admin
 import AdminLogin from "./pages/AdminLogin";
 
@@ -52,7 +53,7 @@ const AppRouter = () => {
         >
           {/* default → redirect to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
-
+          <Route path="treks" element={<AdminTreks />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="slots" element={<AdminSlots />} />

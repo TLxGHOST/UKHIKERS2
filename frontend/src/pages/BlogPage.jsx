@@ -26,7 +26,7 @@ const BlogPage = () => {
         const res = await fetch(`${API}/blogs`);
         const data = await res.json();
 
-        setBlogs(data);
+        setBlogs(data.data || []);
       } catch (err) {
         console.error("Error fetching blogs:", err);
       } finally {

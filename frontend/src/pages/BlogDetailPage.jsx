@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/";
 
 const BlogDetailPage = () => {
   const { id } = useParams();
@@ -46,7 +46,7 @@ const BlogDetailPage = () => {
 
         const data = await res.json();
 
-        setBlogPost(data);
+        setBlogPost(data.data);
       } catch (err) {
         console.error(err);
         setBlogPost(null);
@@ -63,10 +63,9 @@ const BlogDetailPage = () => {
   useEffect(() => {
     const fetchSlots = async () => {
       try {
-        const res = await fetch(`${API}/slots/${id}`);
+        const res = await fetch(`${API}/slots/trek/${id}`); // ✅
         const data = await res.json();
-
-        setSlots(data);
+        setSlots(data.data || []);
       } catch (err) {
         console.error("Slot fetch failed", err);
       }
