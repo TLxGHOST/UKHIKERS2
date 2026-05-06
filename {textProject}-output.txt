@@ -5,8 +5,8 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-05-06 12:36:48 (Asia/Calcutta / GMT+06:30)
-Total Files Processed: 88
+Generated On: 2026-05-06 12:53:42 (Asia/Calcutta / GMT+06:30)
+Total Files Processed: 89
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
 
@@ -61,7 +61,7 @@ PROJECT STRUCTURE
 │   ├── 📄 package-lock.json (50.53 KB)
 │   ├── 📄 package.json (664 B)
 │   ├── 📄 seeder.js (11.53 KB)
-│   └── 📄 server.js (1.15 KB)
+│   └── 📄 server.js (1.51 KB)
 ├── 📁 frontend/
 │   ├── 📁 public/
 │   │   ├── 📁 assets/
@@ -134,24 +134,25 @@ PROJECT STRUCTURE
 │   ├── 📄 README.md
 │   ├── 📄 tailwind.config.js (178 B)
 │   ├── 📄 template_config.json (1.15 KB)
+│   ├── 📄 vercel.json (73 B)
 │   └── 📄 vite.config.ts (163 B)
 └── 📄 README.md (13 B)
 
 ================================================================================
 PROJECT STATISTICS
 ================================================================================
-Total Files: 88
+Total Files: 89
 Total Directories: 26
-Text Files: 77
+Text Files: 78
 Binary Files: 11
-Total Size: 28.2 MB
+Total Size: 28.21 MB
 
 FILE TYPES DISTRIBUTION:
 ------------------------------
 .js             : 38
 .jsx            : 27
 .jpg            : 11
-.json           : 5
+.json           : 6
 .css            : 2
 .ts             : 2
 .md             : 2
@@ -4271,15 +4272,15 @@ FILE: backend/server.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 1.15 KB
+Size: 1.51 KB
 Extension: .js
 Language: javascript
 Location: backend/server.js
 Relative Path: backend
 Created: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-06 08:53:00 (Asia/Calcutta / GMT+06:30)
-MD5: 9ceb5b9bcd183b0fc615542728941b5d
-SHA256: 96a68d41b818bbbfdffcd99393d9c49fb9ee7525873ff7725d7af683645b67d3
+Modified: 2026-05-06 12:53:41 (Asia/Calcutta / GMT+06:30)
+MD5: 9779d2a1d7fddf9cd988fecaee3af4db
+SHA256: 65e2ce33354e819e785b38f631485a830f4711c0c2a2eb0dba92780c493f20fe
 Encoding: ASCII
 
 FILE CONTENT:
@@ -4303,8 +4304,22 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",          // dev
+  "https://your-frontend.vercel.app" // your live Vercel URL
+];
+
 /* MIDDLEWARE */
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 /* DB */
@@ -18267,6 +18282,33 @@ FILE CONTENT:
   "framework": "React",
   "style": "react_template",
   "scene": "default_web_project"
+}
+================================================================================
+
+
+================================================================================
+FILE: frontend/vercel.json
+================================================================================
+
+FILE INFORMATION:
+----------------------------------------
+Size: 73 B
+Extension: .json
+Language: json
+Location: frontend/vercel.json
+Relative Path: frontend
+Created: 2026-05-06 12:52:28 (Asia/Calcutta / GMT+06:30)
+Modified: 2026-05-06 12:52:35 (Asia/Calcutta / GMT+06:30)
+MD5: 6d20a4d1d9741ce5e2102cc91ea31f1d
+SHA256: c4a0d7c81148813fc4d621cda6abe7f07ab33a20e71355afcb45455f33b98af2
+Encoding: ASCII
+
+FILE CONTENT:
+----------------------------------------
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
 ================================================================================
 
