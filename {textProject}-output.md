@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `UKHIKERS_2`
-- **Generated On**: 2026-05-06 12:08:07 (Asia/Calcutta / GMT+06:30)
+- **Generated On**: 2026-05-06 12:15:22 (Asia/Calcutta / GMT+06:30)
 - **Total Files Processed**: 88
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -24,7 +24,7 @@
 │   ├── 📁 config/
 │   │   ├── 📄 config.js (334 B)
 │   │   ├── 📄 db.js (296 B)
-│   │   ├── 📄 email.js (364 B)
+│   │   ├── 📄 email.js (378 B)
 │   │   └── 📄 razorpay.js (233 B)
 │   ├── 📁 controllers/
 │   │   ├── 📄 adminBookingController.js (2.84 KB)
@@ -319,15 +319,15 @@ export default connectDB;
 ### <a id="📄-backend-config-email-js"></a>📄 `backend/config/email.js`
 
 **File Info:**
-- **Size**: 364 B
+- **Size**: 378 B
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `backend/config/email.js`
 - **Relative Path**: `backend/config`
 - **Created**: 2026-05-06 06:53:07 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-06 07:39:07 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `4bdb3e9c6f080829675495f30f8fac40`
-- **SHA256**: `6e104488d110a8c4e9bb10e2d34872192ad58252988916e3d18c6cd121fa395a`
+- **Modified**: 2026-05-06 12:15:21 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `cdeeebe0bae00e541787f92c0377bf64`
+- **SHA256**: `b12c52a5b88cd451cbfbc0673a4ef381b4cbe828f6757de5678a1686b52da974`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -340,6 +340,7 @@ const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false,
+  family: 4,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
