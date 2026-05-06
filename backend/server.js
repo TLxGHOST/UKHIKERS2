@@ -19,7 +19,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",          // dev
-  "https://your-frontend.vercel.app" // your live Vercel URL
+  "https://ukhikers-2.vercel.app/" // your live Vercel URL
 ];
 
 /* MIDDLEWARE */

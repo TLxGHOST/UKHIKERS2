@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `UKHIKERS_2`
-- **Generated On**: 2026-05-06 12:54:56 (Asia/Calcutta / GMT+06:30)
+- **Generated On**: 2026-05-06 12:57:46 (Asia/Calcutta / GMT+06:30)
 - **Total Files Processed**: 89
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -4331,9 +4331,9 @@ runSeeder();
 - **Location**: `backend/server.js`
 - **Relative Path**: `backend`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-06 12:53:41 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `9779d2a1d7fddf9cd988fecaee3af4db`
-- **SHA256**: `65e2ce33354e819e785b38f631485a830f4711c0c2a2eb0dba92780c493f20fe`
+- **Modified**: 2026-05-06 12:57:45 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `e79f7269916c07fef540f98cb4ab4500`
+- **SHA256**: `031f150657121a84cc3abc8c021dd1585ba9bab2dd7dad854ca8302670aff6ee`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -4360,7 +4360,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",          // dev
-  "https://your-frontend.vercel.app" // your live Vercel URL
+  "https://ukhikers-2.vercel.app/" // your live Vercel URL
 ];
 
 /* MIDDLEWARE */
