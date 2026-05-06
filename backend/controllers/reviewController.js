@@ -109,7 +109,7 @@ export const updateReviewStatus = async (req, res) => {
     const review = await Review.findByIdAndUpdate(
       id,
       { status, adminNotes: adminNotes || "" },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.json({ success: true, data: review });

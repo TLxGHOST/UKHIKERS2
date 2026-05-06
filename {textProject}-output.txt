@@ -5,7 +5,7 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-05-06 12:15:22 (Asia/Calcutta / GMT+06:30)
+Generated On: 2026-05-06 12:36:48 (Asia/Calcutta / GMT+06:30)
 Total Files Processed: 88
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
@@ -36,7 +36,7 @@ PROJECT STRUCTURE
 │   │   ├── 📄 bookingController.js (7.07 KB)
 │   │   ├── 📄 bookingStatusController.js (1.25 KB)
 │   │   ├── 📄 paymentController.js (3.5 KB)
-│   │   ├── 📄 reviewController.js (3.26 KB)
+│   │   ├── 📄 reviewController.js (3.27 KB)
 │   │   └── 📄 slotController.js (1.51 KB)
 │   ├── 📁 middleware/
 │   │   └── 📄 authMiddleware.js (917 B)
@@ -82,7 +82,7 @@ PROJECT STRUCTURE
 │   │   └── 📁 data/
 │   ├── 📁 src/
 │   │   ├── 📁 api/
-│   │   │   └── 📄 axios.js (359 B)
+│   │   │   └── 📄 axios.js (383 B)
 │   │   ├── 📁 assets/
 │   │   ├── 📁 components/
 │   │   │   ├── 📁 about/
@@ -99,7 +99,7 @@ PROJECT STRUCTURE
 │   │   │   ├── 📄 ContentSection.jsx (4.48 KB)
 │   │   │   ├── 📄 Footer.jsx (2.76 KB)
 │   │   │   ├── 📄 Hero.jsx (2.79 KB)
-│   │   │   ├── 📄 Navbar.jsx (3.85 KB)
+│   │   │   ├── 📄 Navbar.jsx (5.18 KB)
 │   │   │   └── 📄 SectionNavigation.jsx (1.76 KB)
 │   │   ├── 📁 data/
 │   │   │   └── 📁 blogs/
@@ -1184,15 +1184,15 @@ FILE: backend/controllers/reviewController.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 3.26 KB
+Size: 3.27 KB
 Extension: .js
 Language: javascript
 Location: backend/controllers/reviewController.js
 Relative Path: backend/controllers
 Created: 2026-05-06 08:51:11 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-06 10:07:19 (Asia/Calcutta / GMT+06:30)
-MD5: 7a4b0afa9ef19685e89fdf710aaf7d53
-SHA256: 87f69b8975a96e87fb6cd91317e2d120273735c7ad0fc7a9d2794185272495b0
+Modified: 2026-05-06 12:36:48 (Asia/Calcutta / GMT+06:30)
+MD5: 0c8a0ae17817ec28420474c0579bb508
+SHA256: 557a6b6346c37ff31827ada55cbdba69d8494add9f0167bfa29046531b4e20d8
 Encoding: ASCII
 
 FILE CONTENT:
@@ -1308,7 +1308,7 @@ export const updateReviewStatus = async (req, res) => {
     const review = await Review.findByIdAndUpdate(
       id,
       { status, adminNotes: adminNotes || "" },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.json({ success: true, data: review });
@@ -4364,26 +4364,27 @@ FILE: frontend/src/api/axios.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 359 B
+Size: 383 B
 Extension: .js
 Language: javascript
 Location: frontend/src/api/axios.js
 Relative Path: frontend/src/api
 Created: 2026-05-05 14:49:11 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-05 14:49:16 (Asia/Calcutta / GMT+06:30)
-MD5: c25ed5ff6d1f1d1150fb512cb460744c
-SHA256: d2c6e15b845bd06ee6d17e51f725c89d4fef67c8f3e011727b780137581d8b42
-Encoding: UTF-8
+Modified: 2026-05-06 12:18:03 (Asia/Calcutta / GMT+06:30)
+MD5: 87ea100a078c835d6a6360495fb8dad8
+SHA256: 29a1a0f2a17c017ffad9e9168ff533f5295078b7b94ac947786b61d1d90e710f
+Encoding: ASCII
 
 FILE CONTENT:
 ----------------------------------------
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: API_URL,
 });
 
-// 🔐 Attach token automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("adminToken");
   if (token) {
@@ -5386,15 +5387,15 @@ FILE: frontend/src/components/Navbar.jsx
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 3.85 KB
+Size: 5.18 KB
 Extension: .jsx
 Language: jsx
 Location: frontend/src/components/Navbar.jsx
 Relative Path: frontend/src/components
 Created: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-06 10:37:26 (Asia/Calcutta / GMT+06:30)
-MD5: 2a22e04f79b9c35bb7c695990f2c3778
-SHA256: cb2c786f200bbea7365cc82ba06f8e7eedbff78f371b2cd0725411f8b6c55f24
+Modified: 2026-05-06 12:25:46 (Asia/Calcutta / GMT+06:30)
+MD5: 74b1355c84c3d23593ccb2061d119d98
+SHA256: 32199cffd2fb3d1eefb0a82ff574b3458c74950c36507b557077ebd92e62df28
 Encoding: ASCII
 
 FILE CONTENT:
@@ -5428,43 +5429,33 @@ const Navbar = ({ isScrolled }) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-[#0b1d26cc] backdrop-blur-sm" : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-[#0b1d26cc] backdrop-blur-sm" : "bg-transparent"}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          {/* Logo */}
           <Link
             to="/"
             className="text-white font-[Playfair_Display] font-bold text-2xl tracking-wide"
           >
             UK HIKERS
           </Link>
-
-          {/* Desktop Navigation – No admin links */}
           <div className="hidden md:flex space-x-8">
+            {/* Desktop nav unchanged */}
             <Link
               to="/"
-              className={`text-white px-3 py-2 text-sm font-medium ${
-                isActive("/") ? "border-b-2 border-yellow-500" : ""
-              }`}
+              className={`text-white px-3 py-2 text-sm font-medium ${isActive("/") ? "border-b-2 border-yellow-500" : ""}`}
             >
               Home
             </Link>
             <Link
               to="/equipment"
-              className={`text-white px-3 py-2 text-sm font-medium ${
-                isActive("/equipment") ? "border-b-2 border-yellow-500" : ""
-              }`}
+              className={`text-white px-3 py-2 text-sm font-medium ${isActive("/equipment") ? "border-b-2 border-yellow-500" : ""}`}
             >
               Treks
             </Link>
             <Link
               to="/about"
-              className={`text-white px-3 py-2 text-sm font-medium ${
-                isActive("/about") ? "border-b-2 border-yellow-500" : ""
-              }`}
+              className={`text-white px-3 py-2 text-sm font-medium ${isActive("/about") ? "border-b-2 border-yellow-500" : ""}`}
             >
               About
             </Link>
@@ -5474,9 +5465,30 @@ const Navbar = ({ isScrolled }) => {
             >
               Track Booking
             </Link>
+            {!token ? (
+              <Link
+                to="/admin/login"
+                className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
+              >
+                Login
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/admin"
+                  className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={logout}
+                  className="text-white px-3 py-2 text-sm font-medium hover:text-red-400"
+                >
+                  Logout
+                </button>
+              </>
+            )}
           </div>
-
-          {/* Mobile menu button */}
           <button
             className="md:hidden text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -5488,7 +5500,7 @@ const Navbar = ({ isScrolled }) => {
         </div>
       </div>
 
-      {/* Mobile Menu – No admin links */}
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden mobile-menu-container bg-[#0b1d26]">
           <Link
@@ -5519,6 +5531,34 @@ const Navbar = ({ isScrolled }) => {
           >
             Track Booking
           </Link>
+          {!token ? (
+            <Link
+              to="/admin/login"
+              className="block px-4 py-3 text-white"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Admin Login
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/admin"
+                className="block px-4 py-3 text-white"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  logout();
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left px-4 py-3 text-white"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       )}
     </nav>
