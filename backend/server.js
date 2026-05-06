@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import connectDB from "./config/db.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 import blogRoutes from "./routes/blogRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
@@ -30,7 +31,7 @@ app.use("/api/slots", slotRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/bookings", adminBookingRoutes);
 app.use("/api/payments", paymentRoutes);
-
+app.use("/api/reviews", reviewRoutes);
 /* TEST ROUTE */
 app.get("/", (req, res) => {
   res.send("API is running...");

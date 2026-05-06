@@ -8,27 +8,36 @@ const useBookings = () => {
   const fetchBookings = async () => {
     try {
       const res = await api.get("/admin/bookings");
-      setBookings(res.data.data || []); // ← was res.data (wrong shape)
+      setBookings(res.data.data || []);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch bookings:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // ← FIX: was missing entirely
   useEffect(() => {
     fetchBookings();
   }, []);
 
   const approveBooking = async (id) => {
-    await api.put(`/admin/bookings/approve/${id}`); // ← was /admin/approve/:id
-    fetchBookings();
+    try {
+      await api.put(`/admin/bookings/approve/${id}`);
+      fetchBookings(); // Refresh the list
+    } catch (err) {
+      console.error("Failed to approve booking:", err);
+      alert("Failed to approve booking");
+    }
   };
 
   const rejectBooking = async (id) => {
-    await api.put(`/admin/bookings/reject/${id}`); // ← was /admin/reject/:id
-    fetchBookings();
+    try {
+      await api.put(`/admin/bookings/reject/${id}`);
+      fetchBookings(); // Refresh the list
+    } catch (err) {
+      console.error("Failed to reject booking:", err);
+      alert("Failed to reject booking");
+    }
   };
 
   return { bookings, loading, fetchBookings, approveBooking, rejectBooking };

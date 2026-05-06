@@ -8,8 +8,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-     "seed": "node seeder.js"
+  "start": "node server.js",
+  "seed": "node seeder.js",
+  "seed-blogs": "node seedBlogs.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

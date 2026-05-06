@@ -3,18 +3,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = ({ isScrolled }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const location = useLocation();
   const navigate = useNavigate();
-
   const token = localStorage.getItem("adminToken");
 
   const isActive = (path) => location.pathname === path;
 
   const logout = () => {
     localStorage.removeItem("adminToken");
-
     navigate("/");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -23,9 +21,7 @@ const Navbar = ({ isScrolled }) => {
         setMobileMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
 
@@ -37,8 +33,7 @@ const Navbar = ({ isScrolled }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          {/* LOGO */}
-
+          {/* Logo */}
           <Link
             to="/"
             className="text-white font-[Playfair_Display] font-bold text-2xl tracking-wide"
@@ -46,8 +41,7 @@ const Navbar = ({ isScrolled }) => {
             UK HIKERS
           </Link>
 
-          {/* DESKTOP NAV */}
-
+          {/* Desktop Navigation – No admin links */}
           <div className="hidden md:flex space-x-8">
             <Link
               to="/"
@@ -57,7 +51,6 @@ const Navbar = ({ isScrolled }) => {
             >
               Home
             </Link>
-
             <Link
               to="/equipment"
               className={`text-white px-3 py-2 text-sm font-medium ${
@@ -66,7 +59,6 @@ const Navbar = ({ isScrolled }) => {
             >
               Treks
             </Link>
-
             <Link
               to="/about"
               className={`text-white px-3 py-2 text-sm font-medium ${
@@ -75,44 +67,15 @@ const Navbar = ({ isScrolled }) => {
             >
               About
             </Link>
-
-            {/* ADMIN LINKS */}
-
-            {!token ? (
-              <Link
-                to="/admin/login"
-                className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
-              >
-                Admin
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/admin"
-                  className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
-                >
-                  Dashboard
-                </Link>
-
-                <Link
-                  to="/admin/slots"
-                  className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
-                >
-                  Slots
-                </Link>
-
-                <button
-                  onClick={logout}
-                  className="text-white px-3 py-2 text-sm font-medium hover:text-red-400"
-                >
-                  Logout
-                </button>
-              </>
-            )}
+            <Link
+              to="/track-booking"
+              className="text-white px-3 py-2 text-sm font-medium"
+            >
+              Track Booking
+            </Link>
           </div>
 
-          {/* MOBILE BUTTON */}
-
+          {/* Mobile menu button */}
           <button
             className="md:hidden text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -124,8 +87,7 @@ const Navbar = ({ isScrolled }) => {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
-
+      {/* Mobile Menu – No admin links */}
       {mobileMenuOpen && (
         <div className="md:hidden mobile-menu-container bg-[#0b1d26]">
           <Link
@@ -135,7 +97,6 @@ const Navbar = ({ isScrolled }) => {
           >
             Home
           </Link>
-
           <Link
             to="/equipment"
             className="block px-4 py-3 text-white"
@@ -143,7 +104,6 @@ const Navbar = ({ isScrolled }) => {
           >
             Treks
           </Link>
-
           <Link
             to="/about"
             className="block px-4 py-3 text-white"
@@ -151,43 +111,13 @@ const Navbar = ({ isScrolled }) => {
           >
             About
           </Link>
-
-          {/* ADMIN MOBILE */}
-
-          {!token ? (
-            <Link
-              to="/admin/login"
-              className="block px-4 py-3 text-white"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Admin Login
-            </Link>
-          ) : (
-            <>
-              <Link
-                to="/admin"
-                className="block px-4 py-3 text-white"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-
-              <Link
-                to="/admin/slots"
-                className="block px-4 py-3 text-white"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Slots
-              </Link>
-
-              <button
-                onClick={logout}
-                className="block w-full text-left px-4 py-3 text-white"
-              >
-                Logout
-              </button>
-            </>
-          )}
+          <Link
+            to="/track-booking"
+            className="block px-4 py-3 text-white"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Track Booking
+          </Link>
         </div>
       )}
     </nav>

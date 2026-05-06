@@ -1,5 +1,7 @@
 import Booking from "../models/Booking.js";
-
+import Blog from "../models/Blog.js";
+import transporter from "../config/email.js";
+import { bookingConfirmationEmail } from "../utils/emailTemplates.js";
 /* GET ALL */
 export const getAllBookings = async (req, res) => {
   try {
@@ -21,23 +23,41 @@ export const getAllBookings = async (req, res) => {
 };
 
 /* APPROVE */
+
+
+/* APPROVE - with email notification */
+/* APPROVE - with email notification */
 export const approveBooking = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { bookingStatus: "approved" },
       { new: true }
-    );
+    ).populate("trekId").populate("slotId");
 
-    res.json({
-      success: true,
-      data: booking
-    });
-  } catch {
-    res.status(500).json({
-      success: false,
-      message: "Approval failed"
-    });
+    // 📧 Try to send confirmation email (don't fail if email is invalid)
+    if (process.env.EMAIL_USER && booking.email) {
+      try {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(booking.email)) {
+          await transporter.sendMail({
+            from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
+            to: booking.email,
+            subject: `🎉 Booking Confirmed! - ${booking.trekId?.title || "Your Trek"}`,
+            html: bookingConfirmationEmail(booking, booking.trekId),
+          });
+          console.log(`✅ Confirmation sent to ${booking.email}`);
+        } else {
+          console.log(`⚠️ Invalid email for booking ${booking._id}: ${booking.email}`);
+        }
+      } catch (emailErr) {
+        console.error(`❌ Email send failed: ${emailErr.message}`);
+      }
+    }
+
+    res.json({ success: true, data: booking });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Approval failed" });
   }
 };
 
@@ -60,20 +80,19 @@ export const rejectBooking = async (req, res) => {
 /* MARK PAID */
 export const markPaymentComplete = async (req, res) => {
   try {
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { paymentStatus: "paid" },
-      { new: true }
-    );
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ success: false, message: "Booking not found" });
+    }
 
-    res.json({
-      success: true,
-      data: booking
-    });
-  } catch {
-    res.status(500).json({
-      success: false,
-      message: "Payment update failed"
-    });
+    booking.amountPaid = booking.totalAmount;
+    booking.amountRemaining = 0;
+    booking.paymentStatus = "paid";
+    await booking.save();
+
+    res.json({ success: true, data: booking });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Payment update failed" });
   }
 };

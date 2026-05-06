@@ -14,6 +14,8 @@ import BlogDetailPage from "./pages/BlogDetailPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
 import AdminTreks from "./pages/AdminTreks";
+import TrackBooking from "./pages/TrackBooking";
+import AdminReviews from "./pages/AdminReviews.jsx";
 // 🔐 Admin
 import AdminLogin from "./pages/AdminLogin";
 
@@ -23,7 +25,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
-import AdminSlots from "./pages/AdminSlots";
+// import AdminSlots from "./pages/AdminSlots";
 import AdminPayments from "./pages/AdminPayments";
 // (optional) import AdminPage if you still use it
 // import AdminPage from "./pages/AdminPage";
@@ -38,7 +40,7 @@ const AppRouter = () => {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
         <Route path="/about" element={<AboutPage />} />
-
+        <Route path="/track-booking" element={<TrackBooking />} />
         {/* 🔐 ADMIN LOGIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
@@ -56,9 +58,9 @@ const AppRouter = () => {
           <Route path="treks" element={<AdminTreks />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="bookings" element={<AdminBookings />} />
-          <Route path="slots" element={<AdminSlots />} />
+
           <Route path="payments" element={<AdminPayments />} />
-          {/* <Route path="page" element={<AdminPage />} /> */}
+          <Route path="reviews" element={<AdminReviews />} />
         </Route>
       </Routes>
     </Router>

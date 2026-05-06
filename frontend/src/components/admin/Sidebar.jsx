@@ -1,15 +1,21 @@
 import { NavLink } from "react-router-dom";
+import { X } from "lucide-react";
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
   const linkClass = "block px-4 py-2 rounded-lg transition hover:bg-gray-700";
-
   const activeClass = "bg-gray-700";
 
   return (
-    <div className="w-64 bg-gray-900 text-white flex flex-col">
-      {/* Logo */}
-      <div className="p-5 text-2xl font-bold border-b border-gray-700">
-        UK Hikers
+    <div className="w-64 bg-gray-900 text-white flex flex-col h-full shadow-xl">
+      {/* Logo & Close Button */}
+      <div className="p-5 border-b border-gray-700 flex justify-between items-center">
+        <div className="text-2xl font-bold">UK Hikers</div>
+        <button
+          onClick={onClose}
+          className="md:hidden text-gray-400 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -19,6 +25,7 @@ const Sidebar = () => {
           className={({ isActive }) =>
             `${linkClass} ${isActive ? activeClass : ""}`
           }
+          onClick={onClose}
         >
           📊 Dashboard
         </NavLink>
@@ -28,6 +35,7 @@ const Sidebar = () => {
           className={({ isActive }) =>
             `${linkClass} ${isActive ? activeClass : ""}`
           }
+          onClick={onClose}
         >
           📋 Bookings
         </NavLink>
@@ -37,6 +45,7 @@ const Sidebar = () => {
           className={({ isActive }) =>
             `${linkClass} ${isActive ? activeClass : ""}`
           }
+          onClick={onClose}
         >
           💳 Payments
         </NavLink>
@@ -46,8 +55,19 @@ const Sidebar = () => {
           className={({ isActive }) =>
             `${linkClass} ${isActive ? activeClass : ""}`
           }
+          onClick={onClose}
         >
           🏔 Treks
+        </NavLink>
+
+        <NavLink
+          to="/admin/reviews"
+          className={({ isActive }) =>
+            `${linkClass} ${isActive ? activeClass : ""}`
+          }
+          onClick={onClose}
+        >
+          ⭐ Reviews
         </NavLink>
       </nav>
 
