@@ -5,7 +5,7 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-05-06 13:00:37 (Asia/Calcutta / GMT+06:30)
+Generated On: 2026-05-06 13:42:38 (Asia/Calcutta / GMT+06:30)
 Total Files Processed: 89
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
@@ -26,7 +26,7 @@ PROJECT STRUCTURE
 │   ├── 📁 config/
 │   │   ├── 📄 config.js (334 B)
 │   │   ├── 📄 db.js (296 B)
-│   │   ├── 📄 email.js (639 B)
+│   │   ├── 📄 email.js (540 B)
 │   │   └── 📄 razorpay.js (233 B)
 │   ├── 📁 controllers/
 │   │   ├── 📄 adminBookingController.js (2.84 KB)
@@ -242,15 +242,15 @@ FILE: backend/config/email.js
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 639 B
+Size: 540 B
 Extension: .js
 Language: javascript
 Location: backend/config/email.js
 Relative Path: backend/config
 Created: 2026-05-06 06:53:07 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-06 12:54:55 (Asia/Calcutta / GMT+06:30)
-MD5: d3b318e5888aeb571e17331184a9e327
-SHA256: ce3024a4282f2cb8a024e25b906dbaa19b1a8e330b163219fcc96be8326f0a0a
+Modified: 2026-05-06 13:42:37 (Asia/Calcutta / GMT+06:30)
+MD5: aaf6050673812ace49dbb8b7fbed9bac
+SHA256: 5f3e595cdfc454b74f644b244b3dfa5d451c28814517e87731d45cf6608ecc06
 Encoding: ASCII
 
 FILE CONTENT:
@@ -260,20 +260,20 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,               // Use SSL port instead of 587
-  secure: true,            // true for 465
+  host: process.env.EMAIL_HOST || "smtp-relay.brevo.com",
+  port: process.env.EMAIL_PORT || 587,
+  secure: false, // TLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  family: 4,               // Force IPv4 (critical for Render)
+  family: 4, // Force IPv4
   tls: {
-    rejectUnauthorized: false,  // optional for self-signed, but keep
+    rejectUnauthorized: false,
   },
-  connectionTimeout: 10000,     // 10 seconds
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
 });
 
 export default transporter;
