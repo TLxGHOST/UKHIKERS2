@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `UKHIKERS_2`
-- **Generated On**: 2026-05-06 13:42:38 (Asia/Calcutta / GMT+06:30)
+- **Generated On**: 2026-05-08 16:29:42 (Asia/Calcutta / GMT+06:30)
 - **Total Files Processed**: 89
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -57,9 +57,9 @@
 │   │   └── 📄 emailTemplates.js (9.7 KB)
 │   ├── 📄 adminseed.js (836 B)
 │   ├── 📄 package-lock.json (50.53 KB)
-│   ├── 📄 package.json (664 B)
+│   ├── 📄 package.json (697 B)
 │   ├── 📄 seeder.js (11.53 KB)
-│   └── 📄 server.js (1.36 KB)
+│   └── 📄 server.js (1.79 KB)
 ├── 📁 frontend/
 │   ├── 📁 public/
 │   │   ├── 📁 assets/
@@ -3924,15 +3924,15 @@ seedAdmin();
 ### <a id="📄-backend-package-json"></a>📄 `backend/package.json`
 
 **File Info:**
-- **Size**: 664 B
+- **Size**: 697 B
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `backend/package.json`
 - **Relative Path**: `backend`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-06 11:55:21 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `f7b9675d50dcf049f433886265fd0766`
-- **SHA256**: `5dc1f3e122933421d63b8c7380e99739a934600fbb0e057fc94248276015668f`
+- **Modified**: 2026-05-06 14:01:08 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `debfbb4c84cff94f3c6c53b18837aabe`
+- **SHA256**: `50f18fc2ea826adb49da876a0e54a1b889299bb32853c355ff2a135b65760243`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -3950,7 +3950,8 @@ seedAdmin();
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "seed": "node seeder.js",
-    "seed-blogs": "node seedBlogs.js"
+    "seed-blogs": "node seedBlogs.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -4325,15 +4326,15 @@ runSeeder();
 ### <a id="📄-backend-server-js"></a>📄 `backend/server.js`
 
 **File Info:**
-- **Size**: 1.36 KB
+- **Size**: 1.79 KB
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `backend/server.js`
 - **Relative Path**: `backend`
 - **Created**: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-- **Modified**: 2026-05-06 13:00:37 (Asia/Calcutta / GMT+06:30)
-- **MD5**: `eee45146483f3b9801a13efea510e554`
-- **SHA256**: `6ccad70a09ab86db2946738fc3be405af541fb8da183bc9e7a96e1c4e1bff965`
+- **Modified**: 2026-05-06 14:05:54 (Asia/Calcutta / GMT+06:30)
+- **MD5**: `96e2cea197df2fc233ce58345748a73b`
+- **SHA256**: `90961e33fbe2abd7fe6ac5762201ffce7fef19c469d8ffd8558b148332fe35e4`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -4359,13 +4360,26 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:5173",          // dev
-  "https://ukhikers-2.vercel.app" // your live Vercel URL
+  "http://localhost:5173",
+  "https://uk-hikers-backend.fly.dev",
+  "https://your-frontend.vercel.app", // Your actual Vercel URL
+  /\.fly\.dev$/,  // Allow all fly.dev subdomains
+  /\.vercel\.app$/ // Allow all vercel.app subdomains
 ];
 
 /* MIDDLEWARE */
 app.use(cors({
-  origin: true,  // This reflects the request origin
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowed = allowedOrigins.some(pattern =>
+      typeof pattern === 'string' ? pattern === origin : pattern.test(origin)
+    );
+    if (allowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());

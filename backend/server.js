@@ -18,13 +18,26 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:5173",          // dev
-  "https://ukhikers-2.vercel.app" // your live Vercel URL
+  "http://localhost:5173",
+  "https://uk-hikers-backend.fly.dev",
+  "https://your-frontend.vercel.app", // Your actual Vercel URL
+  /\.fly\.dev$/,  // Allow all fly.dev subdomains
+  /\.vercel\.app$/ // Allow all vercel.app subdomains
 ];
 
 /* MIDDLEWARE */
 app.use(cors({
-  origin: true,  // This reflects the request origin
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowed = allowedOrigins.some(pattern =>
+      typeof pattern === 'string' ? pattern === origin : pattern.test(origin)
+    );
+    if (allowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
