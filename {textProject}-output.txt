@@ -5,7 +5,7 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-05-08 16:29:42 (Asia/Calcutta / GMT+06:30)
+Generated On: 2026-06-21 12:03:08 (Asia/Calcutta / GMT+06:30)
 Total Files Processed: 89
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
@@ -15,8 +15,8 @@ EXPORT CONFIGURATION:
 Language: en
 Max File Size: 1 MB
 Include Hidden Files: false
-Output Format: both
-Notification Level: minimal
+Output Format: txt
+Notification Level: silent
 Custom File Name Pattern: {textProject}-output
 
 ================================================================================
