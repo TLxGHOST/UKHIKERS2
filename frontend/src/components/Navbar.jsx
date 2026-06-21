@@ -68,7 +68,7 @@ const Navbar = ({ isScrolled }) => {
                 to="/admin/login"
                 className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
               >
-                Login
+                {/* Login */}
               </Link>
             ) : (
               <>

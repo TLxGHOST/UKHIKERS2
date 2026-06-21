@@ -5,7 +5,7 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: UKHIKERS_2
-Generated On: 2026-06-21 12:03:08 (Asia/Calcutta / GMT+06:30)
+Generated On: 2026-06-21 12:24:17 (Asia/Calcutta / GMT+06:30)
 Total Files Processed: 89
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
@@ -99,7 +99,7 @@ PROJECT STRUCTURE
 │   │   │   ├── 📄 ContentSection.jsx (4.48 KB)
 │   │   │   ├── 📄 Footer.jsx (2.76 KB)
 │   │   │   ├── 📄 Hero.jsx (2.79 KB)
-│   │   │   ├── 📄 Navbar.jsx (5.18 KB)
+│   │   │   ├── 📄 Navbar.jsx (5.19 KB)
 │   │   │   └── 📄 SectionNavigation.jsx (1.76 KB)
 │   │   ├── 📁 data/
 │   │   │   └── 📁 blogs/
@@ -5414,15 +5414,15 @@ FILE: frontend/src/components/Navbar.jsx
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 5.18 KB
+Size: 5.19 KB
 Extension: .jsx
 Language: jsx
 Location: frontend/src/components/Navbar.jsx
 Relative Path: frontend/src/components
 Created: 2026-05-05 09:09:59 (Asia/Calcutta / GMT+06:30)
-Modified: 2026-05-06 12:25:46 (Asia/Calcutta / GMT+06:30)
-MD5: 74b1355c84c3d23593ccb2061d119d98
-SHA256: 32199cffd2fb3d1eefb0a82ff574b3458c74950c36507b557077ebd92e62df28
+Modified: 2026-06-21 12:24:17 (Asia/Calcutta / GMT+06:30)
+MD5: 69ff9de72f1da8f777d495bf22949da7
+SHA256: e18d66b9cf7e8d4fa540f781ceee95121ccb68ce6d2e45408848e1275671cd2a
 Encoding: ASCII
 
 FILE CONTENT:
@@ -5497,7 +5497,7 @@ const Navbar = ({ isScrolled }) => {
                 to="/admin/login"
                 className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
               >
-                Login
+                {/* Login */}
               </Link>
             ) : (
               <>
