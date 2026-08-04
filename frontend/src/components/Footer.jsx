@@ -31,7 +31,7 @@ const Footer = () => {
         </div>
 
         {/* Developer */}
-        <div>
+        {/* <div>
           <h3 className="text-white font-bold mb-6">
             Developed by Systumm Engineers
           </h3>
@@ -50,7 +50,7 @@ const Footer = () => {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
 
         {/* Social */}
         <div>
@@ -77,7 +77,7 @@ const Footer = () => {
             <p>
               Developed with ♥ by{" "}
               <a
-                href="https://www.tejanshu.me/"
+                href="https://www.tejanshu.dev/"
                 className="text-[#fbd784]"
                 target="_blank"
                 rel="noopener noreferrer"
