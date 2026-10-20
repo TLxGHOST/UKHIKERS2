@@ -1,23 +1,12 @@
 import express from "express";
-import {
-  getBlogs,
-  getBlogById,
-  createBlog,
-  updateBlog,
-  deleteBlog
-} from "../controllers/blogController.js";
-
-import { protect } from "../middleware/authMiddleware.js";
+import { getBlogs, getBlogById, createBlog, updateBlog, deleteBlog } from "../controllers/blogController.js";
+import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-
-/* PUBLIC ROUTES */
 router.get("/", getBlogs);
 router.get("/:id", getBlogById);
-
-/* PROTECTED ROUTES (Admin only) */
-router.post("/", protect, createBlog);
-router.put("/:id", protect, updateBlog);
-router.delete("/:id", protect, deleteBlog);
+router.post("/", protect, authorize("super_admin", "manager"), createBlog);
+router.put("/:id", protect, authorize("super_admin", "manager"), updateBlog);
+router.delete("/:id", protect, authorize("super_admin"), deleteBlog);
 
 export default router;
