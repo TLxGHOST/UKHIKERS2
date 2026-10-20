@@ -100,7 +100,19 @@ export const releaseHold = async (req, res) => {
 /* CREATE BOOKING (complete fixed version) */
 export const createBooking = async (req, res) => {
   try {
-    const { name, email, phone, persons, slotId, amountPaid = 0, holdId } = req.body;
+    const { name, email, phone, persons, slotId, holdId } = req.body;
+    // Public booking creation is for unpaid bookings only. Paid bookings are created by verified checkout.
+    if (Number(req.body.amountPaid ?? 0) !== 0) {
+      return res.status(400).json({ success: false, message: "Paid bookings must be created through verified checkout." });
+    }
+    const amountPaid = 0;
+    if (typeof name !== "string" || name.trim().length < 2 ||
+        typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+        typeof phone !== "string" || phone.trim().length < 7 ||
+        !Number.isInteger(Number(persons)) || Number(persons) < 1 || Number(persons) > 20 ||
+        typeof slotId !== "string" || !/^[a-f\d]{24}$/i.test(slotId)) {
+      return res.status(400).json({ success: false, message: "Please provide valid booking details." });
+    }
 
     const slot = await TrekSlot.findById(slotId).populate("trekId");
     if (!slot) {
@@ -149,14 +161,6 @@ export const createBooking = async (req, res) => {
       amountRemaining: remaining,
       paymentStatus: amountPaid === 0 ? "pending" : amountPaid < totalAmount ? "partial" : "paid"
     });
-
-    if (amountPaid > 0) {
-      await Payment.create({
-        bookingId: booking._id,
-        amount: amountPaid,
-        paymentType: amountPaid === totalAmount ? "full" : "advance"
-      });
-    }
 
     // Deduct seats and release hold
     slot.bookedSeats += Number(persons);
