@@ -5,16 +5,14 @@ import {
   getAllReviews,
   updateReviewStatus
 } from "../controllers/reviewController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Public routes
 router.post("/", submitReview);
 router.get("/trek/:trekId", getTrekReviews);
 
-// Admin routes
-router.get("/admin/all", protect, getAllReviews);
-router.put("/admin/:id", protect, updateReviewStatus);
+router.get("/admin/all", protect, authorize("super_admin", "manager", "viewer"), getAllReviews);
+router.put("/admin/:id", protect, authorize("super_admin", "manager"), updateReviewStatus);
 
 export default router;

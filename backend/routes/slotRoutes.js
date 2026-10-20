@@ -5,19 +5,13 @@ import {
   getSlotsByTrek,
   deleteSlot
 } from "../controllers/slotController.js";
+import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/* GET ALL SLOTS */
 router.get("/", getSlots);
-
-/* GET SLOTS BY TREK */
 router.get("/trek/:trekId", getSlotsByTrek);
-
-/* CREATE SLOT */
-router.post("/", createSlot);
-
-/* DELETE SLOT */
-router.delete("/:id", deleteSlot);
+router.post("/", protect, authorize("super_admin", "manager"), createSlot);
+router.delete("/:id", protect, authorize("super_admin"), deleteSlot);
 
 export default router;
