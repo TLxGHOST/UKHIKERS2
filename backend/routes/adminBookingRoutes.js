@@ -6,21 +6,23 @@ import {
   rejectBooking,
   markPaymentComplete
 } from "../controllers/adminBookingController.js";
-
-import { protect } from "../middleware/authMiddleware.js";
+import { generateBookingInvoice, getBookingInvoice } from "../controllers/invoiceController.js";
+import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/* GET ALL BOOKINGS */
-router.get("/", protect, getAllBookings);
+/* READ-ONLY BOOKING ACCESS */
+router.get("/", protect, authorize("super_admin", "manager", "viewer"), getAllBookings);
 
-/* APPROVE */
-router.put("/approve/:id", protect, approveBooking);
+/* BOOKING OPERATIONS */
+router.put("/approve/:id", protect, authorize("super_admin", "manager"), approveBooking);
+router.put("/reject/:id", protect, authorize("super_admin", "manager"), rejectBooking);
 
-/* REJECT */
-router.put("/reject/:id", protect, rejectBooking);
+/* LEGACY MANUAL PAYMENT ACTION: super-admin only until it records a verified payment transaction */
+router.put("/payment/:id", protect, authorize("super_admin"), markPaymentComplete);
 
-/* MARK PAYMENT COMPLETE */
-router.put("/payment/:id", protect, markPaymentComplete);
+/* INVOICES: only active admins with operational privileges; generation never changes payment state */
+router.post("/:id/invoice", protect, authorize("super_admin", "manager"), generateBookingInvoice);
+router.get("/:id/invoice", protect, authorize("super_admin", "manager", "viewer"), getBookingInvoice);
 
 export default router;
