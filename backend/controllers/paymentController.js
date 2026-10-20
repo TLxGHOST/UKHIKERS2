@@ -93,7 +93,7 @@ export const addPayment = async (req, res) => {
     return res.json({ success: true, booking: updatedBooking });
   } catch (error) {
     if (!failure) console.error("Manual payment transaction failed:", error);
-    if (failure) return res.status(failure.status).json({ success: true, message: failure.message });
+    if (failure) return res.status(failure.status).json({ success: false, message: failure.message });
     return res.status(500).json({ success: false, message: "Payment could not be recorded; no partial balance update was committed." });
   } finally {
     await session.endSession();
