@@ -9,6 +9,7 @@ const paymentOrderSchema = new mongoose.Schema(
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String, required: true, trim: true },
     persons: { type: Number, required: true, min: 1 },
+    totalAmount: { type: Number, required: true, min: 1 },
     amountPaise: { type: Number, required: true, min: 1 },
     currency: { type: String, required: true, default: "INR" },
     holdId: { type: String, default: null },
