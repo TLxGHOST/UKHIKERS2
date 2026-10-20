@@ -163,7 +163,7 @@ const BlogDetailPage = () => {
         email,
         phone,
         persons: Number(persons),
-        amountPaid: Number(advancePaid),
+        amountPaid: 0,
         holdId: holdId || undefined,
       };
       console.log("Saving booking:", payload);
@@ -178,17 +178,6 @@ const BlogDetailPage = () => {
       console.log("Booking response:", data);
 
       if (data.success) {
-        if (advancePaid > 0) {
-          await fetch(`${API}/payments/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              bookingId: data.booking._id,
-              amount: Number(advancePaid),
-              paymentMethod: "razorpay",
-            }),
-          });
-        }
         setBookingComplete(true);
         setProcessing(false);
       } else {
@@ -210,9 +199,14 @@ const BlogDetailPage = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          slotId,
+          name,
+          email,
+          phone,
+          persons: Number(persons),
           amount: Number(advancePaid),
           currency: "INR",
-          receipt: `rcpt_${Date.now()}`,
+          holdId: holdId || undefined,
         }),
       });
       const orderData = await orderRes.json();
@@ -245,8 +239,9 @@ const BlogDetailPage = () => {
             const verifyData = await verifyRes.json();
             console.log("Verification:", verifyData);
 
-            if (verifyData.success) {
-              await saveBookingToDB(response.razorpay_payment_id);
+            if (verifyData.success && verifyData.booking) {
+              setBookingComplete(true);
+              setProcessing(false);
             } else {
               throw new Error("Payment verification failed");
             }
