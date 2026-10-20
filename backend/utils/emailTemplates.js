@@ -31,7 +31,7 @@ export const paymentReceiptEmail = (booking, trek) => `
     </div>
     <div class="content">
       <p>Dear <strong>${booking.name}</strong>,</p>
-      <p>Thank you for your advance payment! Your booking is now pending admin approval.</p>
+      <p>We have received your payment for your approved booking.</p>
       
       <div class="details">
         <h3>Booking Details</h3>
@@ -49,11 +49,11 @@ export const paymentReceiptEmail = (booking, trek) => `
         <p><strong>Persons:</strong> ${booking.persons}</p>
         <hr>
         <p><strong>Total Amount:</strong> ₹${booking.totalAmount.toLocaleString()}</p>
-        <p class="amount">Advance Paid: ₹${booking.amountPaid.toLocaleString()}</p>
+        <p class="amount">Total Paid to Date: ₹${booking.amountPaid.toLocaleString()}</p>
         <p><strong>Remaining:</strong> ₹${booking.amountRemaining.toLocaleString()}</p>
       </div>
       
-      <p>We'll send you a confirmation once your booking is approved.</p>
+      <p>Your booking has already been approved. Thank you for booking with UK Hikers.</p>
       <p>If you have any questions, contact us at ukhikers@gmail.com or +91-6397658159.</p>
     </div>
     <div class="footer">

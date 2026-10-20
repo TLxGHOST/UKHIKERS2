@@ -1,98 +1,182 @@
+import mongoose from "mongoose";
 import Booking from "../models/Booking.js";
-import Blog from "../models/Blog.js";
+import TrekSlot from "../models/TrekSlot.js";
+import Payment from "../models/Payment.js";
 import transporter from "../config/email.js";
 import { bookingConfirmationEmail } from "../utils/emailTemplates.js";
-/* GET ALL */
+
+const validId = (value) => typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
+
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find()
       .populate("trekId", "title")
-      .populate("slotId", "date")
+      .populate("slotId", "date totalSeats bookedSeats")
       .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      data: bookings
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch bookings"
-    });
+    return res.json({ success: true, data: bookings });
+  } catch (error) {
+    console.error("Fetch bookings failed:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch bookings" });
   }
 };
 
-/* APPROVE */
-
-
-/* APPROVE - with email notification */
-/* APPROVE - with email notification */
 export const approveBooking = async (req, res) => {
-  try {
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { bookingStatus: "approved" },
-      { new: true }
-    ).populate("trekId").populate("slotId");
+  if (!validId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid booking ID" });
 
-    // 📧 Try to send confirmation email (don't fail if email is invalid)
-    if (process.env.EMAIL_USER && booking.email) {
+  const session = await mongoose.startSession();
+  let approvedBookingId = null;
+  let failure = null;
+  try {
+    await session.withTransaction(async () => {
+      failure = null;
+      const booking = await Booking.findById(req.params.id).session(session);
+      if (!booking) {
+        failure = { status: 404, message: "Booking not found" };
+        throw new Error("BOOKING_APPROVAL_ABORT");
+      }
+      if (booking.bookingStatus !== "pending") {
+        failure = { status: 409, message: `Only pending bookings can be approved. Current status: ${booking.bookingStatus}.` };
+        throw new Error("BOOKING_APPROVAL_ABORT");
+      }
+
+      const count = Number(booking.persons);
+      if (!Number.isInteger(count) || count < 1) {
+        failure = { status: 409, message: "Booking has an invalid person count" };
+        throw new Error("BOOKING_APPROVAL_ABORT");
+      }
+
+      const slot = await TrekSlot.findOneAndUpdate(
+        {
+          _id: booking.slotId,
+          $expr: {
+            $lte: [
+              { $add: [{ $ifNull: ["$bookedSeats", 0] }, count] },
+              "$totalSeats",
+            ],
+          },
+        },
+        { $inc: { bookedSeats: count } },
+        { new: true, session }
+      );
+      if (!slot) {
+        const existingSlot = await TrekSlot.findById(booking.slotId).session(session);
+        failure = existingSlot
+          ? { status: 409, message: "Not enough seats remain to approve this booking. No seats were reserved." }
+          : { status: 404, message: "The trek date for this booking no longer exists." };
+        throw new Error("BOOKING_APPROVAL_ABORT");
+      }
+
+      const update = await Booking.updateOne(
+        { _id: booking._id, bookingStatus: "pending" },
+        { $set: { bookingStatus: "approved" } },
+        { session }
+      );
+      if (update.modifiedCount !== 1) {
+        failure = { status: 409, message: "Booking status changed during approval. Refresh and try again." };
+        throw new Error("BOOKING_APPROVAL_ABORT");
+      }
+      approvedBookingId = booking._id;
+    });
+  } catch (error) {
+    if (!failure) console.error("Booking approval transaction failed:", error);
+    if (failure) return res.status(failure.status).json({ success: false, message: failure.message });
+    return res.status(500).json({ success: false, message: "Approval failed. No partial seat allocation was committed." });
+  } finally {
+    await session.endSession();
+  }
+
+  try {
+    const booking = await Booking.findById(approvedBookingId).populate("trekId").populate("slotId");
+    if (process.env.EMAIL_USER && booking?.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(booking.email)) {
       try {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(booking.email)) {
-          await transporter.sendMail({
-            from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
-            to: booking.email,
-            subject: `🎉 Booking Confirmed! - ${booking.trekId?.title || "Your Trek"}`,
-            html: bookingConfirmationEmail(booking, booking.trekId),
-          });
-          console.log(`✅ Confirmation sent to ${booking.email}`);
-        } else {
-          console.log(`⚠️ Invalid email for booking ${booking._id}: ${booking.email}`);
-        }
-      } catch (emailErr) {
-        console.error(`❌ Email send failed: ${emailErr.message}`);
+        await transporter.sendMail({
+          from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
+          to: booking.email,
+          subject: `Booking Approved - ${booking.trekId?.title || "Your Trek"}`,
+          html: bookingConfirmationEmail(booking, booking.trekId),
+        });
+      } catch (emailError) {
+        console.error("Approval email failed:", emailError.message);
       }
     }
-
-    res.json({ success: true, data: booking });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Approval failed" });
+    return res.json({ success: true, message: "Booking approved and seats reserved", data: booking });
+  } catch (error) {
+    console.error("Post-approval response failed:", error);
+    return res.status(500).json({ success: false, message: "Booking was approved, but its details could not be loaded. Refresh the booking list." });
   }
 };
 
-/* REJECT */
 export const rejectBooking = async (req, res) => {
   try {
-    await Booking.findByIdAndUpdate(req.params.id, {
-      bookingStatus: "rejected"
-    });
-
-    res.json({ success: true });
-  } catch {
-    res.status(500).json({
-      success: false,
-      message: "Reject failed"
-    });
+    if (!validId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid booking ID" });
+    const booking = await Booking.findOneAndUpdate(
+      { _id: req.params.id, bookingStatus: "pending" },
+      { $set: { bookingStatus: "rejected" } },
+      { new: true }
+    );
+    if (!booking) {
+      const exists = await Booking.exists({ _id: req.params.id });
+      return res.status(exists ? 409 : 404).json({
+        success: false,
+        message: exists ? "Only pending bookings can be rejected." : "Booking not found",
+      });
+    }
+    return res.json({ success: true, message: "Booking rejected; no seats were reserved." });
+  } catch (error) {
+    console.error("Booking rejection failed:", error);
+    return res.status(500).json({ success: false, message: "Reject failed" });
   }
 };
 
-/* MARK PAID */
+// Legacy staff action: records a cash payment entry and updates the balance atomically.
 export const markPaymentComplete = async (req, res) => {
+  if (!validId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid booking ID" });
+  const session = await mongoose.startSession();
+  let updatedBooking = null;
+  let failure = null;
   try {
-    const booking = await Booking.findById(req.params.id);
-    if (!booking) {
-      return res.status(404).json({ success: false, message: "Booking not found" });
-    }
-
-    booking.amountPaid = booking.totalAmount;
-    booking.amountRemaining = 0;
-    booking.paymentStatus = "paid";
-    await booking.save();
-
-    res.json({ success: true, data: booking });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Payment update failed" });
+    await session.withTransaction(async () => {
+      failure = null;
+      const booking = await Booking.findById(req.params.id).session(session);
+      if (!booking) {
+        failure = { status: 404, message: "Booking not found" };
+        throw new Error("MANUAL_PAYMENT_ABORT");
+      }
+      if (booking.bookingStatus !== "approved") {
+        failure = { status: 409, message: "Only approved bookings can have payments recorded." };
+        throw new Error("MANUAL_PAYMENT_ABORT");
+      }
+      const remaining = Number(booking.amountRemaining || 0);
+      if (remaining <= 0) {
+        updatedBooking = booking;
+        return;
+      }
+      const update = await Booking.updateOne(
+        { _id: booking._id, bookingStatus: "approved", amountRemaining: { $gte: remaining } },
+        { $set: { amountPaid: Number(booking.amountPaid || 0) + remaining, amountRemaining: 0, paymentStatus: "paid" } },
+        { session }
+      );
+      if (update.modifiedCount !== 1) {
+        failure = { status: 409, message: "Booking balance changed; refresh and try again." };
+        throw new Error("MANUAL_PAYMENT_ABORT");
+      }
+      await Payment.create([{
+        bookingId: booking._id,
+        amount: remaining,
+        paymentType: Number(booking.amountPaid || 0) > 0 ? "remaining" : "full",
+        paymentMethod: "cash",
+        transactionId: `admin-manual-${booking._id}-${new mongoose.Types.ObjectId()}`,
+        status: "success",
+      }], { session });
+      updatedBooking = await Booking.findById(booking._id).session(session);
+    });
+    if (failure) return res.status(failure.status).json({ success: false, message: failure.message });
+    return res.json({ success: true, data: updatedBooking, message: "Payment recorded" });
+  } catch (error) {
+    if (!failure) console.error("Manual payment transaction failed:", error);
+    if (failure) return res.status(failure.status).json({ success: false, message: failure.message });
+    return res.status(500).json({ success: false, message: "Payment update failed; no partial balance update was committed." });
+  } finally {
+    await session.endSession();
   }
 };

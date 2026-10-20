@@ -1,214 +1,192 @@
 import Booking from "../models/Booking.js";
 import TrekSlot from "../models/TrekSlot.js";
 import transporter from "../config/email.js";
-// import { paymentReceiptEmail } from "../utils/emailTemplates.js";
-import { paymentReceiptEmail, bookingConfirmationNoPaymentEmail } from "../utils/emailTemplates.js";
+import { bookingConfirmationNoPaymentEmail } from "../utils/emailTemplates.js";
 
-// Temporary holds store (in production, use Redis)
-const seatHolds = new Map(); // { slotId: [{ persons, expiresAt }] }
+// Temporary in-memory holds are advisory only; confirmed seat allocation is stored in MongoDB.
+const seatHolds = new Map();
 
-// Clean expired holds every minute
 setInterval(() => {
   const now = Date.now();
   for (const [slotId, holds] of seatHolds.entries()) {
-    const active = holds.filter(h => h.expiresAt > now);
-    if (active.length === 0) {
-      seatHolds.delete(slotId);
-    } else {
-      seatHolds.set(slotId, active);
-    }
+    const active = holds.filter((hold) => hold.expiresAt > now);
+    if (active.length === 0) seatHolds.delete(slotId);
+    else seatHolds.set(slotId, active);
   }
-}, 60000);
+}, 60_000).unref?.();
 
-/* CHECK SEAT AVAILABILITY */
+const releaseSeatHold = (slotId, holdId) => {
+  if (!slotId || !holdId) return;
+  const holds = seatHolds.get(String(slotId)) || [];
+  const remaining = holds.filter((hold) => hold.holdId !== holdId);
+  if (remaining.length) seatHolds.set(String(slotId), remaining);
+  else seatHolds.delete(String(slotId));
+};
+
+const validSlotId = (value) => typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
+
 export const checkAvailability = async (req, res) => {
   try {
     const { slotId } = req.params;
+    if (!validSlotId(slotId)) return res.status(400).json({ success: false, message: "Invalid slot ID" });
     const slot = await TrekSlot.findById(slotId);
+    if (!slot) return res.status(404).json({ success: false, message: "Slot not found" });
 
-    if (!slot) {
-      return res.status(404).json({ success: false, message: "Slot not found" });
-    }
-
-    const heldPersons = (seatHolds.get(slotId) || []).reduce((sum, h) => sum + h.persons, 0);
-    const availableSeats = slot.totalSeats - slot.bookedSeats - heldPersons;
-
-    res.json({
+    const heldPersons = (seatHolds.get(String(slotId)) || []).reduce((sum, hold) => sum + hold.persons, 0);
+    const availableSeats = Number(slot.totalSeats) - Number(slot.bookedSeats || 0) - heldPersons;
+    return res.json({
       success: true,
       availableSeats: Math.max(0, availableSeats),
       totalSeats: slot.totalSeats,
-      bookedSeats: slot.bookedSeats,
+      bookedSeats: slot.bookedSeats || 0,
       heldSeats: heldPersons,
     });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Failed to check availability" });
+  } catch (error) {
+    console.error("Availability check failed:", error);
+    return res.status(500).json({ success: false, message: "Failed to check availability" });
   }
 };
 
-/* HOLD SEATS (called when user starts booking) */
 export const holdSeats = async (req, res) => {
   try {
-    const { slotId, persons } = req.body;
-    const slot = await TrekSlot.findById(slotId);
-
-    if (!slot) {
-      return res.status(404).json({ success: false, message: "Slot not found" });
+    const { slotId, persons } = req.body || {};
+    const count = Number(persons);
+    if (!validSlotId(slotId) || !Number.isInteger(count) || count < 1 || count > 20) {
+      return res.status(400).json({ success: false, message: "Please provide a valid slot ID and person count" });
     }
 
-    const heldPersons = (seatHolds.get(slotId) || []).reduce((sum, h) => sum + h.persons, 0);
-    const availableSeats = slot.totalSeats - slot.bookedSeats - heldPersons;
+    const slot = await TrekSlot.findById(slotId);
+    if (!slot) return res.status(404).json({ success: false, message: "Slot not found" });
+    const holds = (seatHolds.get(String(slotId)) || []).filter((hold) => hold.expiresAt > Date.now());
+    const heldPersons = holds.reduce((sum, hold) => sum + hold.persons, 0);
+    const availableSeats = Number(slot.totalSeats) - Number(slot.bookedSeats || 0) - heldPersons;
 
-    if (persons > availableSeats) {
-      return res.json({
+    if (count > availableSeats) {
+      return res.status(409).json({
         success: false,
         availableSeats: Math.max(0, availableSeats),
-        message: ` ${heldSeats} no of seat(s) are currently being booked try after 5 minutes`,
+        message: `Only ${Math.max(0, availableSeats)} seat(s) are currently available. Please try again later.`,
       });
     }
 
-    // Create hold
-    const holdId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-    const holds = seatHolds.get(slotId) || [];
-    holds.push({ holdId, persons, expiresAt: Date.now() + 5 * 60 * 1000 }); // 5 min hold
-    seatHolds.set(slotId, holds);
-
-    res.json({
-      success: true,
-      holdId,
-      expiresIn: 600, // 10 minutes in seconds
-      heldPersons: persons,
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Failed to hold seats" });
+    const holdId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+    holds.push({ holdId, persons: count, expiresAt: Date.now() + 5 * 60 * 1000 });
+    seatHolds.set(String(slotId), holds);
+    return res.json({ success: true, holdId, expiresIn: 300, heldPersons: count });
+  } catch (error) {
+    console.error("Seat hold failed:", error);
+    return res.status(500).json({ success: false, message: "Failed to hold seats" });
   }
 };
 
-/* RELEASE HOLD (called when user cancels or hold expires) */
 export const releaseHold = async (req, res) => {
   try {
-    const { slotId, holdId } = req.body;
-    const holds = seatHolds.get(slotId) || [];
-    seatHolds.set(slotId, holds.filter(h => h.holdId !== holdId));
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Failed to release hold" });
+    const { slotId, holdId } = req.body || {};
+    if (typeof slotId !== "string" || typeof holdId !== "string") {
+      return res.status(400).json({ success: false, message: "slotId and holdId are required" });
+    }
+    releaseSeatHold(slotId, holdId);
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Seat hold release failed:", error);
+    return res.status(500).json({ success: false, message: "Failed to release hold" });
   }
 };
 
-/* CREATE BOOKING (updated with hold release) */
-/* CREATE BOOKING (complete fixed version) */
+/* A public request is pending until an admin approves it. It never allocates seats. */
 export const createBooking = async (req, res) => {
+  let holdId;
+  let slotId;
   try {
-    const { name, email, phone, persons, slotId, holdId } = req.body;
-    // Public booking creation is for unpaid bookings only. Paid bookings are created by verified checkout.
-    if (Number(req.body.amountPaid ?? 0) !== 0) {
-      return res.status(400).json({ success: false, message: "Paid bookings must be created through verified checkout." });
+    const { name, email, phone, persons, holdId: requestedHoldId } = req.body || {};
+    slotId = req.body?.slotId;
+    holdId = requestedHoldId;
+    const count = Number(persons);
+
+    if (Number(req.body?.amountPaid ?? 0) !== 0) {
+      return res.status(400).json({ success: false, message: "Payment is available only after admin approval." });
     }
-    const amountPaid = 0;
-    if (typeof name !== "string" || name.trim().length < 2 ||
+    if (typeof name !== "string" || name.trim().length < 2 || name.trim().length > 100 ||
         typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-        typeof phone !== "string" || phone.trim().length < 7 ||
-        !Number.isInteger(Number(persons)) || Number(persons) < 1 || Number(persons) > 20 ||
-        typeof slotId !== "string" || !/^[a-f\d]{24}$/i.test(slotId)) {
+        typeof phone !== "string" || phone.trim().length < 7 || phone.trim().length > 25 ||
+        !Number.isInteger(count) || count < 1 || count > 20 || !validSlotId(slotId)) {
       return res.status(400).json({ success: false, message: "Please provide valid booking details." });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
     const slot = await TrekSlot.findById(slotId).populate("trekId");
-    if (!slot) {
-      return res.status(404).json({ success: false, message: "Slot not found" });
-    }
+    if (!slot?.trekId) return res.status(404).json({ success: false, message: "Trek date not found" });
 
-    // 🔁 Duplicate booking check (fix #7)
     const existingBooking = await Booking.findOne({
       slotId,
-      email: email.trim().toLowerCase(),
-      bookingStatus: { $in: ["pending", "approved"] }
+      email: normalizedEmail,
+      bookingStatus: { $in: ["pending", "approved"] },
     });
     if (existingBooking) {
-      // Release hold if exists
-      if (holdId) {
-        const holds = seatHolds.get(slotId) || [];
-        seatHolds.set(slotId, holds.filter(h => h.holdId !== holdId));
-      }
-      return res.status(400).json({
-        success: false,
-        message: "You already have a pending or approved booking for this trek date."
-      });
+      releaseSeatHold(slotId, holdId);
+      return res.status(409).json({ success: false, message: "You already have a pending or approved booking for this trek date." });
     }
 
-    // Check real availability
-    const actualSeatsLeft = slot.totalSeats - slot.bookedSeats;
-    if (persons > actualSeatsLeft) {
-      if (holdId) {
-        const holds = seatHolds.get(slotId) || [];
-        seatHolds.set(slotId, holds.filter(h => h.holdId !== holdId));
-      }
-      return res.status(400).json({
-        success: false,
-        message: `Sorry, only ${actualSeatsLeft} seat(s) available now.`
-      });
+    // This is an informational check, not a reservation. Capacity is rechecked atomically at approval.
+    const availableSeats = Number(slot.totalSeats) - Number(slot.bookedSeats || 0);
+    if (count > availableSeats) {
+      releaseSeatHold(slotId, holdId);
+      return res.status(409).json({ success: false, message: `Sorry, only ${Math.max(0, availableSeats)} seat(s) are available right now.` });
     }
 
-    const trekPrice = slot.trekId.price;
-    const totalAmount = trekPrice * persons;
-    const remaining = totalAmount - amountPaid;
+    const price = Number(slot.trekId.price);
+    const totalAmount = price * count;
+    if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(totalAmount) || totalAmount <= 0) {
+      releaseSeatHold(slotId, holdId);
+      return res.status(409).json({ success: false, message: "The price for this trek is not configured correctly." });
+    }
 
     const booking = await Booking.create({
-      name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), persons: Number(persons),
-      slotId, trekId: slot.trekId._id,
-      totalAmount, amountPaid,
-      amountRemaining: remaining,
-      paymentStatus: amountPaid === 0 ? "pending" : amountPaid < totalAmount ? "partial" : "paid"
+      name: name.trim(),
+      email: normalizedEmail,
+      phone: phone.trim(),
+      persons: count,
+      slotId: slot._id,
+      trekId: slot.trekId._id,
+      totalAmount,
+      amountPaid: 0,
+      amountRemaining: totalAmount,
+      paymentStatus: "pending",
+      bookingStatus: "pending",
     });
+    releaseSeatHold(slotId, holdId);
 
-    // Deduct seats and release hold
-    slot.bookedSeats += Number(persons);
-    await slot.save();
-
-    if (holdId) {
-      const holds = seatHolds.get(slotId) || [];
-      seatHolds.set(slotId, holds.filter(h => h.holdId !== holdId));
-    }
-
-    // Send email (as before)
-    if (process.env.EMAIL_USER && email) {
+    if (process.env.EMAIL_USER) {
       try {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(email)) {
-          const transporter = (await import("../config/email.js")).default;
-          if (amountPaid > 0) {
-            await transporter.sendMail({
-              from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
-              to: email,
-              subject: `Payment Receipt & Booking Confirmation - ${slot.trekId.title}`,
-              html: (await import("../utils/emailTemplates.js")).paymentReceiptEmail(booking, slot.trekId)
-            });
-          } else {
-            await transporter.sendMail({
-              from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
-              to: email,
-              subject: `Booking Confirmation - ${slot.trekId.title}`,
-              html: (await import("../utils/emailTemplates.js")).bookingConfirmationNoPaymentEmail(booking, slot.trekId)
-            });
-          }
-        }
-      } catch (emailErr) {
-        console.error(`Email failed: ${emailErr.message}`);
+        await transporter.sendMail({
+          from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
+          to: normalizedEmail,
+          subject: `Booking Request Received - ${slot.trekId.title}`,
+          html: bookingConfirmationNoPaymentEmail({ ...booking.toObject(), slotId: slot }, slot.trekId),
+        });
+      } catch (emailError) {
+        console.error("Booking request email failed:", emailError.message);
       }
     }
 
-    // ✅ Send success response
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: "Booking created successfully",
-      booking: { _id: booking._id, totalAmount: booking.totalAmount, amountPaid: booking.amountPaid }
+      message: "Booking request submitted. Seats are reserved only after admin approval.",
+      booking: {
+        _id: booking._id,
+        slotId: booking.slotId,
+        trekId: booking.trekId,
+        persons: booking.persons,
+        totalAmount: booking.totalAmount,
+        amountPaid: booking.amountPaid,
+        amountRemaining: booking.amountRemaining,
+        paymentStatus: booking.paymentStatus,
+        bookingStatus: booking.bookingStatus,
+      },
     });
-
-  } catch (err) {
-    console.error("Booking creation error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to create booking: " + err.message
-    });
+  } catch (error) {
+    releaseSeatHold(slotId, holdId);
+    console.error("Booking creation error:", error);
+    return res.status(500).json({ success: false, message: "Failed to create booking" });
   }
 };
