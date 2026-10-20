@@ -121,7 +121,7 @@ export const createBooking = async (req, res) => {
     // 🔁 Duplicate booking check (fix #7)
     const existingBooking = await Booking.findOne({
       slotId,
-      email,
+      email: email.trim().toLowerCase(),
       bookingStatus: { $in: ["pending", "approved"] }
     });
     if (existingBooking) {
@@ -154,7 +154,7 @@ export const createBooking = async (req, res) => {
     const remaining = totalAmount - amountPaid;
 
     const booking = await Booking.create({
-      name, email, phone, persons,
+      name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), persons: Number(persons),
       slotId, trekId: slot.trekId._id,
       totalAmount, amountPaid,
       amountRemaining: remaining,
