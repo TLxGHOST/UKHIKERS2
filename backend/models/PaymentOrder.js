@@ -25,4 +25,18 @@ const paymentOrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// A booking may have only one active checkout. Completed orders are excluded so
+// a later partial payment can create another checkout for the remaining balance.
+paymentOrderSchema.index(
+  { bookingId: 1 },
+  {
+    unique: true,
+    name: "one_active_checkout_per_booking",
+    partialFilterExpression: {
+      bookingId: { $type: "objectId" },
+      status: { $in: ["pending", "processing"] },
+    },
+  }
+);
+
 export default mongoose.model("PaymentOrder", paymentOrderSchema);
