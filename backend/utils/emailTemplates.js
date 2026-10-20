@@ -1,3 +1,29 @@
+
+const invoiceEscape = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+}[char]));
+
+export const bookingInvoiceAttachmentHtml = (booking, trek, invoice) => {
+  const money = (value) => `₹${Number(value || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const date = booking.slotId?.date ? new Date(booking.slotId.date) : null;
+  const trekDate = date && !Number.isNaN(date.getTime())
+    ? date.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
+    : "To be confirmed";
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Invoice ${invoiceEscape(invoice.invoiceNumber)}</title>
+<style>body{font-family:Arial,sans-serif;color:#222;margin:40px}header{border-bottom:3px solid #16a34a;padding-bottom:16px}h1{color:#166534}table{width:100%;border-collapse:collapse;margin-top:24px}td,th{padding:12px;border-bottom:1px solid #ddd;text-align:left}.right{text-align:right}.muted{color:#666}.total{font-size:18px;font-weight:bold}</style></head>
+<body><header><h1>UK Hikers</h1><p>Booking Invoice</p></header>
+<p><strong>Invoice No:</strong> ${invoiceEscape(invoice.invoiceNumber)}<br><strong>Issued:</strong> ${new Date(invoice.generatedAt || invoice.createdAt || Date.now()).toLocaleDateString("en-IN")}<br><strong>Booking ID:</strong> ${invoiceEscape(booking._id)}</p>
+<h3>Customer</h3><p>${invoiceEscape(booking.name)}<br>${invoiceEscape(booking.email)}<br>${invoiceEscape(booking.phone)}</p>
+<h3>Trek details</h3><p><strong>Trek:</strong> ${invoiceEscape(trek?.title || invoice.trek?.name || "Trek booking")}<br><strong>Date:</strong> ${invoiceEscape(trekDate)}<br><strong>Participants:</strong> ${invoiceEscape(booking.persons)}</p>
+<table><thead><tr><th>Description</th><th class="right">Amount</th></tr></thead><tbody>
+<tr><td>${invoiceEscape(trek?.title || invoice.trek?.name || "Trek booking")} (${invoiceEscape(booking.persons)} participant(s))</td><td class="right">${money(booking.totalAmount)}</td></tr>
+<tr><td>Paid to date</td><td class="right">${money(booking.amountPaid)}</td></tr>
+<tr class="total"><td>Outstanding balance</td><td class="right">${money(booking.amountRemaining)}</td></tr>
+</tbody></table><p class="muted">Booking status: ${invoiceEscape(booking.bookingStatus)}. Payment status: ${invoiceEscape(booking.paymentStatus)}.</p>
+<p class="muted">Keep this invoice for your records. Assistance: ukhikers@gmail.com · +91-6397658159.</p></body></html>`;
+};
+
 // Payment Receipt (after advance payment)
 export const paymentReceiptEmail = (booking, trek) => `
 <!DOCTYPE html>
@@ -65,7 +91,7 @@ export const paymentReceiptEmail = (booking, trek) => `
 `;
 
 // Booking Confirmation + Invoice (after approval)
-export const bookingConfirmationEmail = (booking, trek) => `
+export const bookingConfirmationEmail = (booking, trek, invoice = null) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -102,7 +128,7 @@ export const bookingConfirmationEmail = (booking, trek) => `
       <p>Great news! Your booking has been <span class="badge">APPROVED</span></p>
       
       <div class="details">
-        <h3>📋 Invoice / Booking Details</h3>
+        <h3>📋 Booking Details</h3>\n        ${invoice ? `<p><strong>Invoice Number:</strong> ${invoice.invoiceNumber}</p><p>Your booking invoice is attached to this email.</p>` : `<p>Your booking is approved. Please contact us if you need an invoice copy.</p>`}
         <div class="booking-id">
   <p style="font-size: 12px; color: #666; margin-bottom: 5px;">YOUR BOOKING ID</p>
   <strong style="font-size: 16px; letter-spacing: 0.5px; word-break: break-all;">
