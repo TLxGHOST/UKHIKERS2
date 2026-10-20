@@ -126,7 +126,7 @@ export const approveBooking = async (req, res) => {
       }
     }
 
-    if (process.env.EMAIL_USER && booking?.email && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(booking.email)) {
+    if (process.env.EMAIL_USER && booking?.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(booking.email)) {
       try {
         await transporter.sendMail({
           from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
