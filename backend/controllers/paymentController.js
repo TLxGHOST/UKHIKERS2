@@ -187,14 +187,6 @@ export const verifyRazorpayPayment = async (req, res) => {
 
     checkout = await PaymentOrder.findOne({ orderId });
     if (!checkout) return res.status(404).json({ success: false, message: "Checkout order not found" });
-    if (checkout.status === "completed" && checkout.bookingId) {
-      if (checkout.paymentId && checkout.paymentId !== paymentId) {
-        return res.status(409).json({ success: false, message: "This order was already completed with a different payment ID." });
-      }
-      const booking = await Booking.findById(checkout.bookingId);
-      if (booking) return res.json({ success: true, booking, alreadyProcessed: true });
-    }
-
     const secret = process.env.RAZORPAY_KEY_SECRET;
     if (!secret) return res.status(503).json({ success: false, message: "Payment verification is not configured" });
     const expected = crypto.createHmac("sha256", secret).update(`${orderId}|${paymentId}`).digest("hex");
@@ -202,6 +194,15 @@ export const verifyRazorpayPayment = async (req, res) => {
     const signatureBuf = Buffer.from(signature, "utf8");
     if (expectedBuf.length !== signatureBuf.length || !crypto.timingSafeEqual(expectedBuf, signatureBuf)) {
       return res.status(400).json({ success: false, message: "Invalid payment signature" });
+    }
+
+    // Do not return booking data for an idempotent retry until the Razorpay signature is verified.
+    if (checkout.status === "completed" && checkout.bookingId) {
+      if (checkout.paymentId && checkout.paymentId !== paymentId) {
+        return res.status(409).json({ success: false, message: "This order was already completed with a different payment ID." });
+      }
+      const booking = await Booking.findById(checkout.bookingId);
+      if (booking) return res.json({ success: true, booking, alreadyProcessed: true });
     }
 
     const [gatewayOrder, gatewayPayment] = await Promise.all([
