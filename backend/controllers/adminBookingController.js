@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import { randomUUID } from "node:crypto";
 import Booking from "../models/Booking.js";
 import TrekSlot from "../models/TrekSlot.js";
 import Payment from "../models/Payment.js";
+import Invoice from "../models/Invoice.js";
 import transporter from "../config/email.js";
-import { bookingConfirmationEmail } from "../utils/emailTemplates.js";
+import { bookingConfirmationEmail, bookingInvoiceAttachmentHtml } from "../utils/emailTemplates.js";
 
 const validId = (value) => typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
 
@@ -87,16 +89,58 @@ export const approveBooking = async (req, res) => {
 
   try {
     const booking = await Booking.findById(approvedBookingId).populate("trekId").populate("slotId");
-    if (process.env.EMAIL_USER && booking?.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(booking.email)) {
+    let invoice = null;
+
+    // Create an immutable invoice snapshot after approval commits. Email failures
+    // must never roll back the already-approved booking or its seat allocation.
+    if (booking) {
+      try {
+        invoice = await Invoice.findOne({ bookingId: booking._id });
+        if (!invoice) {
+          const totalAmount = Number(booking.totalAmount);
+          const amountPaid = Number(booking.amountPaid || 0);
+          const amountRemaining = Number(booking.amountRemaining ?? Math.max(0, totalAmount - amountPaid));
+          const trekDate = booking.slotId?.date ? new Date(booking.slotId.date) : null;
+          const generatedBy = req.user?.id || req.user?._id;
+          if (!generatedBy) throw new Error("Admin identity missing; cannot create invoice");
+          invoice = await Invoice.create({
+            invoiceNumber: `UKH-${new Date().getFullYear()}-${randomUUID().slice(0, 8).toUpperCase()}`,
+            bookingId: booking._id,
+            generatedBy,
+            customer: { name: booking.name || "Customer", email: booking.email || "", phone: booking.phone || "" },
+            trek: {
+              name: String(booking.trekId?.title || booking.trekId?.name || "Trek booking"),
+              date: trekDate && !Number.isNaN(trekDate.getTime()) ? trekDate : null,
+              persons: Number(booking.persons || 1),
+            },
+            amounts: { currency: "INR", totalAmount, amountPaidAtGeneration: amountPaid, amountRemainingAtGeneration: amountRemaining },
+            paymentStatusAtGeneration: booking.paymentStatus || "pending",
+            bookingStatusAtGeneration: booking.bookingStatus || "approved",
+          });
+        }
+      } catch (invoiceError) {
+        if (invoiceError?.code === 11000) {
+          invoice = await Invoice.findOne({ bookingId: booking._id }).catch(() => null);
+        }
+        if (!invoice) console.error("Approval invoice creation failed:", invoiceError.message);
+      }
+    }
+
+    if (process.env.EMAIL_USER && booking?.email && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(booking.email)) {
       try {
         await transporter.sendMail({
           from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
           to: booking.email,
           subject: `Booking Approved - ${booking.trekId?.title || "Your Trek"}`,
-          html: bookingConfirmationEmail(booking, booking.trekId),
+          html: bookingConfirmationEmail(booking, booking.trekId, invoice),
+          attachments: invoice ? [{
+            filename: `${invoice.invoiceNumber}.html`,
+            content: bookingInvoiceAttachmentHtml(booking, booking.trekId, invoice),
+            contentType: "text/html; charset=utf-8",
+          }] : [],
         });
       } catch (emailError) {
-        console.error("Approval email failed:", emailError.message);
+        console.error("Approval email or invoice attachment failed:", emailError.message);
       }
     }
     return res.json({ success: true, message: "Booking approved and seats reserved", data: booking });
