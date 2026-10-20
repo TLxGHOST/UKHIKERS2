@@ -1,6 +1,5 @@
 import Booking from "../models/Booking.js";
 import TrekSlot from "../models/TrekSlot.js";
-import Payment from "../models/Payment.js";
 import transporter from "../config/email.js";
 // import { paymentReceiptEmail } from "../utils/emailTemplates.js";
 import { paymentReceiptEmail, bookingConfirmationNoPaymentEmail } from "../utils/emailTemplates.js";
