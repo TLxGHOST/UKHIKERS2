@@ -414,8 +414,8 @@ const AdminPayments = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Payment Method
                 </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {["razorpay", "cash", "upi"].map((method) => (
+                <div className="grid grid-cols-2 gap-2">
+                  {["cash", "upi"].map((method) => (
                     <button
                       key={method}
                       type="button"
