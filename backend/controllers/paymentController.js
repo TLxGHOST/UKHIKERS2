@@ -104,7 +104,7 @@ export const createRazorpayOrder = async (req, res) => {
       await PaymentOrder.create({
         orderId: order.id, slotId: slot._id, trekId: slot.trekId._id,
         name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(),
-        persons: count, amountPaise: order.amount, currency: order.currency,
+        persons: count, totalAmount: total, amountPaise: order.amount, currency: order.currency,
         holdId: typeof holdId === "string" ? holdId : null
       });
     } catch (error) {
@@ -181,8 +181,8 @@ export const verifyRazorpayPayment = async (req, res) => {
     }
 
     const paid = claim.amountPaise / 100;
-    const total = Number(slot.trekId.price) * claim.persons;
-    if (!Number.isFinite(total) || total <= 0 || paid > total) throw new Error("Checkout amount no longer matches trek price");
+    const total = Number(claim.totalAmount);
+    if (!Number.isFinite(total) || total <= 0 || paid > total) throw new Error("Stored checkout amount is invalid");
 
     const booking = await Booking.create({
       name: claim.name, email: claim.email, phone: claim.phone, persons: claim.persons,
