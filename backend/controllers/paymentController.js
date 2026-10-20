@@ -139,6 +139,30 @@ export const createRazorpayOrder = async (req, res) => {
       return res.status(503).json({ success: false, message: "Online payment is not configured. Please contact support." });
     }
 
+    // Reuse an existing unfinished checkout for this booking instead of creating a new
+    // payable order on ordinary retries/double-clicks. Never create a second order while
+    // an earlier one remains payable, even if the requested amount has changed.
+    const activeCheckout = await PaymentOrder.findOne({
+      bookingId: booking._id,
+      status: { $in: ["pending", "processing"] },
+    }).sort({ createdAt: -1 });
+
+    const requestedPaise = Math.round(requested * 100);
+    if (activeCheckout) {
+      if (Number(activeCheckout.amountPaise) !== requestedPaise || activeCheckout.currency !== "INR") {
+        return res.status(409).json({
+          success: false,
+          message: "A checkout is already pending for this booking. Finish or resolve that checkout before starting another.",
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        reused: true,
+        order: { id: activeCheckout.orderId, amount: activeCheckout.amountPaise, currency: activeCheckout.currency },
+        booking: { _id: booking._id, totalAmount: booking.totalAmount, amountRemaining: remaining },
+      });
+    }
+
     const order = await razorpay.orders.create({
       amount: Math.round(requested * 100),
       currency: "INR",
