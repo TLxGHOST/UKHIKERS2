@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, Menu, Mountain, X } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Heart, Menu, Mountain, ReceiptText, UserRound, X } from "lucide-react";
 
 const Navbar = ({ isScrolled }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [customerName, setCustomerName] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("customerUser") || "null")?.name || "My account"; } catch { return "My account"; }
+  });
   const location = useLocation();
   const navigate = useNavigate();
   const token = localStorage.getItem("adminToken");
@@ -17,7 +21,25 @@ const Navbar = ({ isScrolled }) => {
     window.location.reload();
   };
 
-  useEffect(() => { setMobileMenuOpen(false); }, [location.pathname]);
+  useEffect(() => { setMobileMenuOpen(false); setAccountMenuOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    const syncCustomer = () => {
+      try { setCustomerName(JSON.parse(localStorage.getItem("customerUser") || "null")?.name || "My account"); } catch { setCustomerName("My account"); }
+    };
+    window.addEventListener("storage", syncCustomer);
+    window.addEventListener("customer-auth-changed", syncCustomer);
+    return () => { window.removeEventListener("storage", syncCustomer); window.removeEventListener("customer-auth-changed", syncCustomer); };
+  }, []);
+
+  const customerLogout = () => {
+    localStorage.removeItem("customerToken");
+    localStorage.removeItem("customerUser");
+    setCustomerName("My account");
+    setAccountMenuOpen(false);
+    closeMenu();
+    navigate("/", { replace: true });
+    window.location.reload();
+  };
   useEffect(() => {
     if (!mobileMenuOpen) return undefined;
     const handleKeyDown = (event) => { if (event.key === "Escape") setMobileMenuOpen(false); };
@@ -41,7 +63,16 @@ const Navbar = ({ isScrolled }) => {
         </Link>
         <div className="site-nav__links">
           {links.map((link) => <Link key={link.to} to={link.to} className={`site-nav__link ${isActive(link.to) ? "is-active" : ""}`}>{link.label}</Link>)}
-          {customerToken ? <Link to="/account" className={`site-nav__link ${isActive("/account") ? "is-active" : ""}`}>My account</Link> : <Link to="/login" className={`site-nav__link ${isActive("/login") || isActive("/register") ? "is-active" : ""}`}>Sign in</Link>}
+          {customerToken ? <div className="customer-nav-account">
+            <button type="button" className={`site-nav__link customer-nav-trigger ${accountMenuOpen ? "is-active" : ""}`} aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><UserRound size={15} /><span>{customerName}</span><ChevronDown size={14} /></button>
+            {accountMenuOpen && <div className="customer-nav-dropdown">
+              <Link to="/account"><UserRound size={15} /> My profile</Link>
+              <Link to="/account#bookings"><Mountain size={15} /> My bookings</Link>
+              <Link to="/account#wishlist"><Heart size={15} /> My wishlist</Link>
+              <Link to="/account#invoices"><ReceiptText size={15} /> My invoices</Link>
+              <button type="button" onClick={customerLogout}><X size={15} /> Sign out</button>
+            </div>}
+          </div> : <Link to="/login" className={`site-nav__link ${isActive("/login") || isActive("/register") ? "is-active" : ""}`}>Sign in</Link>}
           {token && <><Link to="/admin" className="site-nav__link">Dashboard</Link><button type="button" onClick={logout} className="site-nav__link site-nav__logout">Admin log out</button></>}
         </div>
         <Link to="/equipment" className="site-nav__cta">Find a trek <ArrowUpRight size={16} /></Link>
@@ -51,7 +82,14 @@ const Navbar = ({ isScrolled }) => {
       </nav>
       {mobileMenuOpen && <div className="site-nav__mobile" id="mobile-navigation">
         {links.map((link) => <Link key={link.to} to={link.to} onClick={closeMenu} className={isActive(link.to) ? "is-active" : ""}>{link.label}<ArrowUpRight size={16} /></Link>)}
-        {customerToken ? <Link to="/account" onClick={closeMenu}>My account<ArrowUpRight size={16} /></Link> : <Link to="/login" onClick={closeMenu}>Sign in<ArrowUpRight size={16} /></Link>}
+        {customerToken ? <>
+          <div className="site-nav__mobile-label">SIGNED IN AS {customerName.toUpperCase()}</div>
+          <Link to="/account" onClick={closeMenu}>My profile<ArrowUpRight size={16} /></Link>
+          <Link to="/account#bookings" onClick={closeMenu}>My bookings<ArrowUpRight size={16} /></Link>
+          <Link to="/account#wishlist" onClick={closeMenu}>My wishlist<Heart size={16} /></Link>
+          <Link to="/account#invoices" onClick={closeMenu}>My invoices<ReceiptText size={16} /></Link>
+          <button type="button" onClick={customerLogout}>Sign out</button>
+        </> : <Link to="/login" onClick={closeMenu}>Sign in<ArrowUpRight size={16} /></Link>}
         {token && <><Link to="/admin" onClick={closeMenu}>Dashboard<ArrowUpRight size={16} /></Link><button type="button" onClick={logout}>Admin log out</button></>}
         <Link to="/equipment" onClick={closeMenu} className="site-nav__mobile-cta">Find your next trek <ArrowUpRight size={17} /></Link>
       </div>}
