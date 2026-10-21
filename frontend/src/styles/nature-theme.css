@@ -317,3 +317,8 @@ button:active,a:active { transform: none; }
 .trek-hero__eyebrow svg,.trek-hero__meta svg { color: #e1e9d7; }
 .trek-hero h1 span { color: #e0e8d4; }
 .trek-hero__index { color: rgba(255,255,255,.8); }
+
+.nature-section-nav { position: fixed; z-index: 45; left: 17px; top: 50%; display: flex; flex-direction: column; align-items: center; gap: 10px; transform: translateY(-50%); }
+.nature-section-nav button { display: grid; place-items: center; width: 28px; height: 28px; min-width: 28px; min-height: 28px; border: 1px solid transparent; border-radius: 50%; background: rgba(248,247,241,.75); color: #718171; font-size: 8px; font-weight: 800; cursor: pointer; transition: color .2s,border-color .2s,background .2s; }
+.nature-section-nav button:hover,.nature-section-nav button.is-active { border-color: #b9c8b1; background: #fffefa; color: var(--nature-forest); }
+@media (max-width: 1100px) { .nature-section-nav { display: none; } }
