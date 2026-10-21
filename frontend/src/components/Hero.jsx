@@ -1,91 +1,29 @@
-import { useEffect, useRef } from "react";
+import { ArrowDownRight, ArrowUpRight, Compass, Mountain } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Hero = () => {
-  const titleRef = useRef(null);
-  const subtitleRef = useRef(null);
-  const buttonRef = useRef(null);
-
-  useEffect(() => {
-    const elements = [titleRef.current, subtitleRef.current, buttonRef.current];
-
-    elements.forEach((el) => {
-      if (el) {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(20px)";
-      }
-    });
-
-    setTimeout(() => {
-      if (titleRef.current) {
-        titleRef.current.style.transition = "all 0.8s ease-out";
-        titleRef.current.style.opacity = "1";
-        titleRef.current.style.transform = "translateY(0)";
-      }
-    }, 300);
-
-    setTimeout(() => {
-      if (subtitleRef.current) {
-        subtitleRef.current.style.transition = "all 0.8s ease-out";
-        subtitleRef.current.style.opacity = "1";
-        subtitleRef.current.style.transform = "translateY(0)";
-      }
-    }, 600);
-
-    setTimeout(() => {
-      if (buttonRef.current) {
-        buttonRef.current.style.transition = "all 0.8s ease-out";
-        buttonRef.current.style.opacity = "1";
-        buttonRef.current.style.transform = "translateY(0)";
-      }
-    }, 900);
-  }, []);
-
-  return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
-      {/* Background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{
-          backgroundImage: "url('/assets/images/6.jpg')",
-          backgroundAttachment: "fixed",
-        }}
-      >
-        <div className="absolute inset-0 bg-[#0b1d26] opacity-40"></div>
+const Hero = () => (
+  <div className="adventure-hero">
+    <div className="adventure-hero__image" aria-hidden="true" />
+    <div className="adventure-hero__shade" aria-hidden="true" />
+    <div className="adventure-hero__grid" aria-hidden="true" />
+    <div className="adventure-hero__content">
+      <div className="adventure-eyebrow">
+        <span className="adventure-eyebrow__icon"><Mountain size={15} /></span>
+        <span>For the wild at heart</span><span className="adventure-eyebrow__line" />
+        <span className="adventure-eyebrow__location">Uttarakhand · India</span>
       </div>
-
-      {/* Content */}
-      <div className="z-10 text-center max-w-4xl">
-        <div className="inline-flex items-center mb-8 text-[#e0f0e9]">
-          <span className="h-[1px] w-8 bg-[#e0f0e9] mr-4"></span>
-          <p className="uppercase tracking-widest text-sm">Hike With Us</p>
+      <h1 className="adventure-hero__title">TAKE THE<span>SCENIC</span><span className="adventure-hero__last-line">ROUTE<span className="adventure-hero__period">.</span></span></h1>
+      <div className="adventure-hero__bottom">
+        <p className="adventure-hero__description">Bigger skies. Quieter trails. Stories worth the climb. Find your next mountain escape with people who know the way.</p>
+        <div className="adventure-hero__actions">
+          <Link to="/equipment" className="adventure-button adventure-button--accent">Find your trek <ArrowUpRight size={18} /></Link>
+          <Link to="/about" className="adventure-button adventure-button--ghost">Meet the hikers <ArrowDownRight size={17} /></Link>
         </div>
-
-        <h1
-          ref={titleRef}
-          className="text-4xl sm:text-5xl lg:text-[56px] font-bold text-white font-[Playfair_Display] leading-tight mb-6"
-        >
-          Be Prepared For The Mountains And Beyond!
-        </h1>
-
-        <p
-          ref={subtitleRef}
-          className="text-lg md:text-xl text-[#d1d1d1] mb-10"
-        >
-          A Hiking Trip for Nature Lovers and Adventurers Alike.
-        </p>
-
-        <Link
-          ref={buttonRef}
-          to="/equipment"
-          className="inline-flex items-center space-x-2 px-8 py-3 border border-white text-white hover:bg-[#1a2c35] rounded-lg transition-all duration-300"
-        >
-          <span>Explore Now</span>
-          <i className="fas fa-arrow-right"></i>
-        </Link>
       </div>
     </div>
-  );
-};
-
+    <div className="adventure-hero__side-note" aria-hidden="true"><span>GO FURTHER</span><span>FEEL MORE</span><span>LEAVE LIGHTLY</span></div>
+    <a className="adventure-hero__scroll" href="#trail-stories" aria-label="Scroll to discover"><span>SCROLL TO DISCOVER</span><span className="adventure-hero__scroll-line" /></a>
+    <div className="adventure-hero__stamp" aria-hidden="true"><Compass size={19} /><span>YOUR NEXT<br />CHAPTER IS OUT THERE</span></div>
+  </div>
+);
 export default Hero;
