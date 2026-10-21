@@ -69,7 +69,7 @@ export default function ExploreScreen() {
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.eyebrow}>THE OUTDOORS IS CALLING</Text>
-          <Text style={styles.title}>Find your{ '\n' }kind of wild.</Text>
+          <Text style={styles.title}>Find your{'\n'}kind of wild.</Text>
           <Text style={styles.intro}>
             Every great day out starts with an idea. Explore the kind of trail you’re in the mood for.
           </Text>
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 22,
     paddingTop: 20,
-    paddingBottom: 36,
+    paddingBottom: 150,
     maxWidth: 720,
     width: '100%',
     alignSelf: 'center',
