@@ -306,3 +306,12 @@ button:active,a:active { transform: none; }
   .nature-story__copy,.nature-story__visual,.nature-story__visual img,.home-trek-card,.home-trek-card__image img { transition: none; }
   .trail-marquee__track { animation: none; }
 }
+
+/* Ensure the trek-page hero uses the same softer landscape treatment */
+.trek-hero { position: relative; isolation: isolate; background: #4c6851; }
+.trek-hero__image { background-image: url('/assets/images/8.jpg') !important; background-position: center 45%; filter: saturate(.9); }
+.trek-hero__shade { background: linear-gradient(90deg,rgba(24,55,40,.78),rgba(24,55,40,.24) 75%),linear-gradient(0deg,rgba(24,55,40,.35),transparent 50%); }
+.trek-hero__eyebrow,.trek-hero__meta { color: rgba(255,255,255,.88); }
+.trek-hero__eyebrow svg,.trek-hero__meta svg { color: #e1e9d7; }
+.trek-hero h1 span { color: #e0e8d4; }
+.trek-hero__index { color: rgba(255,255,255,.8); }
