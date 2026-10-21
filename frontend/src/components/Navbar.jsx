@@ -10,17 +10,9 @@ const Navbar = ({ isScrolled }) => {
   });
   const location = useLocation();
   const navigate = useNavigate();
-  const token = localStorage.getItem("adminToken");
   const customerToken = localStorage.getItem("customerToken");
   const isActive = (path) => location.pathname === path;
   const closeMenu = () => setMobileMenuOpen(false);
-  const logout = () => {
-    localStorage.removeItem("adminToken");
-    closeMenu();
-    navigate("/");
-    window.location.reload();
-  };
-
   useEffect(() => { setMobileMenuOpen(false); setAccountMenuOpen(false); }, [location.pathname]);
   useEffect(() => {
     const syncCustomer = () => {
@@ -73,7 +65,6 @@ const Navbar = ({ isScrolled }) => {
               <button type="button" onClick={customerLogout}><X size={15} /> Sign out</button>
             </div>}
           </div> : <Link to="/login" className={`site-nav__link ${isActive("/login") || isActive("/register") ? "is-active" : ""}`}>Sign in</Link>}
-          {token && <><Link to="/admin" className="site-nav__link">Dashboard</Link><button type="button" onClick={logout} className="site-nav__link site-nav__logout">Admin log out</button></>}
         </div>
         <Link to="/equipment" className="site-nav__cta">Find a trek <ArrowUpRight size={16} /></Link>
         <button type="button" className="site-nav__menu-toggle" aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>
@@ -90,7 +81,6 @@ const Navbar = ({ isScrolled }) => {
           <Link to="/account#invoices" onClick={closeMenu}>My invoices<ReceiptText size={16} /></Link>
           <button type="button" onClick={customerLogout}>Sign out</button>
         </> : <Link to="/login" onClick={closeMenu}>Sign in<ArrowUpRight size={16} /></Link>}
-        {token && <><Link to="/admin" onClick={closeMenu}>Dashboard<ArrowUpRight size={16} /></Link><button type="button" onClick={logout}>Admin log out</button></>}
         <Link to="/equipment" onClick={closeMenu} className="site-nav__mobile-cta">Find your next trek <ArrowUpRight size={17} /></Link>
       </div>}
     </header>
