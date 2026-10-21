@@ -80,7 +80,7 @@ const TrackBooking = () => {
         name: "UK Hikers",
         description: `Booking payment: ${booking.trek?.title || "Trek"}`,
         order_id: orderData.order.id,
-        prefill: { name: booking.name, email: identifier.includes("@") ? identifier : "", contact: /^\\d{7,}$/.test(identifier) ? identifier : "" },
+        prefill: { name: booking.name, email: identifier.includes("@") ? identifier : "", contact: /^[0-9]{7,}$/.test(identifier) ? identifier : "" },
         handler: async (response) => {
           try {
             const verifyRes = await fetch(`${API}/payments/verify`, {
