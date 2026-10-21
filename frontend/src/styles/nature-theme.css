@@ -415,10 +415,8 @@ button:active,a:active { transform: none; }
   will-change: opacity, transform;
 }
 .nature-hero__content {
-  pointer-events: auto;
-}
-.nature-hero__content[style*="--hero-scroll-progress: 1"] {
-  pointer-events: none;
+  /* Keep the child entrance animations, but let scroll control this wrapper's transform. */
+  animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .nature-hero__content,
