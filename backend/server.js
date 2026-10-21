@@ -53,7 +53,11 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin/bookings", adminBookingRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
-/* TEST ROUTE */
+/* Health check for local use and deployment platforms */
+app.get("/health", (req, res) => {
+  res.status(200).json({ success: true, message: "UK Hikers API is healthy" });
+});
+
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
