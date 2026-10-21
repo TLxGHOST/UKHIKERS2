@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 import { getTreks, resolveMediaUrl, type Trek } from '@/lib/api';
 
@@ -42,6 +43,7 @@ function matchesDifficulty(trek: Trek, filter: Filter) {
 }
 
 export default function ExploreScreen() {
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<Filter>('All treks');
   const [treks, setTreks] = useState<Trek[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,7 +181,12 @@ export default function ExploreScreen() {
               const imageUrl = resolveMediaUrl(trek.imageUrl);
               const price = formatPrice(trek.price);
               return (
-                <View key={trek._id} style={styles.trekCard}>
+                <Pressable
+                  key={trek._id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`View details for ${trek.title || 'this trek'}`}
+                  onPress={() => router.push(`/trek/${trek._id}`)}
+                  style={({ pressed }) => [styles.trekCard, pressed && styles.trekCardPressed]}>
                   {imageUrl ? (
                     <Image
                       source={{ uri: imageUrl }}
@@ -221,7 +228,7 @@ export default function ExploreScreen() {
                       </View>
                     </View>
                   </View>
-                </View>
+                </Pressable>
               );
             })}
           </View>
@@ -318,6 +325,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.line,
   },
+  trekCardPressed: { opacity: 0.9, transform: [{ scale: 0.995 }] },
   trekImage: { width: '100%', height: 185, backgroundColor: '#E5EDDA' },
   imageFallback: { alignItems: 'center', justifyContent: 'center' },
   imageFallbackIcon: { color: COLORS.forest, fontSize: 54 },
