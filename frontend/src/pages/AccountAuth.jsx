@@ -26,7 +26,7 @@ export default function AccountAuth() {
       });
       localStorage.setItem("customerToken", response.data.token);
       localStorage.setItem("customerUser", JSON.stringify(response.data.user));
-      navigate("/account", { replace: true });
+      navigate("/", { replace: true, state: { customerWelcome: true } });
     } catch (err) {
       setError(err.response?.data?.message || "We couldn’t complete that request. Please try again.");
     } finally {
