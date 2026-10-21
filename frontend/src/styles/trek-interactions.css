@@ -151,3 +151,10 @@
 @media (prefers-reduced-motion: reduce) {
   .trek-finder__search, .trek-filter-chip { transition: none; }
 }
+
+
+/* Customer wishlist actions */
+.trek-wishlist-button{display:inline-flex;align-items:center;gap:7px;min-height:34px;margin-top:13px;padding:0 10px;border:1px solid var(--adventure-line,rgba(244,243,235,.14));background:transparent;color:var(--adventure-muted,#a7b0a7);font-size:10px;font-weight:800;cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+.trek-wishlist-button:hover,.trek-wishlist-button.is-saved{border-color:var(--adventure-accent,#d6ff3f);color:var(--adventure-accent,#d6ff3f)}
+.trek-wishlist-button.is-saved{background:rgba(214,255,63,.08)}
+.wishlist-feedback{margin:0 0 18px;padding:12px 14px;border:1px solid rgba(214,255,63,.25);color:var(--adventure-accent,#d6ff3f);font-size:12px}
