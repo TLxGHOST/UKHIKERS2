@@ -123,7 +123,7 @@ export default function NativeBookingScreen() {
         payment = await RazorpayCheckout.open({
           key: orderData.keyId,
           order_id: orderData.order.id,
-          amount: String(orderData.order.amount),
+          amount: orderData.order.amount,
           currency: orderData.order.currency,
           name: 'UK Hikers',
           description: `Full payment — ${trek.title || 'Trek'}`,
