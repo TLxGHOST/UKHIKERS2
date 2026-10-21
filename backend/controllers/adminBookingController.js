@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Booking from "../models/Booking.js";
 import TrekSlot from "../models/TrekSlot.js";
 import Payment from "../models/Payment.js";
+import transporter from "../config/email.js";
 import { sendBookingApprovalEmail } from "../utils/bookingConfirmationMailer.js";
 
 const validId = (value) => typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
@@ -201,5 +202,33 @@ export const markPaymentComplete = async (req, res) => {
     return res.status(500).json({ success: false, message: "Payment update failed; no partial balance update was committed." });
   } finally {
     await session.endSession();
+  }
+};
+
+export const testEmailConfiguration = async (req, res) => {
+  const missing = [];
+  if (!process.env.EMAIL_USER) missing.push("EMAIL_USER");
+  if (!process.env.EMAIL_PASS) missing.push("EMAIL_PASS");
+  if (missing.length) {
+    return res.status(503).json({ success: false, message: `Email configuration is incomplete. Missing: ${missing.join(", ")}.` });
+  }
+  if (!req.user?.email) {
+    return res.status(422).json({ success: false, message: "Your admin account has no email address to receive the test." });
+  }
+  try {
+    await transporter.verify();
+    const safeName = String(req.user.name || "Admin").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"' : "&quot;" }[c]));
+    const info = await transporter.sendMail({
+      from: `"UK Hikers" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      to: req.user.email,
+      subject: "UK Hikers email configuration test",
+      text: `Hello ${req.user.name || "Admin"}, the UK Hikers backend successfully sent this SMTP test email.`,
+      html: `<div style="font-family:Arial,sans-serif"><h2>UK Hikers email test</h2><p>Hello ${safeName},</p><p>The backend connected to its SMTP service and submitted this test email successfully.</p></div>`,
+    });
+    console.info("Email configuration test sent", { to: req.user.email, messageId: info.messageId });
+    return res.json({ success: true, message: `SMTP connection verified. Test email sent to ${req.user.email}.` });
+  } catch (error) {
+    console.error("Email configuration test failed:", error);
+    return res.status(502).json({ success: false, message: `SMTP test failed (${error.code || error.name || "mail error"}). Check EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS, and EMAIL_FROM; ensure the sender is verified with your email provider.` });
   }
 };
