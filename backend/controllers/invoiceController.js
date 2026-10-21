@@ -17,6 +17,13 @@ export const generateBookingInvoice = async (req, res) => {
       return res.status(404).json({ success: false, message: "Booking not found" });
     }
 
+    if (booking.bookingStatus !== "approved") {
+      return res.status(409).json({ success: false, message: "Invoices can only be generated after a booking is approved." });
+    }
+    if (!booking.approvalEmailSentAt) {
+      return res.status(409).json({ success: false, message: "The approval email must be sent successfully before an invoice can be issued. Retry the approval email first." });
+    }
+
     // Invoice creation is idempotent: retrying the request returns the original
     // snapshot instead of issuing a second invoice for the same booking.
     const existing = await Invoice.findOne({ bookingId: booking._id });
@@ -83,7 +90,15 @@ export const generateBookingInvoice = async (req, res) => {
 
 export const getBookingInvoice = async (req, res) => {
   try {
-    const invoice = await Invoice.findOne({ bookingId: req.params.id });
+    const booking = await Booking.findById(req.params.id).select("bookingStatus approvalEmailSentAt");
+    if (!booking) {
+      return res.status(404).json({ success: false, message: "Booking not found" });
+    }
+    if (booking.bookingStatus !== "approved" || !booking.approvalEmailSentAt) {
+      return res.status(404).json({ success: false, message: "Invoice is available only after approval and successful confirmation email delivery" });
+    }
+
+    const invoice = await Invoice.findOne({ bookingId: booking._id });
     if (!invoice) {
       return res.status(404).json({ success: false, message: "No invoice has been generated for this booking" });
     }
