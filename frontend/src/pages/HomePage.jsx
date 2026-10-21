@@ -60,7 +60,7 @@ function HomePage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-[#0b1d26] font-[Inter] text-[#d1d1d1]">
+    <div className="relative min-h-screen bg-[#0b100e] font-[Inter] text-[#f4f3eb]">
       {/* Navbar */}
       <Navbar isScrolled={isScrolled} active="Explore" />
 
