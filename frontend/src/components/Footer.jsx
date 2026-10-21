@@ -18,16 +18,19 @@ const Footer = () => {
           </p>
 
           <p className="text-[#8f9ca3] text-xs">
-            Copyright © 2025 Systumm Engineers. <br />
+            Copyright © {new Date().getFullYear()} UK Hikers. <br />
             All rights reserved.
           </p>
         </div>
 
-        {/* Booking Message */}
+        {/* Booking Links */}
         <div>
-          <h3 className="text-white font-bold mb-6">
-            Connect to us for bookings ❤️
-          </h3>
+          <h3 className="text-white font-bold mb-6">Plan your next trek</h3>
+          <ul className="space-y-3 text-sm">
+            <li><Link to="/equipment" className="text-[#8f9ca3] hover:text-white transition-colors">Explore treks</Link></li>
+            <li><Link to="/track-booking" className="text-[#8f9ca3] hover:text-white transition-colors">Track a booking</Link></li>
+            <li><Link to="/about" className="text-[#8f9ca3] hover:text-white transition-colors">About UK Hikers</Link></li>
+          </ul>
         </div>
 
         {/* Developer */}
@@ -56,22 +59,9 @@ const Footer = () => {
         <div>
           <h3 className="text-white font-bold mb-6">Connect</h3>
 
-          <div className="flex space-x-6">
-            {[
-              { icon: "fa-facebook", url: "https://facebook.com" },
-              { icon: "fa-instagram", url: "https://instagram.com" },
-            ].map((social) => (
-              <a
-                key={social.icon}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#8f9ca3] hover:text-white transition-colors text-lg"
-              >
-                <i className={`fab ${social.icon}`}></i>
-              </a>
-            ))}
-          </div>
+          <p className="text-[#8f9ca3] text-sm">
+            For an existing request, use Track Booking with your booking ID and email or phone.
+          </p>
 
           <div className="mt-10 text-[#8f9ca3]">
             <p>
