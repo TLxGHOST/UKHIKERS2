@@ -220,7 +220,7 @@ const BlogDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0b1d26] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#0b100e] text-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Loading Trek...</p>
@@ -231,7 +231,7 @@ const BlogDetailPage = () => {
 
   if (!blogPost) {
     return (
-      <div className="min-h-screen bg-[#0b1d26] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#0b100e] text-white flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Trek Not Found</h2>
           <p className="text-gray-400">
@@ -243,7 +243,7 @@ const BlogDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b1d26] text-[#d1d1d1]">
+    <div className="min-h-screen bg-[#0b100e] text-[#d1d1d1]">
       <Navbar isScrolled={isScrolled} />
 
       <div className="pt-24 pb-16">
@@ -288,7 +288,7 @@ const BlogDetailPage = () => {
                 return (
                   <h3
                     key={index}
-                    className="text-xl font-semibold text-yellow-400 mt-6"
+                    className="text-xl font-semibold text-[#d6ff3f] mt-6"
                   >
                     {block.text}
                   </h3>
@@ -314,14 +314,14 @@ const BlogDetailPage = () => {
                 return (
                   <ul
                     key={index}
-                    className="space-y-2 bg-[#1a2c35] rounded-xl p-6"
+                    className="space-y-2 bg-[#121a16] rounded-xl p-6"
                   >
                     {block.items?.map((item, i) => (
                       <li
                         key={i}
                         className="flex items-start gap-3 text-gray-300"
                       >
-                        <span className="text-yellow-500">•</span> {item}
+                        <span className="text-[#d6ff3f]">•</span> {item}
                       </li>
                     ))}
                   </ul>
@@ -340,13 +340,13 @@ const BlogDetailPage = () => {
               </h3>
               <div className="space-y-4">
                 {trekReviews.reviews.map((review) => (
-                  <div key={review._id} className="bg-[#1a2c35] p-4 rounded-lg">
+                  <div key={review._id} className="bg-[#121a16] p-4 rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-semibold text-white">
                           {review.userName}
                         </p>
-                        <p className="text-yellow-400 text-sm">
+                        <p className="text-[#d6ff3f] text-sm">
                           {"⭐".repeat(review.rating)}
                           {"☆".repeat(5 - review.rating)}
                         </p>
@@ -376,7 +376,7 @@ const BlogDetailPage = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <div className="bg-[#1a2c35] p-6 rounded-xl sticky top-28">
+            <div className="bg-[#121a16] p-6 rounded-xl sticky top-28">
               <h2 className="text-xl font-bold mb-6 text-white">
                 Trek Details
               </h2>
@@ -384,7 +384,7 @@ const BlogDetailPage = () => {
               <div className="space-y-4">
                 <div className="flex justify-between pb-3 border-b border-gray-700">
                   <span className="text-gray-400">Price per person</span>
-                  <span className="text-yellow-400 font-bold">
+                  <span className="text-[#d6ff3f] font-bold">
                     ₹{blogPost.price?.toLocaleString()}
                   </span>
                 </div>
@@ -412,7 +412,7 @@ const BlogDetailPage = () => {
                   setBookingStep(1);
                   setBookingComplete(false);
                 }}
-                className="w-full mt-6 bg-yellow-600 hover:bg-yellow-700 text-white py-4 rounded-xl font-bold text-lg transition-all"
+                className="w-full mt-6 bg-[#d6ff3f] hover:bg-[#e3ff82] text-[#0b100e] py-4 rounded-xl font-bold text-lg transition-all"
               >
                 Book This Trek
               </button>
@@ -529,7 +529,7 @@ const BlogDetailPage = () => {
                   <button
                     onClick={() => setBookingStep(2)}
                     disabled={!slotId}
-                    className="w-full bg-yellow-600 text-white py-3 rounded-xl font-bold disabled:opacity-50"
+                    className="w-full bg-[#d6ff3f] text-[#0b100e] py-3 rounded-xl font-bold disabled:opacity-50"
                   >
                     Continue
                   </button>
@@ -590,7 +590,7 @@ const BlogDetailPage = () => {
                         }
                         setBookingStep(3);
                       }}
-                      className="flex-1 bg-yellow-600 text-white py-3 rounded-xl font-bold"
+                      className="flex-1 bg-[#d6ff3f] text-[#0b100e] py-3 rounded-xl font-bold"
                     >
                       Continue
                     </button>
@@ -672,7 +672,7 @@ const BlogDetailPage = () => {
                 setPersons(1);
                 setBookingRequestId("");
               }}
-              className="w-full bg-yellow-600 text-white py-3 rounded-xl font-bold"
+              className="w-full bg-[#d6ff3f] text-[#0b100e] py-3 rounded-xl font-bold"
             >
               Done
             </button>
