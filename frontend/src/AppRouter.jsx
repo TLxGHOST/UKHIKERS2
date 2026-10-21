@@ -15,6 +15,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
 import AdminPayments from "./pages/AdminPayments";
 import AdminInvoices from "./pages/AdminInvoices";
+import AccountAuth from "./pages/AccountAuth";
+import AccountPage from "./pages/AccountPage";
 
 const AppRouter = () => (
   <Router>
@@ -25,6 +27,9 @@ const AppRouter = () => (
       <Route path="/blog/:id" element={<BlogDetailPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/track-booking" element={<TrackBooking />} />
+      <Route path="/login" element={<AccountAuth />} />
+      <Route path="/register" element={<AccountAuth />} />
+      <Route path="/account" element={<AccountPage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
         <Route index element={<Navigate to="dashboard" replace />} />
