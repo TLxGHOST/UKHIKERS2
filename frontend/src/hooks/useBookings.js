@@ -22,8 +22,11 @@ const useBookings = () => {
 
   const approveBooking = async (id) => {
     try {
-      await api.put(`/admin/bookings/approve/${id}`);
-      fetchBookings(); // Refresh the list
+      const response = await api.put(`/admin/bookings/approve/${id}`);
+      const result = response.data;
+      window.alert(result?.message || "Booking approved.");
+      await fetchBookings();
+      return result;
     } catch (err) {
       console.error("Failed to approve booking:", err);
       alert("Failed to approve booking");
