@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
@@ -76,10 +75,10 @@ export default function TrekDetailsScreen() {
   const retry = useCallback(() => setRetryKey((value) => value + 1), []);
   const imageUrl = resolveMediaUrl(trek?.imageUrl);
   const price = formatPrice(trek?.price);
-  const openBookingPage = useCallback(async () => {
+  const openBookingPage = useCallback(() => {
     if (!id || Array.isArray(id)) return;
-    await Linking.openURL(`https://ukhikers-2.vercel.app/blog/${encodeURIComponent(id)}`);
-  }, [id]);
+    router.push(`/booking/${encodeURIComponent(id)}`);
+  }, [id, router]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
