@@ -168,7 +168,7 @@ const TrackBooking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b1d26] text-white">
+    <div className="min-h-screen bg-[#0b100e] text-white">
       <Navbar />
 
       <div className="max-w-2xl mx-auto px-4 pt-32 pb-20">
@@ -182,7 +182,7 @@ const TrackBooking = () => {
         {/* Lookup Form */}
         <form
           onSubmit={handleLookup}
-          className="bg-[#1a2c35] p-6 rounded-xl space-y-4 mb-8"
+          className="bg-[#121a16] p-6 rounded-xl space-y-4 mb-8"
         >
           <div>
             <label className="block text-sm text-gray-400 mb-1">
@@ -193,7 +193,7 @@ const TrackBooking = () => {
               placeholder="e.g., 664f1a2b3c4d5e6f7a8b9c0d"
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
-              className="w-full p-3 bg-[#0b1d26] border border-[#273d47] rounded-lg text-white"
+              className="w-full p-3 bg-[#0b100e] border border-[#273d47] rounded-lg text-white"
               required
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -209,14 +209,14 @@ const TrackBooking = () => {
               placeholder="Enter email or phone used during booking"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full p-3 bg-[#0b1d26] border border-[#273d47] rounded-lg text-white"
+              className="w-full p-3 bg-[#0b100e] border border-[#273d47] rounded-lg text-white"
               required
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full bg-[#d6ff3f] hover:bg-[#e3ff82] text-[#0b100e] py-3 rounded-lg font-bold flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <Search className="w-4 h-4" />
             {loading ? "Searching..." : "Track Booking"}
@@ -234,7 +234,7 @@ const TrackBooking = () => {
 
         {/* Booking Details */}
         {booking && (
-          <div className="bg-[#1a2c35] rounded-xl overflow-hidden">
+          <div className="bg-[#121a16] rounded-xl overflow-hidden">
             <div className="bg-gradient-to-r from-yellow-600 to-orange-600 p-4">
               <h2 className="text-lg font-bold">Booking Found!</h2>
             </div>
@@ -263,7 +263,7 @@ const TrackBooking = () => {
               <hr className="border-gray-700" />
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Total Amount</span>
-                <span className="font-bold text-yellow-400">
+                <span className="font-bold text-[#d6ff3f]">
                   ₹{booking.totalAmount?.toLocaleString()}
                 </span>
               </div>
@@ -328,7 +328,7 @@ const TrackBooking = () => {
                   {!showReviewForm ? (
                     <button
                       onClick={() => setShowReviewForm(true)}
-                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+                      className="w-full bg-[#d6ff3f] hover:bg-[#e3ff82] text-[#0b100e] py-2 rounded-lg flex items-center justify-center gap-2"
                     >
                       <Star className="w-4 h-4" /> Write a Review
                     </button>
@@ -354,7 +354,7 @@ const TrackBooking = () => {
                         placeholder="Share your experience..."
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        className="w-full p-3 bg-[#0b1d26] border border-[#273d47] rounded-lg text-white"
+                        className="w-full p-3 bg-[#0b100e] border border-[#273d47] rounded-lg text-white"
                         rows="3"
                         required
                       />
