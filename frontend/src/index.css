@@ -5,10 +5,10 @@
 /* ===== GLOBAL RESETS & VARIABLES ===== */
 :root {
   scroll-behavior: smooth;
-  --primary-color: #EAB308;
-  --bg-dark: #0b1d26;
-  --card-bg: #1a2c35;
-  --text-light: #d1d1d1;
+  --primary-color: #d6ff3f;
+  --bg-dark: #0b100e;
+  --card-bg: #121a16;
+  --text-light: #f4f3eb;
   --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
