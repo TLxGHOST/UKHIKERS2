@@ -26,6 +26,8 @@ const BlogDetailPage = () => {
   const [bookingEmailSent, setBookingEmailSent] = useState(false);
   const [bookingEmailWarning, setBookingEmailWarning] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [bookingMode, setBookingMode] = useState("lead");
+  const [paymentId, setPaymentId] = useState("");
 
   const [holdId, setHoldId] = useState(null);
   const [holdTimer, setHoldTimer] = useState(null);
@@ -155,67 +157,99 @@ const BlogDetailPage = () => {
   const trekPrice = blogPost?.price || 0;
   const totalAmount = trekPrice * persons;
 
-  // Create booking in database
-  const saveBookingToDB = async (paymentId = null) => {
-    try {
-      const payload = {
-        slotId,
-        name,
-        email,
-        phone,
-        persons: Number(persons),
-        amountPaid: 0,
-        holdId: holdId || undefined,
-      };
-      console.log("Saving booking:", payload);
-
-      const res = await fetch(`${API}/bookings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      console.log("Booking response:", data);
-
-      if (data.success) {
-        setBookingRequestId(data.booking?._id || "");
-        setBookingEmailSent(Boolean(data.emailSent));
-        setBookingEmailWarning(data.emailWarning || "");
-        setBookingComplete(true);
-        setProcessing(false);
-      } else {
-        throw new Error(data.message || "Booking failed");
-      }
-    } catch (err) {
-      console.error("Save booking error:", err);
-      alert("Failed to save booking: " + err.message);
-      setProcessing(false);
-    }
+  // The ₹0 option records a lead only; it does not reserve seats.
+  const saveBookingToDB = async () => {
+    const res = await fetch(`${API}/bookings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slotId, name, email, phone, persons: Number(persons), amountPaid: 0 }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || "Could not submit your interest");
+    setBookingMode("lead");
+    setBookingRequestId(data.booking?._id || "");
+    setBookingEmailSent(Boolean(data.emailSent));
+    setBookingEmailWarning(data.emailWarning || "");
+    setBookingComplete(true);
   };
 
-  // Handle final booking confirmation
-  const handleBooking = async () => {
-    if (!slotId) {
-      alert("Please select a trek date");
-      return;
-    }
-    if (!name || !email || !phone) {
-      alert("Please fill all details");
-      return;
-    }
+  const loadRazorpay = () => new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
+  const handleBooking = async (mode = "lead") => {
+    if (!slotId) return alert("Please select a trek date");
+    if (!name.trim() || !email.trim() || !phone.trim()) return alert("Please fill all contact details");
     const selected = slots.find((s) => s._id === slotId);
-    if (!selected) {
-      alert("Invalid slot selected");
-      return;
-    }
-    const seatsLeft = selected.totalSeats - selected.bookedSeats;
-    if (persons > seatsLeft) {
-      alert(`Only ${seatsLeft} seats available`);
-      return;
-    }
+    if (!selected) return alert("Invalid slot selected");
+    const seatsLeft = Number(selected.totalSeats) - Number(selected.bookedSeats);
+    if (persons > seatsLeft) return alert(`Only ${seatsLeft} seats currently appear available. Please choose another date or group size.`);
     setProcessing(true);
-    await saveBookingToDB();
+    try {
+      if (mode === "lead") {
+        await saveBookingToDB();
+        return;
+      }
+      const loaded = await loadRazorpay();
+      if (!loaded) throw new Error("Razorpay Checkout could not load. Check your connection and try again.");
+      const orderRes = await fetch(`${API}/payments/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slotId, name: name.trim(), email: email.trim(), phone: phone.trim(), persons: Number(persons), currency: "INR" }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || !orderData.success) throw new Error(orderData.message || "Unable to start checkout");
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: "UK Hikers",
+        description: `Full payment — ${blogPost.title}`,
+        order_id: orderData.order.id,
+        prefill: { name: name.trim(), email: email.trim(), contact: phone.trim() },
+        notes: { trekId: id, slotId },
+        theme: { color: "#d6ff3f" },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(`${API}/payments/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(response),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok || !verifyData.success) {
+              throw new Error(verifyData.message || "Payment verification failed");
+            }
+            setBookingMode("paid");
+            setBookingRequestId(verifyData.booking?._id || "");
+            setPaymentId(response.razorpay_payment_id || "");
+            setBookingEmailSent(false);
+            setBookingEmailWarning("");
+            setBookingComplete(true);
+            setShowBooking(false);
+            setProcessing(false);
+          } catch (error) {
+            setProcessing(false);
+            alert(error.message + (response.razorpay_payment_id ? `\nPayment ID: ${response.razorpay_payment_id}. Please contact UK Hikers support before paying again.` : ""));
+          }
+        },
+        modal: { ondismiss: () => setProcessing(false) },
+      };
+      const checkout = new window.Razorpay(options);
+      checkout.on("payment.failed", (event) => {
+        setProcessing(false);
+        alert(event.error?.description || "Payment failed. No booking has been confirmed.");
+      });
+      checkout.open();
+    } catch (error) {
+      alert(error.message || "Unable to continue");
+      setProcessing(false);
+    }
   };
 
   if (loading) {
@@ -598,34 +632,26 @@ const BlogDetailPage = () => {
                 </div>
               )}
 
-              {/* Step 3: Booking request (payment after admin approval) */}
+              {/* Step 3: Choose full payment or submit a zero-cost lead */}
               {bookingStep === 3 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Review Booking Request
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Choose how to continue</h3>
                   <div className="bg-gray-50 p-4 rounded-xl mb-4">
-                    <p className="text-sm text-gray-600">Total trek cost</p>
-                    <p className="text-2xl font-bold text-yellow-600">
-                      ₹{totalAmount.toLocaleString()}
-                    </p>
+                    <p className="text-sm text-gray-600">Full payment for {persons} {persons === 1 ? "person" : "people"}</p>
+                    <p className="text-2xl font-bold text-yellow-600">₹{totalAmount.toLocaleString()}</p>
                   </div>
-                  <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 mb-5">
-                    Your booking must be approved by our team before payment. Submitting this request does not reserve seats and will not charge you. Once approved, you can pay an advance securely from Track Your Booking.
-                  </div>
+                  <button type="button" onClick={() => setBookingMode("paid")} className={`w-full text-left p-4 rounded-xl border-2 mb-3 ${bookingMode === "paid" ? "border-green-600 bg-green-50" : "border-gray-200"}`}>
+                    <span className="block font-bold text-gray-900">Pay full amount now</span>
+                    <span className="block text-sm text-gray-600 mt-1">Secure Razorpay checkout. Seats are allocated only after payment verification.</span>
+                  </button>
+                  <button type="button" onClick={() => setBookingMode("lead")} className={`w-full text-left p-4 rounded-xl border-2 mb-4 ${bookingMode === "lead" ? "border-yellow-500 bg-yellow-50" : "border-gray-200"}`}>
+                    <span className="block font-bold text-gray-900">I'm interested — ₹0</span>
+                    <span className="block text-sm text-gray-600 mt-1">Send your details to our team. No payment and no seat reservation.</span>
+                  </button>
                   <div className="flex gap-3">
-                    <button
-                      onClick={() => setBookingStep(2)}
-                      className="px-4 py-3 border-2 rounded-xl"
-                    >
-                      ← Back
-                    </button>
-                    <button
-                      onClick={handleBooking}
-                      disabled={processing}
-                      className="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold disabled:opacity-50"
-                    >
-                      {processing ? "Submitting..." : "Submit Booking Request"}
+                    <button onClick={() => setBookingStep(2)} className="px-4 py-3 border-2 rounded-xl">← Back</button>
+                    <button onClick={() => handleBooking(bookingMode)} disabled={processing} className="flex-1 bg-[#d6ff3f] text-[#0b100e] py-3 rounded-xl font-bold disabled:opacity-50">
+                      {processing ? (bookingMode === "paid" ? "Preparing checkout..." : "Submitting...") : bookingMode === "paid" ? "Pay securely" : "Submit interest — ₹0"}
                     </button>
                   </div>
                 </div>
@@ -643,24 +669,22 @@ const BlogDetailPage = () => {
               <span className="text-3xl">✓</span>
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Request Submitted!
+              {bookingMode === "paid" ? "Payment verified!" : "Interest submitted!"}
             </h2>
             <p className="text-gray-600 mb-4">
-              Your booking request is pending admin approval. No payment has been taken and seats are not reserved yet.
+              {bookingMode === "paid"
+                ? "Your full payment was verified and your booking has been confirmed."
+                : "Your interest has been sent to our team. No payment was taken and seats are not reserved."}
             </p>
-            {bookingEmailWarning ? (
-              <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                {bookingEmailWarning}
-              </p>
+            {bookingMode === "lead" && (bookingEmailWarning ? (
+              <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">{bookingEmailWarning}</p>
             ) : bookingEmailSent ? (
-              <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                A booking request confirmation email was sent. Please also save your booking ID below.
-              </p>
-            ) : null}
+              <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3 mb-4">A confirmation email was sent. Please save your reference ID.</p>
+            ) : null)}
             {bookingRequestId && <div className="bg-gray-100 rounded-lg p-3 mb-5 text-left">
-              <p className="text-xs text-gray-500 mb-1">YOUR BOOKING ID — SAVE THIS</p>
+              <p className="text-xs text-gray-500 mb-1">{bookingMode === "paid" ? "BOOKING ID" : "LEAD / BOOKING REQUEST ID"} — SAVE THIS</p>
               <p className="font-mono text-sm break-all text-gray-800">{bookingRequestId}</p>
-              <p className="text-xs text-gray-500 mt-2">Use this ID and your email or phone on Track Your Booking. Payment becomes available after approval.</p>
+              {paymentId && <p className="text-xs text-gray-500 mt-2">Payment ID: {paymentId}</p>}
             </div>}
             <button
               onClick={() => {
