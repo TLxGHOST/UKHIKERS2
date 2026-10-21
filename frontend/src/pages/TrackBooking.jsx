@@ -168,7 +168,7 @@ const TrackBooking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b100e] text-white">
+    <div className="nature-page min-h-screen bg-[#0b100e] text-white">
       <Navbar />
 
       <div className="max-w-2xl mx-auto px-4 pt-32 pb-20">
