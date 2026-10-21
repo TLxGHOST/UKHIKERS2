@@ -608,7 +608,7 @@ const BlogDetailPage = () => {
                           navigate("/login");
                           return;
                         }
-                        const phoneRegex = /^[6-9]\\d{9}$/;
+                        const phoneRegex = /^[6-9]\d{9}$/;
                         if (!phone || !phoneRegex.test(phone)) {
                           alert("Please enter a valid 10-digit phone number");
                           return;
