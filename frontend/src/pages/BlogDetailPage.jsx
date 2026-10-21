@@ -582,7 +582,14 @@ const BlogDetailPage = () => {
                     </div>
                   </div>
                   <button
-                    onClick={() => setBookingStep(2)}
+                    onClick={() => {
+                      if (!slotId) return;
+                      if (!localStorage.getItem("customerToken")) {
+                        navigate("/login", { state: { from: location.pathname, openBooking: true, slotId, persons, phone } });
+                        return;
+                      }
+                      setBookingStep(2);
+                    }}
                     disabled={!slotId}
                     className="w-full bg-[#d6ff3f] text-[#0b100e] py-3 rounded-xl font-bold disabled:opacity-50"
                   >
