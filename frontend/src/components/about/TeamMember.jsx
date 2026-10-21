@@ -3,8 +3,8 @@ import React from 'react';
 
 const TeamMember = ({ member }) => {
   return (
-    <div className="bg-[#1a2c35] rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.02]">
-      <div className="h-64 overflow-hidden relative bg-[#1a2c35]">
+    <div className="bg-[#121a16] rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.02]">
+      <div className="h-64 overflow-hidden relative bg-[#121a16]">
         <img
           src={member.imageUrl}
           alt={member.name}
@@ -14,11 +14,11 @@ const TeamMember = ({ member }) => {
             e.target.src = '/assets/images/about/team1.jpg';
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d26] to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b100e] to-transparent"></div>
       </div>
       <div className="p-5">
         <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
-        <span className="text-yellow-500 text-sm block mb-3">{member.role}</span>
+        <span className="text-[#d6ff3f] text-sm block mb-3">{member.role}</span>
         <p className="text-sm text-gray-300">{member.bio}</p>
 
         <div className="mt-4 flex space-x-3">
