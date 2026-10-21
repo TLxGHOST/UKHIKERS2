@@ -11,8 +11,9 @@ export const sendBookingApprovalEmail = async (booking, adminId) => {
     error.statusCode = 409;
     throw error;
   }
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    const error = new Error("Email service is not configured (EMAIL_USER or EMAIL_PASS is missing)");
+  if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    const missing = ["EMAIL_HOST", "EMAIL_USER", "EMAIL_PASS"].filter((key) => !process.env[key]);
+    const error = new Error(`Email service is not configured (missing: ${missing.join(", ")})`);
     error.statusCode = 503;
     throw error;
   }
