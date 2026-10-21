@@ -26,7 +26,10 @@ export default function AccountAuth() {
       });
       localStorage.setItem("customerToken", response.data.token);
       localStorage.setItem("customerUser", JSON.stringify(response.data.user));
-      navigate("/", { replace: true, state: { customerWelcome: true } });
+      const returnTo = location.state?.from || "/";
+      const returnState = location.state?.openBooking ? { openBooking: true, slotId: location.state.slotId, persons: location.state.persons, phone: location.state.phone } : { customerWelcome: true };
+      window.dispatchEvent(new Event("customer-auth-changed"));
+      navigate(returnTo, { replace: true, state: returnState });
     } catch (err) {
       setError(err.response?.data?.message || "We couldn’t complete that request. Please try again.");
     } finally {
