@@ -4,7 +4,8 @@ import {
   getAllBookings,
   approveBooking,
   rejectBooking,
-  markPaymentComplete
+  markPaymentComplete,
+  resendBookingApprovalEmail
 } from "../controllers/adminBookingController.js";
 import { generateBookingInvoice, getBookingInvoice } from "../controllers/invoiceController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
@@ -16,6 +17,7 @@ router.get("/", protect, authorize("super_admin", "manager", "viewer"), getAllBo
 
 /* BOOKING OPERATIONS */
 router.put("/approve/:id", protect, authorize("super_admin", "manager"), approveBooking);
+router.post("/:id/resend-confirmation", protect, authorize("super_admin", "manager"), resendBookingApprovalEmail);
 router.put("/reject/:id", protect, authorize("super_admin", "manager"), rejectBooking);
 
 /* LEGACY MANUAL PAYMENT ACTION: super-admin only until it records a verified payment transaction */
