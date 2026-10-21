@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -7,6 +7,7 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const BlogDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [blogPost, setBlogPost] = useState(null);
@@ -18,8 +19,8 @@ const BlogDetailPage = () => {
   const [bookingStep, setBookingStep] = useState(1);
   const [bookingComplete, setBookingComplete] = useState(false);
   const [slotId, setSlotId] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(() => { try { return JSON.parse(localStorage.getItem("customerUser") || "null")?.name || ""; } catch { return ""; } });
+  const [email, setEmail] = useState(() => { try { return JSON.parse(localStorage.getItem("customerUser") || "null")?.email || ""; } catch { return ""; } });
   const [phone, setPhone] = useState("");
   const [persons, setPersons] = useState(1);
   const [bookingRequestId, setBookingRequestId] = useState("");
@@ -186,7 +187,8 @@ const BlogDetailPage = () => {
 
   const handleBooking = async (mode = "lead") => {
     if (!slotId) return alert("Please select a trek date");
-    if (!name.trim() || !email.trim() || !phone.trim()) return alert("Please fill all contact details");
+    if (!localStorage.getItem("customerToken") || !name.trim() || !email.trim()) { alert("Please sign in first so we can use your account details."); navigate("/login"); return; }
+    if (!phone.trim()) return alert("Please enter your phone number");
     const selected = slots.find((s) => s._id === slotId);
     if (!selected) return alert("Invalid slot selected");
     const seatsLeft = Number(selected.totalSeats) - Number(selected.bookedSeats);
@@ -581,27 +583,16 @@ const BlogDetailPage = () => {
                     Your Details
                   </h3>
                   <div className="space-y-4">
-                    <input
-                      type="text"
-                      placeholder="Full Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full p-3 border rounded-xl"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full p-3 border rounded-xl"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full p-3 border rounded-xl"
-                    />
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Using your signed-in account</p>
+                      <p className="font-semibold text-gray-900">{name || "Sign in to continue"}</p>
+                      <p className="text-sm text-gray-600 break-all">{email}</p>
+                      <p className="text-xs text-gray-500 mt-2">Name and email are taken from your account.</p>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Phone number
+                      <input type="tel" inputMode="numeric" autoComplete="tel" placeholder="10-digit mobile number" value={phone} onChange={(e) => setPhone(e.target.value.slice(0, 10))} className="w-full p-3 mt-2 border rounded-xl" required />
+                    </label>
                   </div>
                   <div className="flex gap-3 mt-6">
                     <button
@@ -612,16 +603,12 @@ const BlogDetailPage = () => {
                     </button>
                     <button
                       onClick={() => {
-                        if (!name || name.trim().length < 2) {
-                          alert("Please enter your full name");
+                        if (!localStorage.getItem("customerToken") || !name.trim() || !email.trim()) {
+                          alert("Please sign in first so we can use your account details.");
+                          navigate("/login");
                           return;
                         }
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!email || !emailRegex.test(email)) {
-                          alert("Please enter a valid email address");
-                          return;
-                        }
-                        const phoneRegex = /^[6-9]\d{9}$/;
+                        const phoneRegex = /^[6-9]\\d{9}$/;
                         if (!phone || !phoneRegex.test(phone)) {
                           alert("Please enter a valid 10-digit phone number");
                           return;
