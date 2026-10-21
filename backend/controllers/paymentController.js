@@ -16,7 +16,7 @@ const sendPaymentReceipt = async (bookingId) => {
     const booking = await Booking.findById(bookingId).populate("trekId").populate("slotId");
     if (!booking?.email || !booking.trekId) return;
     await transporter.sendMail({
-      from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
+      from: `"UK Hikers" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to: booking.email,
       subject: `Payment Receipt - ${booking.trekId.title}`,
       html: paymentReceiptEmail(booking, booking.trekId),
