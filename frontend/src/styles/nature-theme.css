@@ -322,3 +322,67 @@ button:active,a:active { transform: none; }
 .nature-section-nav button { display: grid; place-items: center; width: 28px; height: 28px; min-width: 28px; min-height: 28px; border: 1px solid transparent; border-radius: 50%; background: rgba(248,247,241,.75); color: #718171; font-size: 8px; font-weight: 800; cursor: pointer; transition: color .2s,border-color .2s,background .2s; }
 .nature-section-nav button:hover,.nature-section-nav button.is-active { border-color: #b9c8b1; background: #fffefa; color: var(--nature-forest); }
 @media (max-width: 1100px) { .nature-section-nav { display: none; } }
+
+/* Quiet motion system: cinematic entrance, scroll reveals and tactile hover states */
+.nature-hero__photo {
+  animation: nature-photo-arrive 1.25s cubic-bezier(.2,.7,.2,1) both, nature-landscape-pan 28s 1.2s ease-in-out infinite alternate;
+  will-change: background-position,transform;
+}
+.nature-hero__content > .nature-kicker { animation: nature-rise-in .75s .1s both; }
+.nature-hero__content h1 { animation: nature-rise-in .9s .2s both; }
+.nature-hero__content h1 em { display: inline-block; animation: nature-rise-in .85s .34s both; }
+.nature-hero__intro { animation: nature-rise-in .75s .45s both; }
+.nature-hero__actions { animation: nature-rise-in .75s .56s both; }
+.nature-hero__caption-line { transform-origin: left; animation: nature-line-grow .9s .8s both; }
+.nature-hero__scroll svg { animation: nature-scroll-nudge 2s 1.2s ease-in-out infinite; }
+.nature-hero__badge svg { animation: nature-leaf-breathe 5s ease-in-out infinite; }
+.nature-button,.nature-text-link,.nature-story__link,.site-nav__cta,.site-nav__mobile-cta { transition: transform .25s ease,background-color .25s ease,color .25s ease,box-shadow .25s ease; }
+.nature-button:hover,.site-nav__cta:hover { box-shadow: 0 8px 24px rgba(15,42,25,.16); }
+.nature-text-link span { transition: transform .25s ease; }
+.nature-text-link:hover span { transform: translate(3px,-3px); }
+.nature-story__visual { clip-path: inset(0 0 0 0); }
+.nature-story__visual img { transform: scale(1.045); transition: transform 1.2s cubic-bezier(.2,.7,.2,1),filter .6s; }
+.nature-story:not(.nature-story--visible) .nature-story__visual { clip-path: inset(0 0 8% 0); }
+.nature-story--visible .nature-story__visual { animation: nature-image-reveal .95s .08s both; }
+.nature-story--visible .nature-story__visual img { transform: scale(1); }
+.nature-story__visual:hover img { transform: scale(1.055); filter: saturate(1.05); }
+.nature-story__copy > * { animation: nature-rise-in .65s both; }
+.nature-story__copy .nature-story__number { animation: nature-number-arrive .8s .08s both; }
+.nature-story__copy h2 { animation-delay: .12s; }
+.nature-story__copy p { animation-delay: .2s; }
+.nature-story__copy .nature-story__link { animation-delay: .28s; }
+.nature-nav .site-nav__brand,.nature-nav .site-nav__link { transition: color .25s ease,opacity .25s ease; }
+.nature-nav .site-nav__mark { transition: transform .35s ease,background-color .25s ease; }
+.nature-nav .site-nav__brand:hover .site-nav__mark { transform: rotate(-7deg) translateY(-1px); }
+.site-nav__link::after { transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+.site-nav__link.is-active::after { transform: scaleX(1); }
+.home-trek-card { transition: border-color .3s ease,transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease; }
+.home-trek-card:hover { box-shadow: 0 16px 34px rgba(38,55,45,.11); }
+.home-trek-card__image img,.trek-card__image-wrap img { transition: transform .85s cubic-bezier(.2,.7,.2,1),filter .55s ease; }
+.home-trek-card__image img { transform: scale(1.001); }
+.home-trek-card:hover .home-trek-card__image img,.trek-card:hover .trek-card__image-wrap img { transform: scale(1.055); filter: saturate(1.04); }
+.home-trek-card__arrow,.trek-card__image-arrow { transition: background-color .25s ease,color .25s ease,border-color .25s ease,transform .3s ease; }
+.home-trek-card:hover .home-trek-card__arrow { transform: rotate(45deg); }
+.trek-card { transition: border-color .3s ease,transform .3s ease,box-shadow .3s ease; }
+.trek-card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(38,55,45,.1); }
+.trek-filter-chip { transition: color .2s ease,background-color .2s ease,border-color .2s ease,transform .2s ease; }
+.trek-filter-chip:active { transform: scale(.97); }
+.trail-marquee__track { animation-duration: 44s; }
+.home-outro__image { animation: nature-outro-pan 30s ease-in-out infinite alternate; }
+.nature-footer__leaf { transition: transform .35s ease,background-color .35s ease; }
+.nature-footer__invite:hover .nature-footer__leaf { transform: rotate(-8deg) translateY(-2px); background: rgba(255,255,255,.08); }
+@keyframes nature-rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes nature-line-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes nature-image-reveal { from { clip-path: inset(0 0 9% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes nature-number-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes nature-scroll-nudge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+@keyframes nature-leaf-breathe { 0%,100% { transform: rotate(0) scale(1); } 50% { transform: rotate(4deg) scale(1.04); } }
+@keyframes nature-landscape-pan { from { background-position: 48% 48%; } to { background-position: 53% 52%; } }
+@keyframes nature-outro-pan { from { background-position: 48% 48%; } to { background-position: 53% 52%; } }
+@media (prefers-reduced-motion: reduce) {
+  .nature-hero__photo,.nature-hero__content > .nature-kicker,.nature-hero__content h1,.nature-hero__content h1 em,.nature-hero__intro,.nature-hero__actions,.nature-hero__caption-line,.nature-hero__scroll svg,.nature-hero__badge svg,.nature-story__visual,.nature-story__copy > *, .home-outro__image { animation: none !important; }
+  .nature-story__visual,.nature-story__visual img { clip-path: none !important; transform: none !important; }
+  .nature-story__copy > * { opacity: 1; }
+  .nature-button,.nature-text-link,.nature-story__link,.site-nav__cta,.site-nav__mobile-cta,.home-trek-card,.home-trek-card__image img,.trek-card,.trek-card__image-wrap img,.trail-marquee__track { transition: none !important; animation: none !important; }
+  .home-outro__image { transform: none; }
+}
