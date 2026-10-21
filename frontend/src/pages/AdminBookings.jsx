@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useBookings from "../hooks/useBookings";
+import api from "../api/axios";
 import {
   Phone,
   Mail,
@@ -21,6 +22,9 @@ const AdminBookings = () => {
   const [expandedBooking, setExpandedBooking] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [emailTestLoading, setEmailTestLoading] = useState(false);
+  const [emailTestResult, setEmailTestResult] = useState(null);
+  const [resendingBookingId, setResendingBookingId] = useState(null);
 
   if (loading) {
     return (
@@ -58,6 +62,34 @@ const AdminBookings = () => {
   const handleReject = async (id) => {
     if (window.confirm("Reject this booking? This action cannot be undone.")) {
       await rejectBooking(id);
+    }
+  };
+
+  const handleEmailTest = async () => {
+    setEmailTestLoading(true);
+    setEmailTestResult(null);
+    try {
+      const response = await api.post("/admin/bookings/email-test");
+      setEmailTestResult({ success: true, message: response.data.message });
+    } catch (error) {
+      setEmailTestResult({
+        success: false,
+        message: error.response?.data?.message || "Email test failed. Check the backend logs and SMTP environment variables.",
+      });
+    } finally {
+      setEmailTestLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async (bookingId) => {
+    setResendingBookingId(bookingId);
+    try {
+      const response = await api.post(`/admin/bookings/${bookingId}/resend-confirmation`);
+      window.alert(response.data.message || "Confirmation email sent.");
+    } catch (error) {
+      window.alert(error.response?.data?.message || "Could not resend the confirmation email.");
+    } finally {
+      setResendingBookingId(null);
     }
   };
 
@@ -120,14 +152,31 @@ const AdminBookings = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Header with Stats */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          Bookings Management
-        </h1>
-        <p className="text-sm text-gray-500">
-          Manage and track all trek bookings
-        </p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            Bookings Management
+          </h1>
+          <p className="text-sm text-gray-500">
+            Manage bookings and check customer email delivery.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleEmailTest}
+          disabled={emailTestLoading}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold disabled:opacity-50"
+        >
+          <Mail className="w-4 h-4" />
+          {emailTestLoading ? "Testing email..." : "Test email setup"}
+        </button>
       </div>
+      {emailTestResult && (
+        <div className={`mb-6 rounded-lg border p-4 text-sm ${emailTestResult.success ? "border-green-200 bg-green-50 text-green-800" : "border-red-200 bg-red-50 text-red-800"}`}>
+          <p className="font-semibold">{emailTestResult.success ? "Email test succeeded" : "Email test failed"}</p>
+          <p className="mt-1">{emailTestResult.message}</p>
+        </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -294,6 +343,15 @@ const AdminBookings = () => {
                             Reject
                           </button>
                         </>
+                      )}
+                      {booking.bookingStatus === "approved" && (
+                        <button
+                          onClick={() => handleResendConfirmation(booking._id)}
+                          disabled={resendingBookingId === booking._id}
+                          className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        >
+                          {resendingBookingId === booking._id ? "Sending..." : "Resend email"}
+                        </button>
                       )}
                       <button
                         onClick={() =>
