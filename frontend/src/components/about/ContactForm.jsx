@@ -34,7 +34,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="bg-[#1a2c35] p-6 rounded-xl">
+    <div className="bg-[#121a16] p-6 rounded-xl">
       <h3 className="text-xl font-bold mb-4 text-white">Send Us a Message</h3>
 
       {formSubmitted ? (
@@ -51,7 +51,7 @@ const ContactForm = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-[#0b1d26] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600"
+              className="w-full px-4 py-2 bg-[#0b100e] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600"
               required
             />
           </div>
@@ -64,7 +64,7 @@ const ContactForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-[#0b1d26] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600"
+              className="w-full px-4 py-2 bg-[#0b100e] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600"
               required
             />
           </div>
@@ -77,7 +77,7 @@ const ContactForm = () => {
               name="subject"
               value={formData.subject}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-[#0b1d26] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600"
+              className="w-full px-4 py-2 bg-[#0b100e] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600"
               required
             />
           </div>
@@ -90,12 +90,12 @@ const ContactForm = () => {
               value={formData.message}
               onChange={handleChange}
               rows="4"
-              className="w-full px-4 py-2 bg-[#0b1d26] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600 resize-none"
+              className="w-full px-4 py-2 bg-[#0b100e] border border-[#273d47] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-600 resize-none"
               required
             ></textarea>
           </div>
 
-          <button type="submit" className="w-full py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md transition-colors">
+          <button type="submit" className="w-full py-3 bg-[#d6ff3f] hover:bg-[#e3ff82] text-[#0b100e] font-medium rounded-md transition-colors">
             Send Message
           </button>
         </form>
