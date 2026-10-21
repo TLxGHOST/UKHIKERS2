@@ -58,7 +58,7 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0b100e] font-[Inter] text-[#d1d1d1]">
+    <div className="nature-page min-h-screen bg-[#0b100e] font-[Inter] text-[#d1d1d1]">
       <Navbar isScrolled={isScrolled} active="About" />
 
       {/* Hero Section */}
