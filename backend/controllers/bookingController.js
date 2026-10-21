@@ -156,22 +156,31 @@ export const createBooking = async (req, res) => {
     });
     releaseSeatHold(slotId, holdId);
 
-    if (process.env.EMAIL_USER) {
+    let emailSent = false;
+    let emailWarning = null;
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      emailWarning = "Booking saved, but email is not configured on the server.";
+      console.error(emailWarning);
+    } else {
       try {
         await transporter.sendMail({
-          from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
+          from: `"UK Hikers" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
           to: normalizedEmail,
           subject: `Booking Request Received - ${slot.trekId.title}`,
           html: bookingConfirmationNoPaymentEmail({ ...booking.toObject(), slotId: slot }, slot.trekId),
         });
+        emailSent = true;
       } catch (emailError) {
-        console.error("Booking request email failed:", emailError.message);
+        console.error("Booking request email failed:", emailError);
+        emailWarning = "Booking request saved, but the confirmation email could not be sent. Please keep your booking ID.";
       }
     }
 
     return res.status(201).json({
       success: true,
-      message: "Booking request submitted. Seats are reserved only after admin approval.",
+      emailSent,
+      emailWarning,
+      message: emailSent ? "Booking request submitted. A confirmation email was sent; seats are reserved only after admin approval." : "Booking request submitted. Seats are reserved only after admin approval.",
       booking: {
         _id: booking._id,
         slotId: booking.slotId,
