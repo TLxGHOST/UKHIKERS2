@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, Pressable, View } from 'react-native';
+import { ImageBackground, ScrollView, StyleSheet, Text, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const COLORS = {
@@ -13,9 +13,12 @@ const COLORS = {
   line: '#E5E9DF',
 };
 
+// Remote landscape image used for the first visual prototype.
+const HERO_IMAGE =
+  'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1400&q=85';
+
 export default function HomeScreen() {
   const router = useRouter();
-
   const openExplore = () => router.push('/explore');
 
   return (
@@ -40,41 +43,42 @@ export default function HomeScreen() {
         <View style={styles.intro}>
           <Text style={styles.eyebrow}>A LITTLE CLOSER TO NATURE</Text>
           <Text style={styles.title}>
-            The best days{ '\n' }are <Text style={styles.titleAccent}>out there.</Text>
+            The best days{'\n'}are <Text style={styles.titleAccent}>out there.</Text>
           </Text>
           <Text style={styles.introCopy}>
             Fresh air, winding trails and places worth slowing down for. Your next walk starts here.
           </Text>
         </View>
 
-        <View style={styles.heroCard}>
-          <View style={styles.heroTopRow}>
+        <ImageBackground
+          source={{ uri: HERO_IMAGE }}
+          style={styles.heroCard}
+          imageStyle={styles.heroImage}
+          resizeMode="cover">
+          <View style={styles.heroScrim} />
+          <View style={styles.heroContent}>
             <View style={styles.heroPill}>
               <Text style={styles.heroPillText}>YOUR NEXT ADVENTURE</Text>
             </View>
-            <Text style={styles.heroSparkle}>✳</Text>
+            <View style={styles.heroSpacer} />
+            <Text style={styles.heroKicker}>STEP OUT. FEEL MORE.</Text>
+            <Text style={styles.heroTitle}>Take the scenic route.</Text>
+            <Text style={styles.heroCopy}>
+              Find a walk that fits your pace, from easy-going escapes to days in the hills.
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Explore walks"
+              onPress={openExplore}
+              style={({ pressed }) => [styles.heroButton, pressed && styles.pressed]}>
+              <Text style={styles.heroButtonText}>Explore walks</Text>
+              <Text style={styles.heroButtonArrow}>↗</Text>
+            </Pressable>
           </View>
-          <View style={styles.mountainArt}>
-            <Text style={styles.mountainBack}>⌃</Text>
-            <Text style={styles.mountainFront}>▲</Text>
-            <View style={styles.mountainSun} />
-          </View>
-          <Text style={styles.heroTitle}>Take the scenic route.</Text>
-          <Text style={styles.heroCopy}>
-            Find a walk that fits your pace, from easy-going escapes to days in the hills.
-          </Text>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Explore walks"
-            onPress={openExplore}
-            style={({ pressed }) => [styles.heroButton, pressed && styles.pressed]}>
-            <Text style={styles.heroButtonText}>Explore walks</Text>
-            <Text style={styles.heroButtonArrow}>↗</Text>
-          </Pressable>
-        </View>
+        </ImageBackground>
 
         <View style={styles.sectionHeading}>
-          <View>
+          <View style={styles.sectionHeadingText}>
             <Text style={styles.sectionEyebrow}>MAKE IT YOURS</Text>
             <Text style={styles.sectionTitle}>What’s your kind of walk?</Text>
           </View>
@@ -144,7 +148,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 22,
     paddingTop: 12,
-    paddingBottom: 34,
+    paddingBottom: 150,
     maxWidth: 720,
     width: '100%',
     alignSelf: 'center',
@@ -225,75 +229,61 @@ const styles = StyleSheet.create({
     maxWidth: 340,
   },
   heroCard: {
-    backgroundColor: COLORS.forest,
+    minHeight: 420,
     borderRadius: 26,
-    padding: 22,
     overflow: 'hidden',
     marginBottom: 32,
+    backgroundColor: COLORS.forest,
+    justifyContent: 'flex-end',
   },
-  heroTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  heroImage: {
+    borderRadius: 26,
+  },
+  heroScrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(11, 35, 23, 0.48)',
+  },
+  heroContent: {
+    flex: 1,
+    padding: 22,
+    paddingTop: 24,
     justifyContent: 'space-between',
   },
   heroPill: {
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(247,247,241,0.18)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.22)',
     borderRadius: 20,
     paddingHorizontal: 11,
-    paddingVertical: 7,
+    paddingVertical: 8,
   },
   heroPillText: {
-    color: '#EAF0DE',
+    color: COLORS.white,
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 1.1,
   },
-  heroSparkle: {
+  heroSpacer: {
+    flex: 1,
+    minHeight: 150,
+  },
+  heroKicker: {
     color: COLORS.lime,
-    fontSize: 25,
-  },
-  mountainArt: {
-    height: 100,
-    marginTop: 6,
-    marginBottom: 5,
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  mountainBack: {
-    color: '#7D9C78',
-    fontSize: 120,
-    lineHeight: 120,
-    position: 'absolute',
-    right: 44,
-    top: -23,
+    fontSize: 9,
     fontWeight: '900',
-  },
-  mountainFront: {
-    color: '#A8C68D',
-    fontSize: 112,
-    lineHeight: 112,
-    position: 'absolute',
-    right: 90,
-    top: 9,
-  },
-  mountainSun: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLORS.lime,
-    position: 'absolute',
-    right: 20,
-    top: 15,
+    letterSpacing: 1.7,
+    marginBottom: 8,
   },
   heroTitle: {
     color: COLORS.white,
-    fontSize: 25,
-    lineHeight: 31,
+    fontSize: 27,
+    lineHeight: 33,
     fontWeight: '800',
-    letterSpacing: -0.5,
+    letterSpacing: -0.6,
   },
   heroCopy: {
-    color: '#D2DFD2',
+    color: '#F0F2E9',
     fontSize: 13,
     lineHeight: 20,
     marginTop: 8,
@@ -303,7 +293,7 @@ const styles = StyleSheet.create({
   heroButton: {
     backgroundColor: COLORS.lime,
     borderRadius: 15,
-    minHeight: 50,
+    minHeight: 54,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -324,6 +314,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     marginBottom: 16,
+    gap: 8,
+  },
+  sectionHeadingText: {
+    flex: 1,
   },
   sectionEyebrow: {
     color: COLORS.muted,
