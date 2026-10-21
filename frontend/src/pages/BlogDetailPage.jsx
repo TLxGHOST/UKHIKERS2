@@ -109,6 +109,8 @@ const BlogDetailPage = () => {
     setSlotId("");
     setPersons(1);
     setBookingRequestId("");
+    setPaymentId("");
+    setBookingMode("lead");
     setName("");
     setEmail("");
     setPhone("");
@@ -445,6 +447,8 @@ const BlogDetailPage = () => {
                   setShowBooking(true);
                   setBookingStep(1);
                   setBookingComplete(false);
+                  setBookingMode("lead");
+                  setPaymentId("");
                 }}
                 className="w-full mt-6 bg-[#d6ff3f] hover:bg-[#e3ff82] text-[#0b100e] py-4 rounded-xl font-bold text-lg transition-all"
               >
@@ -691,6 +695,8 @@ const BlogDetailPage = () => {
                 releaseSeats();
                 setShowBooking(false);
                 setBookingComplete(false);
+                setBookingMode("lead");
+                setPaymentId("");
                 setBookingStep(1);
                 setSlotId("");
                 setPersons(1);
