@@ -1,0 +1,355 @@
+/* Homepage editorial feature, horizontal trek rail and cinematic closing panel */
+.trail-marquee {
+  overflow: hidden;
+  padding: 19px 0;
+  border-top: 1px solid var(--adventure-line);
+  border-bottom: 1px solid var(--adventure-line);
+  background: var(--adventure-accent);
+  color: var(--adventure-ink);
+  transform: rotate(-1deg) scale(1.01);
+}
+.trail-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: trail-marquee-drift 34s linear infinite;
+}
+.trail-marquee__track > span {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding-right: 30px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .15em;
+}
+.trail-marquee__track i { font-size: 16px; font-style: normal; }
+@keyframes trail-marquee-drift { to { transform: translateX(-50%); } }
+
+.home-featured {
+  position: relative;
+  padding: 112px max(32px,calc((100vw - 1280px)/2)) 92px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(214,255,63,.07), transparent 32%),
+    var(--adventure-ink);
+}
+.home-featured::before {
+  content: "UKH";
+  position: absolute;
+  top: 70px;
+  right: -22px;
+  color: rgba(244,243,235,.025);
+  font-size: clamp(12rem,30vw,28rem);
+  font-weight: 950;
+  line-height: .8;
+  letter-spacing: -.12em;
+  pointer-events: none;
+}
+.home-featured__top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 37px;
+}
+.home-featured__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--adventure-accent);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .18em;
+}
+.home-featured__top h2 {
+  margin: 20px 0 15px;
+  color: var(--adventure-text);
+  font: 900 clamp(2.7rem,6vw,5.4rem)/.95 var(--adventure-font-display);
+  letter-spacing: -.075em;
+}
+.home-featured__top h2 em,.home-outro__content h2 em {
+  color: var(--adventure-accent);
+  font-style: normal;
+}
+.home-featured__top p {
+  max-width: 470px;
+  color: var(--adventure-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.home-featured__controls { display: flex; gap: 9px; flex-shrink: 0; }
+.home-featured__controls button {
+  display: grid;
+  place-items: center;
+  width: 49px;
+  height: 49px;
+  min-width: 49px;
+  min-height: 49px;
+  border: 1px solid rgba(244,243,235,.24);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--adventure-text);
+  cursor: pointer;
+  transition: background .2s,color .2s,border-color .2s,transform .2s;
+}
+.home-featured__controls button:hover {
+  border-color: var(--adventure-accent);
+  background: var(--adventure-accent);
+  color: var(--adventure-ink);
+  transform: translateY(-2px);
+}
+.home-featured__rail {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-auto-columns: minmax(285px, calc((100% - 40px)/3));
+  grid-auto-flow: column;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 3px 2px 20px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(214,255,63,.55) transparent;
+}
+.home-trek-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--adventure-line);
+  background: #111813;
+  scroll-snap-align: start;
+  transition: border-color .25s,transform .25s;
+}
+.home-trek-card:hover { border-color: rgba(214,255,63,.5); transform: translateY(-5px); }
+.home-trek-card__image {
+  display: block;
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  background: #1a241d;
+}
+.home-trek-card__image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,rgba(4,9,6,.3),transparent 36%,rgba(4,9,6,.55));
+  pointer-events: none;
+}
+.home-trek-card__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(.78);
+  transition: transform .7s cubic-bezier(.2,.7,.2,1),filter .4s;
+}
+.home-trek-card:hover .home-trek-card__image img { transform: scale(1.06); filter: saturate(1.08); }
+.home-trek-card__index {
+  position: absolute;
+  z-index: 1;
+  top: 17px;
+  left: 17px;
+  color: rgba(244,243,235,.88);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .15em;
+}
+.home-trek-card__arrow {
+  position: absolute;
+  z-index: 1;
+  right: 17px;
+  bottom: 17px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(244,243,235,.7);
+  border-radius: 50%;
+  color: var(--adventure-text);
+  transition: background .2s,color .2s,border-color .2s,transform .2s;
+}
+.home-trek-card:hover .home-trek-card__arrow {
+  background: var(--adventure-accent);
+  border-color: var(--adventure-accent);
+  color: var(--adventure-ink);
+  transform: rotate(45deg);
+}
+.home-trek-card__body { padding: 20px; }
+.home-trek-card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px 17px;
+  color: var(--adventure-muted);
+  font-size: 10px;
+}
+.home-trek-card__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.home-trek-card__meta svg { color: var(--adventure-accent); }
+.home-trek-card__body h3 {
+  min-height: 58px;
+  margin: 15px 0 17px;
+  font: 850 clamp(1.3rem,2vw,1.65rem)/1.15 var(--adventure-font-display);
+  letter-spacing: -.045em;
+}
+.home-trek-card__body h3 a { color: var(--adventure-text); transition: color .2s; }
+.home-trek-card__body h3 a:hover { color: var(--adventure-accent); }
+.home-trek-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 15px;
+  border-top: 1px solid var(--adventure-line);
+}
+.home-trek-card__bottom > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: rgba(244,243,235,.46);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+.home-trek-card__bottom strong {
+  color: var(--adventure-accent);
+  font-size: 21px;
+  letter-spacing: -.04em;
+}
+.home-trek-card__bottom > a,.home-featured__empty > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--adventure-text);
+  font-size: 10px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+.home-trek-card__bottom > a svg,.home-featured__empty > a svg { color: var(--adventure-accent); transition: transform .2s; }
+.home-trek-card__bottom > a:hover svg,.home-featured__empty > a:hover svg { transform: translate(3px,-3px); }
+.home-featured__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 15px;
+}
+.home-featured__foot > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  color: rgba(244,243,235,.43);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .15em;
+}
+.home-featured__foot-line { display: inline-block; width: 45px; height: 1px; background: var(--adventure-accent); }
+.home-featured__foot > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--adventure-accent);
+  font-size: 11px;
+  font-weight: 850;
+}
+.home-featured__loading,.home-featured__empty {
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--adventure-muted);
+  text-align: center;
+}
+.home-featured__empty > svg { color: var(--adventure-accent); }
+.home-featured__empty > p { font-size: 13px; }
+
+.home-outro {
+  position: relative;
+  isolation: isolate;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 90px max(32px,calc((100vw - 1280px)/2));
+  background: #111813;
+}
+.home-outro__image,.home-outro__shade { position: absolute; z-index: -1; inset: 0; }
+.home-outro__image {
+  background: url('/assets/images/13.jpg') center 48% / cover;
+  transform: scale(1.02);
+  transition: transform 1.4s cubic-bezier(.2,.7,.2,1);
+}
+.home-outro:hover .home-outro__image { transform: scale(1.055); }
+.home-outro__shade {
+  background: linear-gradient(90deg,rgba(5,10,7,.94),rgba(5,10,7,.73) 43%,rgba(5,10,7,.08)),linear-gradient(0deg,rgba(5,10,7,.55),transparent 55%);
+}
+.home-outro__content { width: min(100%,760px); }
+.home-outro__content > span {
+  color: var(--adventure-accent);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .19em;
+}
+.home-outro__content h2 {
+  margin: 24px 0;
+  color: var(--adventure-text);
+  font: 950 clamp(3.5rem,9vw,8rem)/.88 var(--adventure-font-display);
+  letter-spacing: -.085em;
+}
+.home-outro__content p { max-width: 400px; color: rgba(244,243,235,.75); font-size: 14px; line-height: 1.9; }
+.home-outro__content > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 25px;
+  margin-top: 26px;
+  padding: 16px 19px;
+  background: var(--adventure-accent);
+  color: var(--adventure-ink);
+  font-size: 12px;
+  font-weight: 850;
+  transition: gap .2s,background .2s;
+}
+.home-outro__content > a:hover { gap: 33px; background: #e4ff8c; }
+.home-outro__coordinates {
+  position: absolute;
+  right: max(32px,calc((100vw - 1280px)/2));
+  bottom: 30px;
+  color: rgba(244,243,235,.66);
+  font-size: 8px;
+  font-weight: 850;
+  line-height: 1.8;
+  letter-spacing: .16em;
+  text-align: right;
+}
+@media (max-width: 900px) {
+  .home-featured { padding-top: 86px; padding-bottom: 75px; }
+  .home-featured__rail { grid-auto-columns: minmax(280px, 46%); }
+  .home-trek-card__image { height: 260px; }
+}
+@media (max-width: 620px) {
+  .trail-marquee { padding: 15px 0; }
+  .trail-marquee__track > span { gap: 19px; padding-right: 19px; font-size: 10px; }
+  .home-featured { padding: 72px 20px 62px; }
+  .home-featured__top { align-items: flex-end; gap: 15px; margin-bottom: 25px; }
+  .home-featured__top h2 { margin-top: 17px; font-size: clamp(2.7rem,11vw,4.2rem); }
+  .home-featured__top p { max-width: 310px; font-size: 12px; }
+  .home-featured__controls { gap: 6px; }
+  .home-featured__controls button { width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
+  .home-featured__rail { grid-auto-columns: minmax(260px, 86%); gap: 14px; margin-right: -20px; padding-right: 20px; }
+  .home-trek-card__image { height: 270px; }
+  .home-featured__foot { align-items: flex-start; flex-direction: column; }
+  .home-outro { min-height: 550px; padding: 75px 20px; align-items: flex-end; }
+  .home-outro__image { background-position: 60% center; }
+  .home-outro__shade { background: linear-gradient(0deg,rgba(5,10,7,.94),rgba(5,10,7,.6) 60%,rgba(5,10,7,.16)); }
+  .home-outro__content h2 { font-size: clamp(3.8rem,16vw,6rem); }
+  .home-outro__coordinates { right: 20px; bottom: 20px; font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trail-marquee__track { animation: none; }
+  .home-trek-card,.home-trek-card__image img,.home-trek-card__arrow,.home-featured__controls button,.home-outro__image,.home-outro__content > a { transition: none; }
+  .home-featured__rail { scroll-behavior: auto; }
+}
