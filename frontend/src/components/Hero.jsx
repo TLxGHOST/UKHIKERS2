@@ -17,6 +17,8 @@ const Hero = () => {
         const progress = Math.min(1, Math.max(0, (window.scrollY - hero.offsetTop) / distance));
         hero.style.setProperty("--hero-scroll-progress", progress.toFixed(3));
         hero.style.setProperty("--hero-scroll-offset", `${-progress * 38}px`);
+        const heroContent = hero.querySelector(".nature-hero__content");
+        if (heroContent) heroContent.style.pointerEvents = progress > 0.96 ? "none" : "auto";
       });
     };
 
