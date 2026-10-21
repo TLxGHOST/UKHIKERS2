@@ -9,6 +9,10 @@ export default function FeaturedTreks() {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
   const railRef = useRef(null);
+  const featuredRef = useRef(null);
+  const outroRef = useRef(null);
+  const [featuredVisible, setFeaturedVisible] = useState(false);
+  const [outroVisible, setOutroVisible] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -28,6 +32,21 @@ export default function FeaturedTreks() {
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    const observers = [];
+    const observeOnce = (node, setVisible) => {
+      if (!node || typeof IntersectionObserver === "undefined") { setVisible(true); return; }
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) { setVisible(true); observer.disconnect(); }
+      }, { threshold: 0.12 });
+      observer.observe(node);
+      observers.push(observer);
+    };
+    observeOnce(featuredRef.current, setFeaturedVisible);
+    observeOnce(outroRef.current, setOutroVisible);
+    return () => observers.forEach((observer) => observer.disconnect());
+  }, []);
+
   const moveRail = (direction) => {
     if (!railRef.current) return;
     const card = railRef.current.querySelector(".home-trek-card");
@@ -45,7 +64,7 @@ export default function FeaturedTreks() {
         </div>
       </div>
 
-      <section className="home-featured" aria-labelledby="home-featured-title">
+      <section ref={featuredRef} className={`home-featured ${featuredVisible ? "is-in-view" : ""}`} aria-labelledby="home-featured-title">
         <div className="home-featured__top">
           <div>
             <span className="home-featured__eyebrow"><Mountain size={15} /> THE TRAIL BOARD / 001</span>
@@ -93,7 +112,7 @@ export default function FeaturedTreks() {
         {treks.length > 0 && <div className="home-featured__foot"><span>SCROLL TO FIND YOUR NEXT YES <span className="home-featured__foot-line" /></span><Link to="/equipment">Explore all treks <ArrowUpRight size={16} /></Link></div>}
       </section>
 
-      <section className="home-outro">
+      <section ref={outroRef} className={`home-outro ${outroVisible ? "is-in-view" : ""}`}>
         <div className="home-outro__image" aria-hidden="true" />
         <div className="home-outro__shade" aria-hidden="true" />
         <div className="home-outro__content">
