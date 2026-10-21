@@ -6,8 +6,8 @@ const BlogCard = ({ post }) => {
 
   return (
     <Link to={`/blog/${blogId}`} className="block group">
-      <div className="bg-[#1a2c35] rounded-xl overflow-hidden shadow-lg h-full transition-transform duration-300 group-hover:scale-[1.02]">
-        <div className="h-48 overflow-hidden relative bg-[#1a2c35]">
+      <div className="bg-[#121a16] rounded-xl overflow-hidden shadow-lg h-full transition-transform duration-300 group-hover:scale-[1.02]">
+        <div className="h-48 overflow-hidden relative bg-[#121a16]">
           <img
             src={post.imageUrl || "/assets/images/blog/hiking1.jpg"}
             alt={post.title}
@@ -28,7 +28,7 @@ const BlogCard = ({ post }) => {
             </span>
           </div>
 
-          <h3 className="text-xl font-bold mb-3 text-white group-hover:text-yellow-500 transition-colors">
+          <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#d6ff3f] transition-colors">
             {post.title}
           </h3>
 
@@ -39,7 +39,7 @@ const BlogCard = ({ post }) => {
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-400">{post.readTime}</span>
 
-            <span className="group-hover:translate-x-1 transition-transform duration-300 inline-flex items-center text-xs uppercase tracking-wide bg-yellow-600 text-white px-6 py-2">
+            <span className="group-hover:translate-x-1 transition-transform duration-300 inline-flex items-center text-xs uppercase tracking-wide bg-[#d6ff3f] text-[#0b100e] px-6 py-2">
               Read more
             </span>
           </div>
