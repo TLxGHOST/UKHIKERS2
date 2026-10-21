@@ -10,7 +10,7 @@ const Footer = () => {
             to="/"
             className="text-white font-[Playfair_Display] font-bold text-3xl mb-4 block"
           >
-            UK HIKER
+            UK HIKERS
           </Link>
 
           <p className="text-[#8f9ca3] text-sm mt-4 mb-6">
