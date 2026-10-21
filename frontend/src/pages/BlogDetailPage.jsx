@@ -23,6 +23,8 @@ const BlogDetailPage = () => {
   const [phone, setPhone] = useState("");
   const [persons, setPersons] = useState(1);
   const [bookingRequestId, setBookingRequestId] = useState("");
+  const [bookingEmailSent, setBookingEmailSent] = useState(false);
+  const [bookingEmailWarning, setBookingEmailWarning] = useState("");
   const [processing, setProcessing] = useState(false);
 
   const [holdId, setHoldId] = useState(null);
@@ -178,6 +180,8 @@ const BlogDetailPage = () => {
 
       if (data.success) {
         setBookingRequestId(data.booking?._id || "");
+        setBookingEmailSent(Boolean(data.emailSent));
+        setBookingEmailWarning(data.emailWarning || "");
         setBookingComplete(true);
         setProcessing(false);
       } else {
@@ -644,6 +648,15 @@ const BlogDetailPage = () => {
             <p className="text-gray-600 mb-4">
               Your booking request is pending admin approval. No payment has been taken and seats are not reserved yet.
             </p>
+            {bookingEmailWarning ? (
+              <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                {bookingEmailWarning}
+              </p>
+            ) : bookingEmailSent ? (
+              <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                A booking request confirmation email was sent. Please also save your booking ID below.
+              </p>
+            ) : null}
             {bookingRequestId && <div className="bg-gray-100 rounded-lg p-3 mb-5 text-left">
               <p className="text-xs text-gray-500 mb-1">YOUR BOOKING ID — SAVE THIS</p>
               <p className="font-mono text-sm break-all text-gray-800">{bookingRequestId}</p>
