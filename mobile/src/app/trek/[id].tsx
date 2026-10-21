@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
@@ -75,6 +76,10 @@ export default function TrekDetailsScreen() {
   const retry = useCallback(() => setRetryKey((value) => value + 1), []);
   const imageUrl = resolveMediaUrl(trek?.imageUrl);
   const price = formatPrice(trek?.price);
+  const openBookingPage = useCallback(async () => {
+    if (!id || Array.isArray(id)) return;
+    await Linking.openURL(`https://ukhikers-2.vercel.app/blog/${encodeURIComponent(id)}`);
+  }, [id]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -167,6 +172,17 @@ export default function TrekDetailsScreen() {
                 </View>
               </View>
 
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Book ${trek.title || 'this trek'} on UK Hikers`}
+                onPress={openBookingPage}
+                style={({ pressed }) => [styles.bookButton, pressed && styles.pressed]}>
+                <Text style={styles.bookButtonText}>Book This Trek</Text>
+                <Text style={styles.bookButtonArrow}>↗</Text>
+              </Pressable>
+
+              <Text style={styles.bookingHint}>Choose your date and complete the booking securely on the UK Hikers website.</Text>
+
               <View style={styles.noteCard}>
                 <Text style={styles.noteIcon}>✳</Text>
                 <View style={styles.noteCopy}>
@@ -220,6 +236,10 @@ const styles = StyleSheet.create({
   priceLabel: { color: '#D2DFD2', fontSize: 9, fontWeight: '800', letterSpacing: 1.3 },
   price: { color: COLORS.white, fontSize: 25, fontWeight: '900' },
   priceNote: { color: '#D2DFD2', fontSize: 11, lineHeight: 17, marginTop: 5 },
+  bookButton: { backgroundColor: COLORS.lime, borderRadius: 16, paddingHorizontal: 20, paddingVertical: 17, marginTop: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  bookButtonText: { color: COLORS.forest, fontSize: 16, fontWeight: '900' },
+  bookButtonArrow: { color: COLORS.forest, fontSize: 22, fontWeight: '800' },
+  bookingHint: { color: COLORS.muted, fontSize: 11, lineHeight: 17, marginTop: 9 },
   noteCard: { flexDirection: 'row', gap: 12, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.line, borderRadius: 16, padding: 16, marginTop: 15 },
   noteIcon: { color: COLORS.forestLight, fontSize: 19 },
   noteCopy: { flex: 1 },
