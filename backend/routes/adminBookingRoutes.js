@@ -5,7 +5,8 @@ import {
   approveBooking,
   rejectBooking,
   markPaymentComplete,
-  resendBookingApprovalEmail
+  resendBookingApprovalEmail,
+  testEmailConfiguration
 } from "../controllers/adminBookingController.js";
 import { generateBookingInvoice, getBookingInvoice } from "../controllers/invoiceController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
@@ -14,6 +15,7 @@ const router = express.Router();
 
 /* READ-ONLY BOOKING ACCESS */
 router.get("/", protect, authorize("super_admin", "manager", "viewer"), getAllBookings);
+router.post("/email-test", protect, authorize("super_admin", "manager"), testEmailConfiguration);
 
 /* BOOKING OPERATIONS */
 router.put("/approve/:id", protect, authorize("super_admin", "manager"), approveBooking);
