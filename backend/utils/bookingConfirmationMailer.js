@@ -31,6 +31,15 @@ export const sendBookingApprovalEmail = async (booking, adminId) => {
 
   let invoice = await Invoice.findOne({ bookingId: booking._id });
   let createdForThisAttempt = false;
+
+  // Older versions could create an invoice before email delivery. If no
+  // successful approval-email timestamp exists, replace that unissued snapshot
+  // with one created for the approved booking before retrying delivery.
+  if (invoice && !booking.approvalEmailSentAt) {
+    await Invoice.deleteOne({ _id: invoice._id });
+    invoice = null;
+  }
+
   if (!invoice) {
     const totalAmount = Number(booking.totalAmount);
     const amountPaid = Number(booking.amountPaid || 0);
