@@ -207,6 +207,7 @@ export const markPaymentComplete = async (req, res) => {
 
 export const testEmailConfiguration = async (req, res) => {
   const missing = [];
+  if (!process.env.EMAIL_HOST) missing.push("EMAIL_HOST");
   if (!process.env.EMAIL_USER) missing.push("EMAIL_USER");
   if (!process.env.EMAIL_PASS) missing.push("EMAIL_PASS");
   if (missing.length) {
