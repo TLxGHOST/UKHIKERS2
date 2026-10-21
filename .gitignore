@@ -1,2 +1,6 @@
 {textProject}-output.md
 {textProject}-output.txt
+credentials.txt
+backend-review.zip
+./{textProject}-output.txt
+/.gitignore
