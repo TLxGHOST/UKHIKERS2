@@ -63,14 +63,7 @@ const Navbar = ({ isScrolled }) => {
             >
               Track Booking
             </Link>
-            {!token ? (
-              <Link
-                to="/admin/login"
-                className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
-              >
-                {/* Login */}
-              </Link>
-            ) : (
+            {token && (
               <>
                 <Link
                   to="/admin"
@@ -129,15 +122,7 @@ const Navbar = ({ isScrolled }) => {
           >
             Track Booking
           </Link>
-          {!token ? (
-            <Link
-              to="/admin/login"
-              className="block px-4 py-3 text-white"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Admin Login
-            </Link>
-          ) : (
+          {token && (
             <>
               <Link
                 to="/admin"
