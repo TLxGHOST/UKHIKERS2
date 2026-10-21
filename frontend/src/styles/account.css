@@ -69,3 +69,73 @@
 .customer-nav-dropdown button{border-top:1px solid var(--adventure-line,rgba(244,243,235,.14));margin-top:5px;color:#ffaaa0}
 .site-nav__mobile-label{padding:12px 16px;color:var(--adventure-accent,#d6ff3f);font-size:9px;font-weight:850;letter-spacing:.12em;overflow-wrap:anywhere}
 @media(max-width:800px){.customer-nav-account{display:none}}
+
+
+/* Align customer auth and profile pages with the current nature-first website theme */
+.account-page,.account-dashboard {
+  background: var(--nature-paper,#f8f7f1);
+  color: var(--nature-ink,#26372d);
+}
+.account-back { color: var(--nature-muted,#68766b); }
+.account-back:hover,.account-switch a,.account-inline-link { color: var(--nature-forest,#254b38); }
+.account-panel,.account-section {
+  background: var(--nature-white,#fffefa);
+  border-color: var(--nature-line,#dfe3d8);
+  border-radius: 8px;
+  box-shadow: 0 12px 36px rgba(38,55,45,.055);
+}
+.account-brand { color: var(--nature-forest,#254b38); }
+.account-brand>span { background: var(--nature-forest,#254b38); color: #fffefa; }
+.account-brand small { color: var(--nature-muted,#68766b); }
+.account-eyebrow { color: var(--nature-forest,#254b38); }
+.account-panel h1,.account-welcome h1,.account-section__heading h2,
+.account-empty h3,.account-trek__info h3 { color: var(--nature-ink,#26372d); }
+.account-intro,.account-welcome>p:last-child,.account-section__heading p,
+.account-empty,.account-trek__info p,.account-switch,.account-google-note,
+.account-loading { color: var(--nature-muted,#68766b); }
+.account-form label,.account-interest-label,.account-preferences legend { color: var(--nature-ink,#26372d); }
+.account-form input,.account-preferences textarea {
+  background: var(--nature-white,#fffefa);
+  color: var(--nature-ink,#26372d);
+  border-color: #d8ded3;
+  border-radius: 6px;
+}
+.account-form input::placeholder,.account-preferences textarea::placeholder { color: #8a968b; }
+.account-form input:focus,.account-preferences textarea:focus {
+  outline: 1px solid #6d8a70;
+  border-color: #6d8a70;
+  box-shadow: 0 0 0 3px rgba(75,111,79,.12);
+}
+.account-submit {
+  background: var(--nature-forest,#254b38);
+  color: #fffefa;
+  border-radius: 5px;
+  transition: background .2s,transform .2s;
+}
+.account-submit:hover:not(:disabled) { background: #35664b; transform: translateY(-1px); }
+.account-google-note,.account-dashboard__header,.account-trek,
+.account-trek>button,.account-levels label,.account-alert,
+.account-signout { border-color: var(--nature-line,#dfe3d8); }
+.account-signout { color: var(--nature-forest,#254b38); border-radius: 5px; }
+.account-section__heading>svg,.account-empty>svg,.account-trek__placeholder { color: var(--nature-forest,#254b38); }
+.account-trek__placeholder { background: var(--nature-sage,#dfe7d8); }
+.account-trek__info strong { color: var(--nature-forest,#254b38); }
+.account-trek>button { color: var(--nature-muted,#68766b); border-radius: 5px; }
+.account-trek>button:hover { color: var(--nature-forest,#254b38); background: var(--nature-sage,#dfe7d8); }
+.account-levels label { color: var(--nature-muted,#68766b); border-radius: 5px; }
+.account-levels label.is-selected { border-color: var(--nature-forest,#254b38); color: var(--nature-forest,#254b38); background: #f0f4ec; }
+.account-levels input { accent-color: var(--nature-forest,#254b38); }
+.account-alert { color: var(--nature-forest,#254b38); background: #f0f4ec; }
+.customer-nav-dropdown {
+  background: var(--nature-white,#fffefa);
+  border-color: var(--nature-line,#dfe3d8);
+  border-radius: 7px;
+  box-shadow: 0 14px 30px rgba(25,48,33,.12);
+}
+.customer-nav-dropdown a,.customer-nav-dropdown button { color: var(--nature-ink,#26372d); }
+.customer-nav-dropdown a:hover,.customer-nav-dropdown button:hover {
+  color: var(--nature-forest,#254b38);
+  background: #f0f4ec;
+}
+.customer-nav-dropdown button { color: #a14c40; border-color: var(--nature-line,#dfe3d8); }
+.site-nav__mobile-label { color: var(--nature-forest,#254b38); }
