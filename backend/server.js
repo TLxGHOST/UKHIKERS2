@@ -12,6 +12,7 @@ import slotRoutes from "./routes/slotRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import adminBookingRoutes from "./routes/adminBookingRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin/bookings", adminBookingRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/users", userRoutes);
 /* Health check for local use and deployment platforms */
 app.get("/health", (req, res) => {
   res.status(200).json({ success: true, message: "UK Hikers API is healthy" });
