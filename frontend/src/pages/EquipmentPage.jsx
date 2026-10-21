@@ -44,7 +44,8 @@ const EquipmentPage = () => {
       const matchesSearch = !query || [trek.title, trek.excerpt, trek.description, trek.location, trek.difficulty]
         .some((value) => String(value || "").toLowerCase().includes(query));
       const trekDifficulty = String(trek.difficulty || "").toLowerCase();
-      const matchesDifficulty = difficulty === "All levels" || trekDifficulty.includes(difficulty.toLowerCase());
+      const difficultyTerms = difficulty === "Difficult" ? ["difficult", "hard", "challenging"] : [difficulty.toLowerCase()];
+      const matchesDifficulty = difficulty === "All levels" || difficultyTerms.some((term) => trekDifficulty.includes(term));
       return matchesSearch && matchesDifficulty;
     });
 
