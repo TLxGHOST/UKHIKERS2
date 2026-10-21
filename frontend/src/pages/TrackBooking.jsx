@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { Search, Star, Send, Check, X } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_YOUR_KEY";
 
 const TrackBooking = () => {
   const [bookingId, setBookingId] = useState("");
@@ -11,6 +12,7 @@ const TrackBooking = () => {
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   // Review states
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -41,6 +43,84 @@ const TrackBooking = () => {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const startPayment = async (amount) => {
+    if (!booking || booking.bookingStatus !== "approved") {
+      setError("Payment is available only after admin approval.");
+      return;
+    }
+    if (!Number.isFinite(amount) || amount < 1 || amount > Number(booking.amountRemaining || 0)) {
+      setError("The payment amount is invalid. Refresh your booking details and try again.");
+      return;
+    }
+    if (!window.Razorpay) {
+      setError("Razorpay did not load. Please refresh the page and try again.");
+      return;
+    }
+
+    setPaymentProcessing(true);
+    setError("");
+    try {
+      const orderRes = await fetch(`${API}/payments/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId: booking._id, amount, currency: "INR" }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || !orderData.success || !orderData.order) {
+        throw new Error(orderData.message || "Could not start checkout");
+      }
+
+      const checkout = new window.Razorpay({
+        key: RAZORPAY_KEY,
+        amount: orderData.order.amount,
+        currency: orderData.order.currency || "INR",
+        name: "UK Hikers",
+        description: `Booking payment: ${booking.trek?.title || "Trek"}`,
+        order_id: orderData.order.id,
+        prefill: { name: booking.name, email: identifier.includes("@") ? identifier : "", contact: /^\\d{7,}$/.test(identifier) ? identifier : "" },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(`${API}/payments/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok || !verifyData.success) {
+              throw new Error(verifyData.message || "Payment verification failed");
+            }
+            const lookupRes = await fetch(`${API}/bookings/lookup`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ bookingId: booking._id, identifier }),
+            });
+            const lookupData = await lookupRes.json();
+            if (lookupRes.ok && lookupData.success) setBooking(lookupData.data);
+            else throw new Error("Payment was verified, but booking details could not be refreshed. Search for your booking again.");
+          } catch (error) {
+            setError(error.message || "Payment was made but status could not be refreshed. Please track the booking again.");
+          } finally {
+            setPaymentProcessing(false);
+          }
+        },
+        modal: { ondismiss: () => setPaymentProcessing(false) },
+        theme: { color: "#EAB308" },
+      });
+      checkout.on("payment.failed", (response) => {
+        setError(response?.error?.description || "Payment failed. Please try again.");
+        setPaymentProcessing(false);
+      });
+      checkout.open();
+    } catch (error) {
+      setError(error.message || "Could not start payment. Please try again.");
+      setPaymentProcessing(false);
     }
   };
 
@@ -218,6 +298,29 @@ const TrackBooking = () => {
                   {booking.paymentStatus?.toUpperCase()}
                 </span>
               </div>
+
+              {booking.bookingStatus === "approved" && Number(booking.amountRemaining) > 0 && (
+                <div className="pt-4 border-t border-gray-700 space-y-3">
+                  <h3 className="font-semibold">Make a Payment</h3>
+                  <p className="text-sm text-gray-400">Your booking is approved. Choose an advance payment or pay the full outstanding balance.</p>
+                  <button
+                    type="button"
+                    disabled={paymentProcessing}
+                    onClick={() => startPayment(Math.min(Math.max(1, Math.round(Number(booking.totalAmount) * 0.3)), Number(booking.amountRemaining)))}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold disabled:opacity-50"
+                  >
+                    {paymentProcessing ? "Opening secure checkout..." : `Pay 30% Advance (₹${Math.min(Math.max(1, Math.round(Number(booking.totalAmount) * 0.3)), Number(booking.amountRemaining)).toLocaleString()})`}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={paymentProcessing}
+                    onClick={() => startPayment(Number(booking.amountRemaining))}
+                    className="w-full border border-yellow-500 text-yellow-300 hover:bg-yellow-500/10 py-3 rounded-lg font-semibold disabled:opacity-50"
+                  >
+                    Pay Remaining ₹{Number(booking.amountRemaining).toLocaleString()}
+                  </button>
+                </div>
+              )}
 
               {/* Review Section */}
               {booking.bookingStatus === "approved" && !reviewSubmitted && (
