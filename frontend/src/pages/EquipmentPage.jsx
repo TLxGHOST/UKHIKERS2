@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowUpRight, Clock3, MapPin, Mountain, Sparkles } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -10,23 +11,17 @@ const EquipmentPage = () => {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
-
-  /* Navbar scroll state */
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  /* Fetch trek/blog data from backend */
   useEffect(() => {
     const fetchTreks = async () => {
       try {
         const res = await fetch(`${API}/blogs`);
         const data = await res.json();
-
         setTreks(data.data || []);
       } catch (error) {
         console.error("Error fetching treks:", error);
@@ -34,121 +29,64 @@ const EquipmentPage = () => {
         setLoading(false);
       }
     };
-
     fetchTreks();
   }, []);
 
-  /* Loading UI */
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0b1d26] text-white flex items-center justify-center">
-        Loading Treks...
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#0b1d26] font-[Inter] text-[#d1d1d1]">
-      <Navbar isScrolled={isScrolled} active="Equipment" />
-
-      {/* Hero Section */}
-      <div className="relative pt-28 pb-10 px-4 sm:px-6 lg:px-8 text-center bg-gradient-to-b from-[#0b1d26] via-[#0c2029] to-[#0b1d26]">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 font-[Playfair_Display] text-white">
-          Essential Treks
-        </h1>
-
-        <p className="max-w-2xl mx-auto text-lg">
-          Discover the most beautiful Himalayan treks curated for adventurers
-          and nature lovers.
-        </p>
-
-        <p className="max-w-2xl mx-auto text-sm mt-4 text-yellow-400">
-          💡 Click on any trek to view complete details
-        </p>
-      </div>
-
-      {/* Trek Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {treks.map((trek) => (
-            <div
-              key={trek._id}
-              onClick={() => navigate(`/blog/${trek._id}`)}
-              className="cursor-pointer group"
-            >
-              <div className="bg-[#1a2c35] rounded-xl overflow-hidden shadow-lg h-full transition-all duration-300 group-hover:scale-[1.02]">
-                {/* IMAGE */}
-                <div className="h-48 overflow-hidden relative">
-                  <img
-                    src={trek.imageUrl}
-                    alt={trek.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-
-                  {/* Discount Badge */}
-                  {trek.discount && (
-                    <div className="absolute top-3 left-3 bg-red-600 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                      {trek.discount}% OFF
-                    </div>
-                  )}
-                </div>
-
-                {/* CONTENT */}
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition">
-                    {trek.title}
-                  </h3>
-
-                  <p className="text-sm text-gray-300 mb-4 line-clamp-2">
-                    {trek.excerpt}
-                  </p>
-
-                  {/* TREK INFO GRID */}
-                  <div className="grid grid-cols-2 gap-3 text-sm mb-4">
-                    <div className="bg-[#0b1d26] p-2 rounded text-center">
-                      <p className="text-gray-400">Price</p>
-                      <p className="text-yellow-400 font-semibold">
-                        ₹{trek.price}
-                      </p>
-                    </div>
-
-                    <div className="bg-[#0b1d26] p-2 rounded text-center">
-                      <p className="text-gray-400">Difficulty</p>
-                      <p className="text-white">{trek.difficulty}</p>
-                    </div>
-
-                    <div className="bg-[#0b1d26] p-2 rounded text-center">
-                      <p className="text-gray-400">Duration</p>
-                      <p className="text-white">{trek.duration}</p>
-                    </div>
-
-                    <div className="bg-[#0b1d26] p-2 rounded text-center">
-                      <p className="text-gray-400">Discount</p>
-                      <p className="text-green-400">
-                        {trek.discount ? `${trek.discount}%` : "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/blog/${trek._id}`);
-                    }}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded font-medium transition"
-                  >
-                    Book Now
-                  </button>
-
-                  {/* </div> */}
-                </div>
-              </div>
-            </div>
-          ))}
+    <div className="trek-page">
+      <Navbar isScrolled={isScrolled} />
+      <section className="trek-hero">
+        <div className="trek-hero__image" aria-hidden="true" />
+        <div className="trek-hero__shade" aria-hidden="true" />
+        <div className="trek-hero__content">
+          <span className="trek-hero__eyebrow"><Mountain size={15} /> THE MOUNTAINS ARE WAITING</span>
+          <h1>Pick your<br /><span>kind of wild.</span></h1>
+          <p>From first-time trail days to high-altitude horizons, find a trek that gets you out there.</p>
+          <div className="trek-hero__meta"><span><MapPin size={15} /> Uttarakhand, India</span><span><Sparkles size={15} /> Curated for real adventure</span></div>
         </div>
-      </div>
+        <span className="trek-hero__index" aria-hidden="true">EXPLORE / 01</span>
+      </section>
 
+      <section className="trek-listing">
+        <div className="trek-listing__heading">
+          <div><span className="trek-listing__eyebrow">YOUR NEXT CHAPTER</span><h2>Find your trail<span>.</span></h2></div>
+          {!loading && <p>{treks.length} {treks.length === 1 ? "experience" : "experiences"} to explore</p>}
+        </div>
+
+        {loading ? (
+          <div className="trek-state"><span className="loader" /><p>Finding the trails...</p></div>
+        ) : treks.length === 0 ? (
+          <div className="trek-state"><Mountain size={34} /><h3>New trails are on the way.</h3><p>Check back soon for your next mountain escape.</p></div>
+        ) : (
+          <div className="trek-grid">
+            {treks.map((trek, index) => (
+              <article key={trek._id} className="trek-card">
+                <Link to={`/blog/${trek._id}`} className="trek-card__image-link" aria-label={`View ${trek.title}`}>
+                  <div className="trek-card__image-wrap">
+                    <img src={trek.imageUrl || "/assets/images/6.jpg"} alt={trek.title} loading="lazy" />
+                    <span className="trek-card__number">{String(index + 1).padStart(2, "0")}</span>
+                    {trek.discount ? <span className="trek-card__discount">{trek.discount}% OFF</span> : null}
+                    <span className="trek-card__image-arrow"><ArrowUpRight size={20} /></span>
+                  </div>
+                </Link>
+                <div className="trek-card__body">
+                  <div className="trek-card__eyebrow"><Mountain size={13} /> HIMALAYAN ESCAPE</div>
+                  <h3><Link to={`/blog/${trek._id}`}>{trek.title}</Link></h3>
+                  <p className="trek-card__excerpt">{trek.excerpt || "Discover a memorable route through the mountains with the UK Hikers crew."}</p>
+                  <div className="trek-card__facts">
+                    <div><span>DIFFICULTY</span><strong>{trek.difficulty || "All levels"}</strong></div>
+                    <div><span>DURATION</span><strong><Clock3 size={13} /> {trek.duration || "See details"}</strong></div>
+                  </div>
+                  <div className="trek-card__bottom">
+                    <div><span>FROM</span><strong>₹{Number(trek.price || 0).toLocaleString("en-IN")}</strong></div>
+                    <Link to={`/blog/${trek._id}`} className="trek-card__cta">Explore trek <ArrowUpRight size={16} /></Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
       <Footer />
     </div>
   );
