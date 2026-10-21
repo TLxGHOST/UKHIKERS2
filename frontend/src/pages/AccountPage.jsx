@@ -84,7 +84,7 @@ export default function AccountPage() {
       {error && <p className="account-alert account-alert--error" role="alert">{error}</p>}
       {message && <p className="account-alert" role="status">{message}</p>}
       <div className="account-dashboard__grid">
-        <section className="account-section">
+        <section className="account-section" id="wishlist">
           <div className="account-section__heading"><Heart size={19} /><div><h2>Your wishlist</h2><p>{user?.wishlist?.length || 0} saved {(user?.wishlist?.length || 0) === 1 ? "trek" : "treks"}</p></div></div>
           {!user?.wishlist?.length ? <div className="account-empty"><Heart size={27} /><h3>Your next favourite trek starts here.</h3><p>Save treks from the Explore page and they’ll show up here.</p><Link to="/equipment" className="account-inline-link">Explore treks <ArrowRight size={15} /></Link></div> :
             <div className="account-wishlist">{user.wishlist.map((trek) => {
@@ -93,7 +93,7 @@ export default function AccountPage() {
               return <article className="account-trek" key={trek._id}>{image ? <img src={image} alt="" /> : <div className="account-trek__placeholder"><Mountain /></div>}<div className="account-trek__info"><h3>{trek.title}</h3><p>{[trek.location, trek.duration, trek.difficulty].filter(Boolean).join(" · ")}</p>{typeof trek.price === "number" && <strong>₹{trek.price.toLocaleString("en-IN")}</strong>}</div><button aria-label={`Remove ${trek.title} from wishlist`} onClick={() => removeTrek(trek._id)}><Trash2 size={17} /></button></article>;
             })}</div>}
         </section>
-        <section className="account-section">
+        <section className="account-section" id="preferences">
           <div className="account-section__heading"><SlidersHorizontal size={19} /><div><h2>Your preferences</h2><p>Help us tailor your trail inspiration.</p></div></div>
           <form className="account-preferences" onSubmit={savePreferences}>
             <fieldset><legend>Preferred difficulty</legend><div className="account-levels">{LEVELS.map((level) => <label key={level} className={selected.includes(level) ? "is-selected" : ""}><input type="checkbox" checked={selected.includes(level)} onChange={() => toggleLevel(level)} />{level[0].toUpperCase() + level.slice(1)}</label>)}</div></fieldset>
