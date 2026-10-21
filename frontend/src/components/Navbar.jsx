@@ -32,17 +32,17 @@ const Navbar = ({ isScrolled }) => {
   ];
 
   return (
-    <header className={`site-nav ${isScrolled ? "site-nav--scrolled" : ""}`}>
+    <header className={`site-nav nature-nav ${isScrolled || location.pathname !== "/" ? "site-nav--scrolled" : ""}`}>
       <nav className="site-nav__inner" aria-label="Main navigation">
         <Link to="/" className="site-nav__brand" aria-label="UK Hikers home">
-          <span className="site-nav__mark"><Mountain size={21} strokeWidth={2.2} /></span>
-          <span className="site-nav__wordmark">UK<span>HIKERS</span><small>FIND YOUR OUT THERE</small></span>
+          <span className="site-nav__mark"><Mountain size={22} strokeWidth={1.9} /></span>
+          <span className="site-nav__wordmark">UK HIKERS<small>WANDER WELL. LEAVE LIGHTLY.</small></span>
         </Link>
         <div className="site-nav__links">
           {links.map((link) => <Link key={link.to} to={link.to} className={`site-nav__link ${isActive(link.to) ? "is-active" : ""}`}>{link.label}</Link>)}
           {token && <><Link to="/admin" className="site-nav__link">Dashboard</Link><button type="button" onClick={logout} className="site-nav__link site-nav__logout">Log out</button></>}
         </div>
-        <Link to="/equipment" className="site-nav__cta">Start exploring <ArrowUpRight size={16} /></Link>
+        <Link to="/equipment" className="site-nav__cta">Find a trek <ArrowUpRight size={16} /></Link>
         <button type="button" className="site-nav__menu-toggle" aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>
           {mobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
         </button>
@@ -55,4 +55,5 @@ const Navbar = ({ isScrolled }) => {
     </header>
   );
 };
+
 export default Navbar;
