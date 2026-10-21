@@ -220,7 +220,7 @@ const BlogDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0b100e] text-white flex items-center justify-center">
+      <div className="nature-page min-h-screen bg-[#0b100e] text-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Loading Trek...</p>
@@ -231,7 +231,7 @@ const BlogDetailPage = () => {
 
   if (!blogPost) {
     return (
-      <div className="min-h-screen bg-[#0b100e] text-white flex items-center justify-center">
+      <div className="nature-page min-h-screen bg-[#0b100e] text-white flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Trek Not Found</h2>
           <p className="text-gray-400">
@@ -243,7 +243,7 @@ const BlogDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b100e] text-[#d1d1d1]">
+    <div className="nature-page min-h-screen bg-[#0b100e] text-[#d1d1d1]">
       <Navbar isScrolled={isScrolled} />
 
       <div className="pt-24 pb-16">
