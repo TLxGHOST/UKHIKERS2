@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
-import { randomUUID } from "node:crypto";
 import Booking from "../models/Booking.js";
 import TrekSlot from "../models/TrekSlot.js";
 import Payment from "../models/Payment.js";
-import Invoice from "../models/Invoice.js";
-import transporter from "../config/email.js";
 import { sendBookingApprovalEmail } from "../utils/bookingConfirmationMailer.js";
 
 const validId = (value) => typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
