@@ -6,10 +6,8 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
 import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
 
-import { ExternalLink } from './external-link';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
@@ -54,22 +52,16 @@ export function CustomTabList(props: TabListProps) {
   return (
     <View {...props} style={styles.tabListContainer}>
       <ThemedView type="backgroundElement" style={styles.innerContainer}>
+        <View style={styles.brandMark}>
+          <ThemedText style={styles.brandMarkText}>U</ThemedText>
+        </View>
         <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
+          UK HIKERS
         </ThemedText>
-
         {props.children}
-
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
+        <ThemedText style={[styles.tagline, { color: colors.textSecondary }]}>
+          FIND YOUR OUTSIDE
+        </ThemedText>
       </ThemedView>
     </View>
   );
@@ -86,7 +78,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
+    paddingHorizontal: Spacing.four,
     borderRadius: Spacing.five,
     flexDirection: 'row',
     alignItems: 'center',
@@ -94,8 +86,28 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     maxWidth: MaxContentWidth,
   },
+  brandMark: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    backgroundColor: '#173D2B',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandMarkText: {
+    color: '#D8E7A5',
+    fontSize: 16,
+    fontWeight: '900',
+  },
   brandText: {
     marginRight: 'auto',
+    letterSpacing: 1,
+  },
+  tagline: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginLeft: Spacing.two,
   },
   pressed: {
     opacity: 0.7,
@@ -104,12 +116,5 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     paddingHorizontal: Spacing.three,
     borderRadius: Spacing.three,
-  },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
   },
 });
