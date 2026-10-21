@@ -4,6 +4,7 @@ import Hero from "../components/Hero";
 import SectionNavigation from "../components/SectionNavigation";
 import ContentSection from "../components/ContentSection";
 import Footer from "../components/Footer";
+import FeaturedTreks from "../components/FeaturedTreks";
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState(0);
@@ -87,6 +88,9 @@ function HomePage() {
           <ContentSection {...section} />
         </section>
       ))}
+
+      {/* Dynamic trek showcase and cinematic closing call to action */}
+      <FeaturedTreks />
 
       {/* Footer */}
       <Footer />
