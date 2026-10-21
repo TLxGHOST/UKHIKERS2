@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -8,6 +8,7 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const BlogDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [blogPost, setBlogPost] = useState(null);
@@ -33,6 +34,20 @@ const BlogDetailPage = () => {
   const [holdId, setHoldId] = useState(null);
   const [holdTimer, setHoldTimer] = useState(null);
 
+  useEffect(() => {
+    let user = null;
+    try { user = JSON.parse(localStorage.getItem("customerUser") || "null"); } catch { user = null; }
+    setName(user?.name || "");
+    setEmail(user?.email || "");
+    if (location.state?.openBooking) {
+      setSlotId(location.state.slotId || "");
+      setPersons(Number(location.state.persons) || 1);
+      setPhone(location.state.phone || "");
+      setBookingStep(2);
+      setShowBooking(true);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.key]);
   // Add state
   const [trekReviews, setTrekReviews] = useState(null);
 
@@ -604,8 +619,7 @@ const BlogDetailPage = () => {
                     <button
                       onClick={() => {
                         if (!localStorage.getItem("customerToken") || !name.trim() || !email.trim()) {
-                          alert("Please sign in first so we can use your account details.");
-                          navigate("/login");
+                          navigate("/login", { state: { from: location.pathname, openBooking: true, slotId, persons, phone } });
                           return;
                         }
                         const phoneRegex = /^[6-9]\d{9}$/;
