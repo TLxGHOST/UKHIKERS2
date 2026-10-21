@@ -38,6 +38,12 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     enum: ["pending", "approved", "rejected"],
     default: "pending"
+  },
+
+  // Set only after the approval email is accepted by the SMTP server.
+  approvalEmailSentAt: {
+    type: Date,
+    default: null
   }
 
 }, { timestamps: true });
