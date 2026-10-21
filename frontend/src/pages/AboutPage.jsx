@@ -58,11 +58,11 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0b1d26] font-[Inter] text-[#d1d1d1]">
+    <div className="min-h-screen bg-[#0b100e] font-[Inter] text-[#d1d1d1]">
       <Navbar isScrolled={isScrolled} active="About" />
 
       {/* Hero Section */}
-      <div className="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 text-center bg-gradient-to-b from-[#0b1d26] via-[#0c2029] to-[#0b1d26]">
+      <div className="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 text-center bg-gradient-to-b from-[#0b100e] via-[#101913] to-[#0b100e]">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 font-[Playfair_Display] text-white">
           Our Story
         </h1>
@@ -77,18 +77,18 @@ const AboutPage = () => {
         {/* Brand Story */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 font-[Playfair_Display] text-white relative">
-            <span className="inline-block mr-2 text-yellow-500">//</span>
+            <span className="inline-block mr-2 text-[#d6ff3f]">//</span>
             UKHIKER Philosophy
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="h-[400px] relative bg-[#1a2c35] rounded-xl overflow-hidden shadow-lg">
+            <div className="h-[400px] relative bg-[#121a16] rounded-xl overflow-hidden shadow-lg">
               <img
                 src="/assets/images/about/company.jpg"
                 alt="Mountain landscape"
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-yellow-500 bg-black bg-opacity-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-[#d6ff3f] bg-black bg-opacity-50">
                 <i className="fas fa-mountain text-6xl mb-4 animate-bounce"></i>
                 <h3 className="text-2xl font-bold text-white tracking-wider">
                   UKHIKER
@@ -99,7 +99,7 @@ const AboutPage = () => {
             <div>
               <p className="text-lg mb-6">
                 At{" "}
-                <span className="text-yellow-500 font-semibold">UKHIKER</span>,
+                <span className="text-[#d6ff3f] font-semibold">UKHIKER</span>,
                 we see mountains not just as landscapes, but as living
                 classrooms and sources of inspiration. Every summit, every
                 trail, and every challenge is an opportunity to grow, connect,
@@ -115,7 +115,7 @@ const AboutPage = () => {
               </p>
               <p className="text-lg mb-6">
                 Our philosophy is simple:{" "}
-                <span className="text-yellow-500 font-semibold">
+                <span className="text-[#d6ff3f] font-semibold">
                   live, worship, and inspire
                 </span>
                 .
@@ -132,11 +132,11 @@ const AboutPage = () => {
         {/* Company Milestones */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 font-[Playfair_Display] text-white relative">
-            <span className="inline-block mr-2 text-yellow-500">//</span>
+            <span className="inline-block mr-2 text-[#d6ff3f]">//</span>
             Our Journey
           </h2>
 
-          <div className="relative border-l-2 border-yellow-600 pl-8 ml-4 space-y-12">
+          <div className="relative border-l-2 border-[#d6ff3f] pl-8 ml-4 space-y-12">
             {milestones.map((milestone, index) => (
               <div key={index} className="relative">
                 <span className="absolute -left-[42px] flex items-center justify-center w-8 h-8 bg-yellow-600 rounded-full">
@@ -154,7 +154,7 @@ const AboutPage = () => {
         {/* Team Section */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 font-[Playfair_Display] text-white relative">
-            <span className="inline-block mr-2 text-yellow-500">//</span>
+            <span className="inline-block mr-2 text-[#d6ff3f]">//</span>
             Our Team
           </h2>
 
@@ -168,14 +168,14 @@ const AboutPage = () => {
         {/* Values */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 font-[Playfair_Display] text-white relative">
-            <span className="inline-block mr-2 text-yellow-500">//</span>
+            <span className="inline-block mr-2 text-[#d6ff3f]">//</span>
             Our Values
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="bg-[#1a2c35] p-6 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0b1d26] rounded-full mb-4">
-                <i className="fas fa-mountain text-yellow-500 text-2xl"></i>
+            <div className="bg-[#121a16] p-6 rounded-xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0b100e] rounded-full mb-4">
+                <i className="fas fa-mountain text-[#d6ff3f] text-2xl"></i>
               </div>
               <h3 className="text-xl font-bold mb-3 text-white">Performance</h3>
               <p>
@@ -185,9 +185,9 @@ const AboutPage = () => {
               </p>
             </div>
 
-            <div className="bg-[#1a2c35] p-6 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0b1d26] rounded-full mb-4">
-                <i className="fas fa-leaf text-yellow-500 text-2xl"></i>
+            <div className="bg-[#121a16] p-6 rounded-xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0b100e] rounded-full mb-4">
+                <i className="fas fa-leaf text-[#d6ff3f] text-2xl"></i>
               </div>
               <h3 className="text-xl font-bold mb-3 text-white">
                 Sustainability
@@ -198,9 +198,9 @@ const AboutPage = () => {
               </p>
             </div>
 
-            <div className="bg-[#1a2c35] p-6 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0b1d26] rounded-full mb-4">
-                <i className="fas fa-users text-yellow-500 text-2xl"></i>
+            <div className="bg-[#121a16] p-6 rounded-xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0b100e] rounded-full mb-4">
+                <i className="fas fa-users text-[#d6ff3f] text-2xl"></i>
               </div>
               <h3 className="text-xl font-bold mb-3 text-white">Community</h3>
               <p>
@@ -215,7 +215,7 @@ const AboutPage = () => {
         {/* Contact Section */}
         <div>
           <h2 className="text-3xl font-bold mb-8 font-[Playfair_Display] text-white relative">
-            <span className="inline-block mr-2 text-yellow-500">//</span>
+            <span className="inline-block mr-2 text-[#d6ff3f]">//</span>
             Get in Touch
           </h2>
 
@@ -223,20 +223,20 @@ const AboutPage = () => {
             {/* <ContactForm /> */}
 
             <div>
-              <div className="bg-[#1a2c35] p-6 rounded-xl mb-6">
+              <div className="bg-[#121a16] p-6 rounded-xl mb-6">
                 <h3 className="text-xl font-bold mb-4 text-white">
                   Connect With us for Bookings
                 </h3>
                 <p className="mb-2">
-                  <i className="fas fa-map-marker-alt mr-2 text-yellow-500"></i>{" "}
+                  <i className="fas fa-map-marker-alt mr-2 text-[#d6ff3f]"></i>{" "}
                   Saraswati Vihar , Ajabpur Khurd , Dehradun
                 </p>
                 <p className="mb-2">
-                  <i className="fas fa-phone-alt mr-2 text-yellow-500"></i>{" "}
+                  <i className="fas fa-phone-alt mr-2 text-[#d6ff3f]"></i>{" "}
                   +91-6397658159
                 </p>
                 <p>
-                  <i className="fas fa-envelope mr-2 text-yellow-500"></i>{" "}
+                  <i className="fas fa-envelope mr-2 text-[#d6ff3f]"></i>{" "}
                   ukhikers@gmail.com
                 </p>
               </div>
@@ -244,25 +244,25 @@ const AboutPage = () => {
               <div className="flex space-x-4">
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center w-10 h-10 bg-[#1a2c35] rounded-full hover:bg-yellow-600 transition-colors"
+                  className="inline-flex items-center justify-center w-10 h-10 bg-[#121a16] rounded-full hover:bg-yellow-600 transition-colors"
                 >
                   <i className="fab fa-instagram text-white"></i>
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center w-10 h-10 bg-[#1a2c35] rounded-full hover:bg-yellow-600 transition-colors"
+                  className="inline-flex items-center justify-center w-10 h-10 bg-[#121a16] rounded-full hover:bg-yellow-600 transition-colors"
                 >
                   <i className="fab fa-facebook-f text-white"></i>
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center w-10 h-10 bg-[#1a2c35] rounded-full hover:bg-yellow-600 transition-colors"
+                  className="inline-flex items-center justify-center w-10 h-10 bg-[#121a16] rounded-full hover:bg-yellow-600 transition-colors"
                 >
                   <i className="fab fa-twitter text-white"></i>
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center w-10 h-10 bg-[#1a2c35] rounded-full hover:bg-yellow-600 transition-colors"
+                  className="inline-flex items-center justify-center w-10 h-10 bg-[#121a16] rounded-full hover:bg-yellow-600 transition-colors"
                 >
                   <i className="fab fa-youtube text-white"></i>
                 </a>
