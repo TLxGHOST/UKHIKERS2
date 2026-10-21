@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_YOUR_KEY";
 
 const BlogDetailPage = () => {
   const { id } = useParams();
@@ -23,7 +22,7 @@ const BlogDetailPage = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [persons, setPersons] = useState(1);
-  const [advancePaid, setAdvancePaid] = useState(0);
+  const [bookingRequestId, setBookingRequestId] = useState("");
   const [processing, setProcessing] = useState(false);
 
   const [holdId, setHoldId] = useState(null);
@@ -105,7 +104,7 @@ const BlogDetailPage = () => {
     setBookingStep(1);
     setSlotId("");
     setPersons(1);
-    setAdvancePaid(0);
+    setBookingRequestId("");
     setName("");
     setEmail("");
     setPhone("");
@@ -178,6 +177,7 @@ const BlogDetailPage = () => {
       console.log("Booking response:", data);
 
       if (data.success) {
+        setBookingRequestId(data.booking?._id || "");
         setBookingComplete(true);
         setProcessing(false);
       } else {
@@ -186,109 +186,6 @@ const BlogDetailPage = () => {
     } catch (err) {
       console.error("Save booking error:", err);
       alert("Failed to save booking: " + err.message);
-      setProcessing(false);
-    }
-  };
-
-  // Handle Razorpay payment
-  const handleRazorpayPayment = async () => {
-    setProcessing(true);
-    try {
-      console.log("Creating Razorpay order for amount:", advancePaid);
-      const orderRes = await fetch(`${API}/payments/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slotId,
-          name,
-          email,
-          phone,
-          persons: Number(persons),
-          amount: Number(advancePaid),
-          currency: "INR",
-          holdId: holdId || undefined,
-        }),
-      });
-      const orderData = await orderRes.json();
-      console.log("Order created:", orderData);
-
-      if (!orderData.success || !orderData.order) {
-        throw new Error(orderData.message || "Failed to create payment order");
-      }
-
-      const options = {
-        key: RAZORPAY_KEY,
-        amount: orderData.order.amount,
-        currency: orderData.order.currency || "INR",
-        name: "UK Hikers",
-        description: `Booking: ${blogPost.title}`,
-        image: "/assets/images/logo.png",
-        order_id: orderData.order.id,
-        handler: async function (response) {
-          console.log("Payment successful:", response);
-          try {
-            const verifyRes = await fetch(`${API}/payments/verify`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-            const verifyData = await verifyRes.json();
-            console.log("Verification:", verifyData);
-
-            if (verifyData.success && verifyData.booking) {
-              setBookingComplete(true);
-              setProcessing(false);
-            } else {
-              throw new Error("Payment verification failed");
-            }
-          } catch (err) {
-            console.error("Verification error:", err);
-            alert("Payment verification failed. Please contact support.");
-            setProcessing(false);
-          }
-        },
-        prefill: {
-          name: name,
-          email: email,
-          contact: phone,
-        },
-        notes: {
-          trek: blogPost.title,
-          persons: persons,
-        },
-        theme: {
-          color: "#EAB308",
-        },
-        modal: {
-          ondismiss: function () {
-            console.log("Payment dismissed by user");
-            releaseSeats();
-            setProcessing(false);
-          },
-        },
-      };
-
-      console.log("Opening Razorpay with options:", options);
-      if (!window.Razorpay) {
-        throw new Error("Razorpay not loaded. Please refresh the page.");
-      }
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.on("payment.failed", function (response) {
-        console.error("Payment failed:", response.error);
-        alert("Payment failed: " + response.error.description);
-        releaseSeats();
-        setProcessing(false);
-      });
-      razorpay.open();
-    } catch (err) {
-      console.error("Payment error:", err);
-      alert("Payment failed: " + err.message);
-      releaseSeats();
       setProcessing(false);
     }
   };
@@ -313,12 +210,8 @@ const BlogDetailPage = () => {
       alert(`Only ${seatsLeft} seats available`);
       return;
     }
-    if (advancePaid > 0) {
-      await handleRazorpayPayment();
-    } else {
-      setProcessing(true);
-      await saveBookingToDB();
-    }
+    setProcessing(true);
+    await saveBookingToDB();
   };
 
   if (loading) {
@@ -701,56 +594,21 @@ const BlogDetailPage = () => {
                 </div>
               )}
 
-              {/* Step 3: Payment */}
+              {/* Step 3: Booking request (payment after admin approval) */}
               {bookingStep === 3 && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Payment
+                    Review Booking Request
                   </h3>
                   <div className="bg-gray-50 p-4 rounded-xl mb-4">
-                    <p className="text-sm text-gray-600">Total Amount</p>
+                    <p className="text-sm text-gray-600">Total trek cost</p>
                     <p className="text-2xl font-bold text-yellow-600">
                       ₹{totalAmount.toLocaleString()}
                     </p>
                   </div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Advance Payment
-                  </label>
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    {[
-                      { label: "Pay Later", amount: 0, desc: "Full later" },
-                      {
-                        label: "30% Now",
-                        amount: Math.round(totalAmount * 0.3),
-                        desc: `₹${Math.round(totalAmount * 0.3).toLocaleString()}`,
-                      },
-                      {
-                        label: "50% Now",
-                        amount: Math.round(totalAmount * 0.5),
-                        desc: `₹${Math.round(totalAmount * 0.5).toLocaleString()}`,
-                      },
-                    ].map((opt) => (
-                      <button
-                        key={opt.amount}
-                        onClick={() => setAdvancePaid(opt.amount)}
-                        className={`p-3 rounded-lg border-2 text-center ${advancePaid === opt.amount ? "border-yellow-500 bg-yellow-50" : "border-gray-200"}`}
-                      >
-                        <p className="text-sm font-bold">{opt.label}</p>
-                        <p className="text-xs text-gray-500">{opt.desc}</p>
-                      </button>
-                    ))}
+                  <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 mb-5">
+                    Your booking must be approved by our team before payment. Submitting this request does not reserve seats and will not charge you. Once approved, you can pay an advance securely from Track Your Booking.
                   </div>
-                  <input
-                    type="number"
-                    placeholder="Custom amount"
-                    value={advancePaid || ""}
-                    onChange={(e) =>
-                      setAdvancePaid(
-                        Math.min(totalAmount, Number(e.target.value)),
-                      )
-                    }
-                    className="w-full p-3 border rounded-xl mb-4"
-                  />
                   <div className="flex gap-3">
                     <button
                       onClick={() => setBookingStep(2)}
@@ -763,15 +621,12 @@ const BlogDetailPage = () => {
                       disabled={processing}
                       className="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold disabled:opacity-50"
                     >
-                      {processing
-                        ? "Processing..."
-                        : advancePaid > 0
-                          ? `Pay ₹${advancePaid.toLocaleString()}`
-                          : "Confirm Booking"}
+                      {processing ? "Submitting..." : "Submit Booking Request"}
                     </button>
                   </div>
                 </div>
               )}
+       )}
             </div>
           </div>
         </div>
@@ -785,11 +640,16 @@ const BlogDetailPage = () => {
               <span className="text-3xl">✓</span>
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Booking Confirmed!
+              Request Submitted!
             </h2>
-            <p className="text-gray-600 mb-6">
-              Your trek has been booked successfully.
+            <p className="text-gray-600 mb-4">
+              Your booking request is pending admin approval. No payment has been taken and seats are not reserved yet.
             </p>
+            {bookingRequestId && <div className="bg-gray-100 rounded-lg p-3 mb-5 text-left">
+              <p className="text-xs text-gray-500 mb-1">YOUR BOOKING ID — SAVE THIS</p>
+              <p className="font-mono text-sm break-all text-gray-800">{bookingRequestId}</p>
+              <p className="text-xs text-gray-500 mt-2">Use this ID and your email or phone on Track Your Booking. Payment becomes available after approval.</p>
+            </div>}
             <button
               onClick={() => {
                 releaseSeats();
@@ -798,7 +658,7 @@ const BlogDetailPage = () => {
                 setBookingStep(1);
                 setSlotId("");
                 setPersons(1);
-                setAdvancePaid(0);
+                setBookingRequestId("");
               }}
               className="w-full bg-yellow-600 text-white py-3 rounded-xl font-bold"
             >
