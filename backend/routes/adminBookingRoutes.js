@@ -15,7 +15,7 @@ const router = express.Router();
 
 /* READ-ONLY BOOKING ACCESS */
 router.get("/", protect, authorize("super_admin", "manager", "viewer"), getAllBookings);
-router.post("/email-test", protect, authorize("super_admin", "manager"), testEmailConfiguration);
+router.post("/email-test", protect, authorize("super_admin", "manager", "viewer"), testEmailConfiguration);
 
 /* BOOKING OPERATIONS */
 router.put("/approve/:id", protect, authorize("super_admin", "manager"), approveBooking);
