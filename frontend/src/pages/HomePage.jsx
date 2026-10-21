@@ -81,6 +81,7 @@ function HomePage() {
         <section
           key={section.number}
           ref={(el) => (sectionRefs.current[index + 1] = el)}
+          id={index === 0 ? "trail-stories" : undefined}
           className="scroll-mt-20"
         >
           <ContentSection {...section} />
