@@ -1,151 +1,58 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ArrowUpRight, Menu, Mountain, X } from "lucide-react";
 
 const Navbar = ({ isScrolled }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const token = localStorage.getItem("adminToken");
-
   const isActive = (path) => location.pathname === path;
-
+  const closeMenu = () => setMobileMenuOpen(false);
   const logout = () => {
     localStorage.removeItem("adminToken");
+    closeMenu();
     navigate("/");
     window.location.reload();
   };
 
+  useEffect(() => { closeMenu(); }, [location.pathname]);
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (mobileMenuOpen && !event.target.closest(".mobile-menu-container")) {
-        setMobileMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    if (!mobileMenuOpen) return undefined;
+    const handleKeyDown = (event) => { if (event.key === "Escape") closeMenu(); };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen]);
 
-  return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-[#0b1d26cc] backdrop-blur-sm" : "bg-transparent"}`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
-          <Link
-            to="/"
-            className="text-white font-[Playfair_Display] font-bold text-2xl tracking-wide"
-          >
-            UK HIKERS
-          </Link>
-          <div className="hidden md:flex space-x-8">
-            {/* Desktop nav unchanged */}
-            <Link
-              to="/"
-              className={`text-white px-3 py-2 text-sm font-medium ${isActive("/") ? "border-b-2 border-yellow-500" : ""}`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/equipment"
-              className={`text-white px-3 py-2 text-sm font-medium ${isActive("/equipment") ? "border-b-2 border-yellow-500" : ""}`}
-            >
-              Treks
-            </Link>
-            <Link
-              to="/about"
-              className={`text-white px-3 py-2 text-sm font-medium ${isActive("/about") ? "border-b-2 border-yellow-500" : ""}`}
-            >
-              About
-            </Link>
-            <Link
-              to="/track-booking"
-              className="text-white px-3 py-2 text-sm font-medium"
-            >
-              Track Booking
-            </Link>
-            {token && (
-              <>
-                <Link
-                  to="/admin"
-                  className="text-white px-3 py-2 text-sm font-medium hover:text-yellow-400"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={logout}
-                  className="text-white px-3 py-2 text-sm font-medium hover:text-red-400"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
-          <button
-            className="md:hidden text-white"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <i
-              className={`fas ${mobileMenuOpen ? "fa-times" : "fa-bars"} text-xl`}
-            ></i>
-          </button>
-        </div>
-      </div>
+  const links = [
+    { to: "/", label: "Home" },
+    { to: "/equipment", label: "Explore treks" },
+    { to: "/about", label: "Our story" },
+    { to: "/track-booking", label: "Track booking" },
+  ];
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mobile-menu-container bg-[#0b1d26]">
-          <Link
-            to="/"
-            className="block px-4 py-3 text-white"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link
-            to="/equipment"
-            className="block px-4 py-3 text-white"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Treks
-          </Link>
-          <Link
-            to="/about"
-            className="block px-4 py-3 text-white"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            About
-          </Link>
-          <Link
-            to="/track-booking"
-            className="block px-4 py-3 text-white"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Track Booking
-          </Link>
-          {token && (
-            <>
-              <Link
-                to="/admin"
-                className="block px-4 py-3 text-white"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <button
-                onClick={() => {
-                  logout();
-                  setMobileMenuOpen(false);
-                }}
-                className="block w-full text-left px-4 py-3 text-white"
-              >
-                Logout
-              </button>
-            </>
-          )}
+  return (
+    <header className={`site-nav ${isScrolled ? "site-nav--scrolled" : ""}`}>
+      <nav className="site-nav__inner" aria-label="Main navigation">
+        <Link to="/" className="site-nav__brand" aria-label="UK Hikers home">
+          <span className="site-nav__mark"><Mountain size={21} strokeWidth={2.2} /></span>
+          <span className="site-nav__wordmark">UK<span>HIKERS</span><small>FIND YOUR OUT THERE</small></span>
+        </Link>
+        <div className="site-nav__links">
+          {links.map((link) => <Link key={link.to} to={link.to} className={`site-nav__link ${isActive(link.to) ? "is-active" : ""}`}>{link.label}</Link>)}
+          {token && <><Link to="/admin" className="site-nav__link">Dashboard</Link><button type="button" onClick={logout} className="site-nav__link site-nav__logout">Log out</button></>}
         </div>
-      )}
-    </nav>
+        <Link to="/equipment" className="site-nav__cta">Start exploring <ArrowUpRight size={16} /></Link>
+        <button type="button" className="site-nav__menu-toggle" aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>
+          {mobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
+        </button>
+      </nav>
+      {mobileMenuOpen && <div className="site-nav__mobile" id="mobile-navigation">
+        {links.map((link) => <Link key={link.to} to={link.to} onClick={closeMenu} className={isActive(link.to) ? "is-active" : ""}>{link.label}<ArrowUpRight size={16} /></Link>)}
+        {token && <><Link to="/admin" onClick={closeMenu}>Dashboard<ArrowUpRight size={16} /></Link><button type="button" onClick={logout}>Log out</button></>}
+        <Link to="/equipment" onClick={closeMenu} className="site-nav__mobile-cta">Find your next trek <ArrowUpRight size={17} /></Link>
+      </div>}
+    </header>
   );
 };
-
 export default Navbar;
