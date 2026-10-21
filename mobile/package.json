@@ -30,7 +30,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "@types/react-native-razorpay": "^2.2.6"
   },
   "scripts": {
     "start": "expo start",
