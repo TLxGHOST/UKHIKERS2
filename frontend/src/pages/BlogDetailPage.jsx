@@ -626,7 +626,6 @@ const BlogDetailPage = () => {
                   </div>
                 </div>
               )}
-       )}
             </div>
           </div>
         </div>
