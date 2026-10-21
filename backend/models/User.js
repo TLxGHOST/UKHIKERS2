@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
   password: { type: String, required: true, minlength: 8, select: false },
   authProvider: { type: String, enum: ["password", "google"], default: "password" },
-  googleSubject: { type: String, default: null, sparse: true, unique: true },
+  googleSubject: { type: String, sparse: true, unique: true },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog" }],
   preferences: { type: preferencesSchema, default: () => ({}) },
   isActive: { type: Boolean, default: true },
