@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Clock3, MapPin, Mountain, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { ArrowUpRight, Clock3, Heart, MapPin, Mountain, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/trek-interactions.css";
+import api from "../api/axios";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const DIFFICULTIES = ["All levels", "Easy", "Moderate", "Difficult"];
@@ -15,6 +16,8 @@ const EquipmentPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [difficulty, setDifficulty] = useState("All levels");
   const [sortBy, setSortBy] = useState("featured");
+  const [wishlist, setWishlist] = useState(new Set());
+  const [wishlistMessage, setWishlistMessage] = useState("");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -37,6 +40,35 @@ const EquipmentPage = () => {
     };
     fetchTreks();
   }, []);
+
+  useEffect(() => {
+    if (!localStorage.getItem("customerToken")) return;
+    api.get("/users/me").then(({ data }) => {
+      const ids = (data.user?.wishlist || []).map((item) => typeof item === "string" ? item : item?._id).filter(Boolean);
+      setWishlist(new Set(ids));
+    }).catch(() => {});
+  }, []);
+
+  const toggleWishlist = async (trekId) => {
+    if (!localStorage.getItem("customerToken")) {
+      window.location.assign("/login");
+      return;
+    }
+    setWishlistMessage("");
+    try {
+      if (wishlist.has(trekId)) {
+        await api.delete(`/users/wishlist/${trekId}`);
+        setWishlist((current) => { const next = new Set(current); next.delete(trekId); return next; });
+        setWishlistMessage("Removed from your wishlist.");
+      } else {
+        await api.post(`/users/wishlist/${trekId}`);
+        setWishlist((current) => new Set(current).add(trekId));
+        setWishlistMessage("Saved to your wishlist.");
+      }
+    } catch (error) {
+      setWishlistMessage(error.response?.data?.message || "Could not update your wishlist. Please try again.");
+    }
+  };
 
   const filteredTreks = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -82,6 +114,8 @@ const EquipmentPage = () => {
           <div><span className="trek-listing__eyebrow">YOUR NEXT CHAPTER</span><h2 id="trek-listing-title">Find your trail<span>.</span></h2></div>
           {!loading && <p aria-live="polite">{filteredTreks.length} {filteredTreks.length === 1 ? "experience" : "experiences"}{hasActiveFilters ? " found" : " to explore"}</p>}
         </div>
+
+        {wishlistMessage && <p className="wishlist-feedback" role="status">{wishlistMessage}</p>}
 
         {!loading && treks.length > 0 && (
           <div className="trek-finder">
@@ -147,6 +181,7 @@ const EquipmentPage = () => {
                 </Link>
                 <div className="trek-card__body">
                   <div className="trek-card__eyebrow"><Mountain size={13} /> HIMALAYAN ESCAPE</div>
+                  <button type="button" className={`trek-wishlist-button ${wishlist.has(trek._id) ? "is-saved" : ""}`} onClick={() => toggleWishlist(trek._id)} aria-pressed={wishlist.has(trek._id)} aria-label={wishlist.has(trek._id) ? `Remove ${trek.title} from wishlist` : `Save ${trek.title} to wishlist`}><Heart size={16} fill={wishlist.has(trek._id) ? "currentColor" : "none"} /> {wishlist.has(trek._id) ? "Saved" : "Save trek"}</button>
                   <h3><Link to={`/blog/${trek._id}`}>{trek.title}</Link></h3>
                   <p className="trek-card__excerpt">{trek.excerpt || "Discover a memorable route through the mountains with the UK Hikers crew."}</p>
                   <div className="trek-card__facts">
