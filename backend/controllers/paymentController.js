@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 import Booking from "../models/Booking.js";
+import TrekSlot from "../models/TrekSlot.js";
 import Payment from "../models/Payment.js";
 import PaymentOrder from "../models/PaymentOrder.js";
 import razorpay from "../config/razorpay.js";
@@ -112,88 +113,58 @@ export const getAllPayments = async (req, res) => {
 /* Creates checkout only for an already-approved booking. The client never supplies customer or trek pricing. */
 export const createRazorpayOrder = async (req, res) => {
   try {
-    const { bookingId, amount, currency = "INR" } = req.body || {};
-    if (!validId(bookingId)) return res.status(400).json({ success: false, message: "A valid approved booking ID is required" });
+    const { bookingId, slotId, name, email, phone, persons, currency = "INR" } = req.body || {};
     if (currency !== "INR") return res.status(400).json({ success: false, message: "Only INR checkout is supported" });
-
-    const booking = await Booking.findById(bookingId).populate("slotId").populate("trekId");
-    if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
-    if (booking.bookingStatus !== "approved") {
-      return res.status(409).json({ success: false, message: "Payment is available only after admin approval." });
-    }
-    if (!booking.slotId || !booking.trekId || !Number.isInteger(Number(booking.persons)) || Number(booking.persons) < 1) {
-      return res.status(409).json({ success: false, message: "Booking details are incomplete. Contact support." });
-    }
-
-    const remaining = Number(booking.amountRemaining);
-    if (!Number.isFinite(remaining) || remaining <= 0) {
-      return res.status(409).json({ success: false, message: "This booking has no outstanding balance." });
-    }
-    const requested = amount === undefined || amount === null || amount === "" ? remaining : Number(amount);
-    if (!validAmount(requested) || requested > remaining + 0.000001 || Math.round(requested * 100) < 100 || Math.abs(Math.round(requested * 100) - requested * 100) > 0.000001) {
-      return res.status(400).json({ success: false, message: "Enter a valid payment amount not exceeding the remaining balance (minimum ₹1)." });
-    }
-
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-    if (!process.env.RAZORPAY_KEY_ID || !secret) {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       return res.status(503).json({ success: false, message: "Online payment is not configured. Please contact support." });
     }
 
-    // Reuse an existing unfinished checkout for this booking instead of creating a new
-    // payable order on ordinary retries/double-clicks. Never create a second order while
-    // an earlier one remains payable, even if the requested amount has changed.
-    const activeCheckout = await PaymentOrder.findOne({
-      bookingId: booking._id,
-      status: { $in: ["pending", "processing"] },
-    }).sort({ createdAt: -1 });
-
-    const requestedPaise = Math.round(requested * 100);
-    if (activeCheckout) {
-      if (Number(activeCheckout.amountPaise) !== requestedPaise || activeCheckout.currency !== "INR") {
-        return res.status(409).json({
-          success: false,
-          message: "A checkout is already pending for this booking. Finish or resolve that checkout before starting another.",
-        });
+    let data;
+    let amount;
+    if (bookingId) {
+      if (!validId(bookingId)) return res.status(400).json({ success: false, message: "A valid booking ID is required" });
+      const booking = await Booking.findById(bookingId).populate("slotId").populate("trekId");
+      if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
+      if (booking.bookingStatus !== "approved") return res.status(409).json({ success: false, message: "Payment is available only after admin approval." });
+      amount = Number(booking.amountRemaining);
+      if (!Number.isFinite(amount) || amount <= 0) return res.status(409).json({ success: false, message: "This booking has no outstanding balance." });
+      data = { slotId: booking.slotId._id, trekId: booking.trekId._id, name: booking.name, email: booking.email, phone: booking.phone, persons: booking.persons, totalAmount: booking.totalAmount, bookingId: booking._id };
+    } else {
+      const count = Number(persons);
+      if (!validId(slotId) || typeof name !== "string" || name.trim().length < 2 || name.trim().length > 100 ||
+          typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+          typeof phone !== "string" || !/^[6-9]\d{9}$/.test(phone.trim()) ||
+          !Number.isInteger(count) || count < 1 || count > 20) {
+        return res.status(400).json({ success: false, message: "Please provide valid trek, contact and person details." });
       }
-      return res.status(200).json({
-        success: true,
-        reused: true,
-        order: { id: activeCheckout.orderId, amount: activeCheckout.amountPaise, currency: activeCheckout.currency },
-        booking: { _id: booking._id, totalAmount: booking.totalAmount, amountRemaining: remaining },
-      });
+      const slot = await TrekSlot.findById(slotId).populate("trekId");
+      if (!slot?.trekId) return res.status(404).json({ success: false, message: "Trek date not found" });
+      if (Number(slot.totalSeats) - Number(slot.bookedSeats || 0) < count) {
+        return res.status(409).json({ success: false, message: "Not enough seats are currently available. Please choose another date or reduce the group size." });
+      }
+      const price = Number(slot.trekId.price);
+      amount = price * count;
+      if (!Number.isFinite(amount) || amount <= 0 || Math.round(amount * 100) < 100 || Math.abs(Math.round(amount * 100) - amount * 100) > 0.000001) {
+        return res.status(409).json({ success: false, message: "The trek price is not configured correctly." });
+      }
+      data = { slotId: slot._id, trekId: slot.trekId._id, name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), persons: count, totalAmount: amount, bookingId: null };
     }
 
     const order = await razorpay.orders.create({
-      amount: Math.round(requested * 100),
-      currency: "INR",
+      amount: Math.round(amount * 100), currency: "INR",
       receipt: `ukh_${Date.now().toString(36)}_${crypto.randomBytes(4).toString("hex")}`,
-      notes: { bookingId: String(booking._id), slotId: String(booking.slotId._id) },
+      notes: { slotId: String(data.slotId), trekId: String(data.trekId), bookingId: data.bookingId ? String(data.bookingId) : "new_full_payment" },
     });
-
-    try {
-      await PaymentOrder.create({
-        orderId: order.id,
-        slotId: booking.slotId._id,
-        trekId: booking.trekId._id,
-        name: booking.name,
-        email: booking.email,
-        phone: booking.phone,
-        persons: booking.persons,
-        totalAmount: booking.totalAmount,
-        amountPaise: order.amount,
-        currency: order.currency,
-        holdId: null,
-        bookingId: booking._id,
-      });
-    } catch (error) {
-      console.error("Could not persist checkout order:", error);
-      return res.status(500).json({ success: false, message: "Could not prepare checkout. Please try again." });
-    }
-
+    await PaymentOrder.create({
+      orderId: order.id, slotId: data.slotId, trekId: data.trekId,
+      name: data.name, email: data.email, phone: data.phone, persons: data.persons,
+      totalAmount: data.totalAmount, amountPaise: order.amount, currency: order.currency,
+      holdId: null, bookingId: data.bookingId,
+    });
     return res.status(201).json({
-      success: true,
+      success: true, keyId: process.env.RAZORPAY_KEY_ID,
       order: { id: order.id, amount: order.amount, currency: order.currency },
-      booking: { _id: booking._id, totalAmount: booking.totalAmount, amountRemaining: remaining },
+      booking: data.bookingId ? { _id: data.bookingId, totalAmount: data.totalAmount, amountRemaining: amount } : null,
     });
   } catch (error) {
     console.error("Razorpay order error:", error);
@@ -271,8 +242,37 @@ export const verifyRazorpayPayment = async (req, res) => {
           throw new Error("PAYMENT_FINALIZATION_ABORT");
         }
         if (!order.bookingId) {
-          failure = { status: 409, message: "This checkout is not linked to an approved booking. Contact support with your payment ID." };
-          throw new Error("PAYMENT_FINALIZATION_ABORT");
+          const slot = await TrekSlot.findOneAndUpdate(
+            { _id: order.slotId, $expr: { $gte: [{ $subtract: ["$totalSeats", "$bookedSeats"] }, order.persons] } },
+            { $inc: { bookedSeats: order.persons } },
+            { new: true, session }
+          );
+          if (!slot) {
+            failure = { status: 409, message: "Payment was captured, but seats were no longer available. Do not pay again. Contact UK Hikers support with payment ID: " + paymentId };
+            throw new Error("PAYMENT_FINALIZATION_ABORT");
+          }
+          const created = await Booking.create([{
+            name: order.name, email: order.email, phone: order.phone,
+            persons: order.persons, slotId: order.slotId, trekId: order.trekId,
+            totalAmount: order.totalAmount, amountPaid: paid, amountRemaining: 0,
+            paymentStatus: "paid", bookingStatus: "approved",
+          }], { session });
+          const booking = created[0];
+          await Payment.create([{
+            bookingId: booking._id, amount: paid, paymentType: "full",
+            paymentMethod: "razorpay", transactionId: paymentId, status: "success",
+          }], { session });
+          const orderUpdate = await PaymentOrder.updateOne(
+            { _id: order._id, status: { $in: ["pending", "processing"] }, bookingId: null },
+            { $set: { status: "completed", bookingId: booking._id, paymentId } },
+            { session }
+          );
+          if (orderUpdate.modifiedCount !== 1) {
+            failure = { status: 409, message: "Payment was captured but booking finalization needs support. Keep payment ID: " + paymentId };
+            throw new Error("PAYMENT_FINALIZATION_ABORT");
+          }
+          finalBookingId = booking._id;
+          return;
         }
 
         const booking = await Booking.findById(order.bookingId).session(session);
