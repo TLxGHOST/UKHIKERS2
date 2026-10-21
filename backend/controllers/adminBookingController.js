@@ -5,7 +5,7 @@ import TrekSlot from "../models/TrekSlot.js";
 import Payment from "../models/Payment.js";
 import Invoice from "../models/Invoice.js";
 import transporter from "../config/email.js";
-import { bookingConfirmationEmail, bookingInvoiceAttachmentHtml } from "../utils/emailTemplates.js";
+import { sendBookingApprovalEmail } from "../utils/bookingConfirmationMailer.js";
 
 const validId = (value) => typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
 
@@ -89,64 +89,46 @@ export const approveBooking = async (req, res) => {
 
   try {
     const booking = await Booking.findById(approvedBookingId).populate("trekId").populate("slotId");
-    let invoice = null;
-
-    // Create an immutable invoice snapshot after approval commits. Email failures
-    // must never roll back the already-approved booking or its seat allocation.
+    let emailSent = false;
     if (booking) {
       try {
-        invoice = await Invoice.findOne({ bookingId: booking._id });
-        if (!invoice) {
-          const totalAmount = Number(booking.totalAmount);
-          const amountPaid = Number(booking.amountPaid || 0);
-          const amountRemaining = Number(booking.amountRemaining ?? Math.max(0, totalAmount - amountPaid));
-          const trekDate = booking.slotId?.date ? new Date(booking.slotId.date) : null;
-          const generatedBy = req.user?.id || req.user?._id;
-          if (!generatedBy) throw new Error("Admin identity missing; cannot create invoice");
-          invoice = await Invoice.create({
-            invoiceNumber: `UKH-${new Date().getFullYear()}-${randomUUID().slice(0, 8).toUpperCase()}`,
-            bookingId: booking._id,
-            generatedBy,
-            customer: { name: booking.name || "Customer", email: booking.email || "", phone: booking.phone || "" },
-            trek: {
-              name: String(booking.trekId?.title || booking.trekId?.name || "Trek booking"),
-              date: trekDate && !Number.isNaN(trekDate.getTime()) ? trekDate : null,
-              persons: Number(booking.persons || 1),
-            },
-            amounts: { currency: "INR", totalAmount, amountPaidAtGeneration: amountPaid, amountRemainingAtGeneration: amountRemaining },
-            paymentStatusAtGeneration: booking.paymentStatus || "pending",
-            bookingStatusAtGeneration: booking.bookingStatus || "approved",
-          });
-        }
-      } catch (invoiceError) {
-        if (invoiceError?.code === 11000) {
-          invoice = await Invoice.findOne({ bookingId: booking._id }).catch(() => null);
-        }
-        if (!invoice) console.error("Approval invoice creation failed:", invoiceError.message);
-      }
-    }
-
-    if (process.env.EMAIL_USER && booking?.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(booking.email)) {
-      try {
-        await transporter.sendMail({
-          from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
-          to: booking.email,
-          subject: `Booking Approved - ${booking.trekId?.title || "Your Trek"}`,
-          html: bookingConfirmationEmail(booking, booking.trekId, invoice),
-          attachments: invoice ? [{
-            filename: `${invoice.invoiceNumber}.html`,
-            content: bookingInvoiceAttachmentHtml(booking, booking.trekId, invoice),
-            contentType: "text/html; charset=utf-8",
-          }] : [],
-        });
+        await sendBookingApprovalEmail(booking, req.user?.id || req.user?._id);
+        emailSent = true;
       } catch (emailError) {
-        console.error("Approval email or invoice attachment failed:", emailError.message);
+        console.error("Approval email delivery failed; admin can retry:", emailError.message);
       }
     }
-    return res.json({ success: true, message: "Booking approved and seats reserved", data: booking });
+    return res.json({ success: true, message: emailSent ? "Booking approved, seats reserved, and confirmation email sent" : "Booking approved and seats reserved. Confirmation email was not sent; an admin can retry it.", emailSent, data: booking });
   } catch (error) {
     console.error("Post-approval response failed:", error);
     return res.status(500).json({ success: false, message: "Booking was approved, but its details could not be loaded. Refresh the booking list." });
+  }
+};
+
+
+export const resendBookingApprovalEmail = async (req, res) => {
+  if (!validId(req.params.id)) {
+    return res.status(400).json({ success: false, message: "Invalid booking ID" });
+  }
+  try {
+    const booking = await Booking.findById(req.params.id).populate("trekId").populate("slotId");
+    if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
+    if (booking.bookingStatus !== "approved") {
+      return res.status(409).json({ success: false, message: "Confirmation email can only be sent for approved bookings." });
+    }
+
+    const result = await sendBookingApprovalEmail(booking, req.user?.id || req.user?._id);
+    return res.json({
+      success: true,
+      message: "Booking confirmation email and invoice attachment sent.",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Booking confirmation resend failed:", error);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode ? error.message : "Could not send confirmation email. The booking remains approved; you can retry.",
+    });
   }
 };
 
