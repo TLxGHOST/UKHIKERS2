@@ -11,8 +11,8 @@ export const sendBookingApprovalEmail = async (booking, adminId) => {
     error.statusCode = 409;
     throw error;
   }
-  if (!process.env.EMAIL_USER) {
-    const error = new Error("Email service is not configured (EMAIL_USER is missing)");
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    const error = new Error("Email service is not configured (EMAIL_USER or EMAIL_PASS is missing)");
     error.statusCode = 503;
     throw error;
   }
@@ -56,7 +56,7 @@ export const sendBookingApprovalEmail = async (booking, adminId) => {
   }
 
   await transporter.sendMail({
-    from: `"UK Hikers" <${process.env.EMAIL_USER}>`,
+    from: `"UK Hikers" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
     to: booking.email,
     subject: `Booking Approved - ${booking.trekId?.title || "Your Trek"}`,
     html: bookingConfirmationEmail(booking, booking.trekId, invoice),
