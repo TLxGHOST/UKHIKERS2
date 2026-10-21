@@ -386,3 +386,16 @@ button:active,a:active { transform: none; }
   .nature-button,.nature-text-link,.nature-story__link,.site-nav__cta,.site-nav__mobile-cta,.home-trek-card,.home-trek-card__image img,.trek-card,.trek-card__image-wrap img,.trail-marquee__track { transition: none !important; animation: none !important; }
   .home-outro__image { transform: none; }
 }
+
+.home-featured.is-in-view .home-featured__top { animation: nature-rise-in .7s both; }
+.home-featured.is-in-view .home-trek-card { animation: nature-rise-in .7s both; }
+.home-featured.is-in-view .home-trek-card:nth-child(2) { animation-delay: .08s; }
+.home-featured.is-in-view .home-trek-card:nth-child(3) { animation-delay: .16s; }
+.home-featured.is-in-view .home-trek-card:nth-child(4) { animation-delay: .24s; }
+.home-featured.is-in-view .home-trek-card:nth-child(5) { animation-delay: .32s; }
+.home-featured.is-in-view .home-trek-card:nth-child(6) { animation-delay: .4s; }
+.home-outro.is-in-view .home-outro__content { animation: nature-rise-in .8s both; }
+.home-outro.is-in-view .home-outro__coordinates { animation: nature-rise-in .8s .18s both; }
+@media (prefers-reduced-motion: reduce) {
+  .home-featured.is-in-view .home-featured__top,.home-featured.is-in-view .home-trek-card,.home-outro.is-in-view .home-outro__content,.home-outro.is-in-view .home-outro__coordinates { animation: none !important; }
+}
