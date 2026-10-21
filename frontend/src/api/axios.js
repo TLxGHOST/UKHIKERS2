@@ -7,7 +7,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("adminToken");
+  const isCustomerEndpoint = config.url?.startsWith("/users/");
+  const token = localStorage.getItem(isCustomerEndpoint ? "customerToken" : "adminToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
