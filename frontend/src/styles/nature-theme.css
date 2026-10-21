@@ -399,3 +399,32 @@ button:active,a:active { transform: none; }
 @media (prefers-reduced-motion: reduce) {
   .home-featured.is-in-view .home-featured__top,.home-featured.is-in-view .home-trek-card,.home-outro.is-in-view .home-outro__content,.home-outro.is-in-view .home-outro__coordinates { animation: none !important; }
 }
+
+
+/* Scroll-linked fade: let the landscape take over as visitors move down the page */
+.nature-hero {
+  --hero-scroll-progress: 0;
+  --hero-scroll-offset: 0px;
+}
+.nature-hero__content,
+.nature-hero__caption,
+.nature-hero__scroll,
+.nature-hero__badge {
+  opacity: calc(1 - var(--hero-scroll-progress));
+  transform: translate3d(0, var(--hero-scroll-offset), 0);
+  will-change: opacity, transform;
+}
+.nature-hero__content {
+  pointer-events: auto;
+}
+.nature-hero__content[style*="--hero-scroll-progress: 1"] {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nature-hero__content,
+  .nature-hero__caption,
+  .nature-hero__scroll,
+  .nature-hero__badge {
+    will-change: auto;
+  }
+}
