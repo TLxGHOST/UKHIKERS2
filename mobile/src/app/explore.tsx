@@ -1,180 +1,410 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, Pressable, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+const COLORS = {
+  forest: '#173D2B',
+  forestLight: '#28563D',
+  paper: '#F7F7F1',
+  white: '#FFFFFF',
+  ink: '#1B2E25',
+  muted: '#65736A',
+  lime: '#D8E7A5',
+  line: '#E5E9DF',
+};
 
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
-  const theme = useTheme();
+const FILTERS = ['All walks', 'Mountains', 'Coast', 'Nature'] as const;
+type Filter = (typeof FILTERS)[number];
 
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
+const COLLECTIONS: {
+  title: string;
+  subtitle: string;
+  description: string;
+  emoji: string;
+  category: Exclude<Filter, 'All walks'>;
+  tone: string;
+  tag: string;
+}[] = [
+  {
+    title: 'Mountain trails',
+    subtitle: 'For the big-view seekers',
+    description: 'Open landscapes, uphill effort and the feeling of reaching the top.',
+    emoji: '⛰',
+    category: 'Mountains',
+    tone: '#E5EDDA',
+    tag: 'HIGHER GROUND',
+  },
+  {
+    title: 'Coastal escapes',
+    subtitle: 'Follow the sea breeze',
+    description: 'Clifftop paths, sea air and long horizons to walk towards.',
+    emoji: '〰',
+    category: 'Coast',
+    tone: '#F2E8D7',
+    tag: 'BY THE WATER',
+  },
+  {
+    title: 'Woodland & nature',
+    subtitle: 'Take the slower path',
+    description: 'Leafy trails, quiet corners and time to notice the little things.',
+    emoji: '🌿',
+    category: 'Nature',
+    tone: '#DFECE6',
+    tag: 'SLOW EXPLORING',
+  },
+];
+
+export default function ExploreScreen() {
+  const [activeFilter, setActiveFilter] = useState<Filter>('All walks');
+
+  const visibleCollections =
+    activeFilter === 'All walks'
+      ? COLLECTIONS
+      : COLLECTIONS.filter((item) => item.category === activeFilter);
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.eyebrow}>THE OUTDOORS IS CALLING</Text>
+          <Text style={styles.title}>Find your{ '\n' }kind of wild.</Text>
+          <Text style={styles.intro}>
+            Every great day out starts with an idea. Explore the kind of trail you’re in the mood for.
+          </Text>
+        </View>
 
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
+        <View style={styles.searchPrompt}>
+          <View style={styles.searchIconWrap}>
+            <Text style={styles.searchIcon}>⌕</Text>
+          </View>
+          <View style={styles.searchTextWrap}>
+            <Text style={styles.searchTitle}>Not sure where to start?</Text>
+            <Text style={styles.searchCopy}>Choose a walking style below to get inspired.</Text>
+          </View>
+        </View>
 
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+        <Text style={styles.sectionLabel}>BROWSE BY EXPERIENCE</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterRow}>
+          {FILTERS.map((filter) => {
+            const selected = filter === activeFilter;
+            return (
+              <Pressable
+                key={filter}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                onPress={() => setActiveFilter(filter)}
+                style={({ pressed }) => [
+                  styles.filterChip,
+                  selected && styles.filterChipSelected,
+                  pressed && styles.pressed,
+                ]}>
+                <Text style={[styles.filterText, selected && styles.filterTextSelected]}>
+                  {filter}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
 
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
+        <View style={styles.resultsHeading}>
+          <Text style={styles.resultsTitle}>
+            {activeFilter === 'All walks' ? 'Trail inspiration' : activeFilter}
+          </Text>
+          <Text style={styles.resultsCount}>
+            {visibleCollections.length} {visibleCollections.length === 1 ? 'collection' : 'collections'}
+          </Text>
+        </View>
 
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+        <View style={styles.collectionList}>
+          {visibleCollections.map((item) => (
+            <View key={item.title} style={styles.collectionCard}>
+              <View style={[styles.artPanel, { backgroundColor: item.tone }]}>
+                <View style={styles.artSun} />
+                <Text style={styles.artEmoji}>{item.emoji}</Text>
+                <View style={styles.artLabel}>
+                  <Text style={styles.artLabelText}>{item.tag}</Text>
+                </View>
+              </View>
+              <View style={styles.cardBody}>
+                <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+                <Text style={styles.cardTitle}>{item.title}</Text>
+                <Text style={styles.cardDescription}>{item.description}</Text>
+                <View style={styles.cardBottom}>
+                  <Text style={styles.cardCategory}>{item.category.toUpperCase()}</Text>
+                  <View style={styles.cardArrowWrap}>
+                    <Text style={styles.cardArrow}>↗</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
 
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
-    </ScrollView>
+        <View style={styles.noteCard}>
+          <Text style={styles.noteIcon}>✳</Text>
+          <View style={styles.noteCopyWrap}>
+            <Text style={styles.noteTitle}>More trails are on the way</Text>
+            <Text style={styles.noteText}>
+              This is the start of your trail guide. Verified routes, practical details and booking options can be added next.
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
+  safeArea: {
+    flex: 1,
+    backgroundColor: COLORS.paper,
+  },
+  content: {
+    paddingHorizontal: 22,
+    paddingTop: 20,
+    paddingBottom: 36,
+    maxWidth: 720,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  header: {
+    marginBottom: 23,
+  },
+  eyebrow: {
+    color: COLORS.forestLight,
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1.9,
+    marginBottom: 12,
+  },
+  title: {
+    color: COLORS.ink,
+    fontSize: 42,
+    lineHeight: 45,
+    letterSpacing: -1.5,
+    fontWeight: '800',
+  },
+  intro: {
+    color: COLORS.muted,
+    fontSize: 14,
+    lineHeight: 22,
+    marginTop: 12,
+    maxWidth: 360,
+  },
+  searchPrompt: {
+    backgroundColor: COLORS.forest,
+    borderRadius: 19,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 27,
+  },
+  searchIconWrap: {
+    height: 45,
+    width: 45,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  searchIcon: {
+    color: COLORS.lime,
+    fontSize: 31,
+    lineHeight: 36,
+  },
+  searchTextWrap: {
     flex: 1,
   },
-  contentContainer: {
+  searchTitle: {
+    color: COLORS.white,
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  searchCopy: {
+    color: '#D2DFD2',
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 4,
+  },
+  sectionLabel: {
+    color: COLORS.muted,
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.7,
+    marginBottom: 12,
+  },
+  filterRow: {
+    gap: 8,
+    paddingBottom: 23,
+  },
+  filterChip: {
+    borderWidth: 1,
+    borderColor: '#DDE4D9',
+    backgroundColor: COLORS.white,
+    borderRadius: 22,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  filterChipSelected: {
+    backgroundColor: COLORS.forest,
+    borderColor: COLORS.forest,
+  },
+  filterText: {
+    color: COLORS.muted,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  filterTextSelected: {
+    color: COLORS.white,
+  },
+  resultsHeading: {
     flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
-  },
-  titleContainer: {
-    gap: Spacing.three,
     alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
+    justifyContent: 'space-between',
+    marginBottom: 14,
   },
-  centerText: {
+  resultsTitle: {
+    color: COLORS.ink,
+    fontSize: 21,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  resultsCount: {
+    color: COLORS.muted,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  collectionList: {
+    gap: 15,
+  },
+  collectionCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 22,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: COLORS.line,
+  },
+  artPanel: {
+    height: 142,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  artSun: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F5D98B',
+    position: 'absolute',
+    right: 34,
+    top: 22,
+    opacity: 0.95,
+  },
+  artEmoji: {
+    fontSize: 68,
+    color: COLORS.forest,
     textAlign: 'center',
   },
-  pressed: {
-    opacity: 0.7,
+  artLabel: {
+    position: 'absolute',
+    left: 14,
+    bottom: 13,
+    backgroundColor: 'rgba(255,255,255,0.82)',
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
-  linkButton: {
+  artLabelText: {
+    color: COLORS.forest,
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+  },
+  cardBody: {
+    paddingHorizontal: 17,
+    paddingTop: 15,
+    paddingBottom: 16,
+  },
+  cardSubtitle: {
+    color: COLORS.forestLight,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  cardTitle: {
+    color: COLORS.ink,
+    fontSize: 19,
+    fontWeight: '800',
+    letterSpacing: -0.4,
+    marginTop: 4,
+  },
+  cardDescription: {
+    color: COLORS.muted,
+    fontSize: 12,
+    lineHeight: 19,
+    marginTop: 7,
+  },
+  cardBottom: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: COLORS.line,
+    marginTop: 14,
+    paddingTop: 12,
+  },
+  cardCategory: {
+    color: COLORS.muted,
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+  },
+  cardArrowWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#E8EDE2',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.one,
-    alignItems: 'center',
   },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
+  cardArrow: {
+    color: COLORS.forest,
+    fontSize: 18,
+    fontWeight: '700',
   },
-  collapsibleContent: {
-    alignItems: 'center',
+  noteCard: {
+    backgroundColor: '#E9EFE4',
+    borderRadius: 18,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 22,
   },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
+  noteIcon: {
+    color: COLORS.forestLight,
+    fontSize: 22,
+    marginRight: 12,
   },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
+  noteCopyWrap: {
+    flex: 1,
+  },
+  noteTitle: {
+    color: COLORS.ink,
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  noteText: {
+    color: COLORS.muted,
+    fontSize: 11,
+    lineHeight: 17,
+    marginTop: 5,
+  },
+  pressed: {
+    opacity: 0.8,
   },
 });
